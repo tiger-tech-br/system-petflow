@@ -1,0 +1,162 @@
+/* ==================================================
+   BOTÃO BASE
+================================================== */
+
+.btn {
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+
+    padding: .9rem 1.6rem;
+
+    border: none;
+    border-radius: var(--radius-md);
+
+    font-size: var(--fs-md);
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: var(--transition);
+
+}
+
+/* ==================================================
+   BOTÃO PRIMÁRIO
+================================================== */
+
+.btn-primary {
+
+    background-color: var(--primary);
+
+    color: var(--white);
+
+}
+
+.btn-primary:hover {
+
+    background-color: var(--primary-dark);
+
+}
+
+/* ==================================================
+   BOTÃO SECUNDÁRIO
+================================================== */
+
+.btn-secondary {
+
+    background-color: var(--secondary);
+
+    color: var(--white);
+
+}
+
+.btn-secondary:hover {
+
+    background-color: var(--secondary-dark);
+
+}
+
+/* ==================================================
+   BOTÃO OUTLINE
+================================================== */
+
+.btn-outline {
+
+    background: transparent;
+
+    border: 2px solid var(--primary);
+
+    color: var(--primary);
+
+}
+
+.btn-outline:hover {
+
+    background: var(--primary);
+
+    color: var(--white);
+
+}
+
+/* ==================================================
+   BOTÃO SUCESSO
+================================================== */
+
+.btn-success {
+
+    background-color: var(--success);
+
+    color: var(--white);
+
+}
+
+/* ==================================================
+   BOTÃO PERIGO
+================================================== */
+
+.btn-danger {
+
+    background-color: var(--danger);
+
+    color: var(--white);
+
+}
+
+/* ==================================================
+   TAMANHOS
+================================================== */
+
+.btn-sm {
+
+    padding: .6rem 1rem;
+
+    font-size: var(--fs-sm);
+
+}
+
+.btn-lg {
+
+    padding: 1rem 2rem;
+
+    font-size: var(--fs-lg);
+
+}
+
+/* ==================================================
+   LARGURA TOTAL
+================================================== */
+
+.btn-block {
+
+    width: 100%;
+
+}
+
+/* ==================================================
+   BOTÃO DESABILITADO
+================================================== */
+
+.btn:disabled {
+
+    opacity: .6;
+
+    cursor: not-allowed;
+
+}
+
+/* ==================================================
+   RESPONSIVIDADE
+================================================== */
+
+@media (max-width: 768px) {
+
+    .btn {
+
+        width: 100%;
+
+    }
+
+}

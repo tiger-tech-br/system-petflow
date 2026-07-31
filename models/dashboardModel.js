@@ -1,0 +1,372 @@
+"use strict";
+
+const db = require("../database/connection");
+
+class DashboardModel {
+
+    /* ==============================================
+       RESUMO GERAL
+    ============================================== */
+
+    static async resumo(empresaId) {
+
+        const query = `
+
+            SELECT
+
+                /* Clientes */
+
+                (
+                    SELECT COUNT(*)
+
+                    FROM clientes
+
+                    WHERE empresa_id = $1
+                ) AS total_clientes,
+
+                /* Pets */
+
+                (
+                    SELECT COUNT(*)
+
+                    FROM pets
+
+                    WHERE empresa_id = $1
+                ) AS total_pets,
+
+                /* Produtos */
+
+                (
+                    SELECT COUNT(*)
+
+                    FROM produtos
+
+                    WHERE empresa_id = $1
+                ) AS total_produtos,
+
+                /* Vendas */
+
+                (
+                    SELECT COALESCE(SUM(valor_total),0)
+
+                    FROM vendas
+
+                    WHERE empresa_id = $1
+
+                    AND DATE(data_venda)=CURRENT_DATE
+
+                ) AS vendas_hoje,
+
+                (
+                    SELECT COALESCE(SUM(valor_total),0)
+
+                    FROM vendas
+
+                    WHERE empresa_id=$1
+
+                    AND DATE_TRUNC('month',data_venda)=DATE_TRUNC('month',CURRENT_DATE)
+
+                ) AS vendas_mes,
+
+                /* Compras */
+
+                (
+                    SELECT COALESCE(SUM(valor_total),0)
+
+                    FROM compras
+
+                    WHERE empresa_id=$1
+
+                    AND DATE_TRUNC('month',data_compra)=DATE_TRUNC('month',CURRENT_DATE)
+
+                ) AS compras_mes,
+
+                /* Financeiro */
+
+                (
+                    SELECT COALESCE(SUM(valor),0)
+
+                    FROM financeiro
+
+                    WHERE empresa_id=$1
+
+                    AND tipo='RECEBER'
+
+                    AND status='PENDENTE'
+
+                ) AS contas_receber,
+
+                (
+                    SELECT COALESCE(SUM(valor),0)
+
+                    FROM financeiro
+
+                    WHERE empresa_id=$1
+
+                    AND tipo='PAGAR'
+
+                    AND status='PENDENTE'
+
+                ) AS contas_pagar,
+
+                /* Agendamentos */
+
+                (
+                    SELECT COUNT(*)
+
+                    FROM agendamentos
+
+                    WHERE empresa_id=$1
+
+                    AND DATE(data_agendamento)=CURRENT_DATE
+
+                ) AS agendamentos_hoje;
+
+        `;
+
+        const { rows } = await db.query(query, [empresaId]);
+
+        return rows[0];
+
+    }
+
+    /* ==============================================
+       ÚLTIMAS VENDAS
+    ============================================== */
+
+    static async ultimasVendas(empresaId, limite = 10) {
+
+        const query = `
+
+            SELECT
+
+                v.id,
+
+                c.nome AS cliente,
+
+                v.valor_total,
+
+                v.data_venda
+
+            FROM vendas v
+
+            LEFT JOIN clientes c
+
+            ON c.id = v.cliente_id
+
+            WHERE v.empresa_id=$1
+
+            ORDER BY v.data_venda DESC
+
+            LIMIT $2;
+
+        `;
+
+        const { rows } = await db.query(query, [
+
+            empresaId,
+
+            limite
+
+        ]);
+
+        return rows;
+
+    }
+
+    /* ==============================================
+       ÚLTIMAS COMPRAS
+    ============================================== */
+
+    static async ultimasCompras(empresaId, limite = 10) {
+
+        const query = `
+
+            SELECT
+
+                c.id,
+
+                f.nome AS fornecedor,
+
+                c.valor_total,
+
+                c.data_compra
+
+            FROM compras c
+
+            LEFT JOIN fornecedores f
+
+            ON f.id = c.fornecedor_id
+
+            WHERE c.empresa_id=$1
+
+            ORDER BY c.data_compra DESC
+
+            LIMIT $2;
+
+        `;
+
+        const { rows } = await db.query(query, [
+
+            empresaId,
+
+            limite
+
+        ]);
+
+        return rows;
+
+    }
+
+    /* ==============================================
+       PRODUTOS COM ESTOQUE BAIXO
+    ============================================== */
+
+    static async estoqueBaixo(empresaId) {
+
+        const query = `
+
+            SELECT
+
+                p.id,
+
+                p.nome,
+
+                e.quantidade
+
+            FROM estoque e
+
+            INNER JOIN produtos p
+
+                ON p.id = e.produto_id
+
+            WHERE e.empresa_id=$1
+
+            AND e.quantidade <= 5
+
+            ORDER BY e.quantidade ASC;
+
+        `;
+
+        const { rows } = await db.query(query, [
+
+            empresaId
+
+        ]);
+
+        return rows;
+
+    }
+
+    /* ==============================================
+       AGENDAMENTOS DE HOJE
+    ============================================== */
+
+    static async agendamentosHoje(empresaId) {
+
+        const query = `
+            SELECT
+                a.id,
+                c.nome AS cliente,
+                p.nome AS pet,
+                a.servico,
+                a.data,
+                a.hora,
+                a.status
+            FROM agendamentos a
+            LEFT JOIN clientes c
+                ON c.id = a.cliente_id
+            LEFT JOIN pets p
+                ON p.id = a.pet_id
+            WHERE a.empresa_id = $1
+              AND DATE(a.data) = CURRENT_DATE
+            ORDER BY a.hora ASC;
+        `;
+
+        const { rows } = await db.query(query, [empresaId]);
+
+        return rows;
+
+    }
+
+    /* ==============================================
+       CONTAS VENCIDAS
+    ============================================== */
+
+    static async contasVencidas(empresaId) {
+
+        const query = `
+            SELECT *
+            FROM financeiro
+            WHERE empresa_id = $1
+              AND status = 'PENDENTE'
+              AND data_vencimento < CURRENT_DATE
+            ORDER BY data_vencimento ASC;
+        `;
+
+        const { rows } = await db.query(query, [empresaId]);
+
+        return rows;
+
+    }
+
+    /* ==============================================
+       PRODUTOS MAIS VENDIDOS
+    ============================================== */
+
+    static async produtosMaisVendidos(empresaId, limite = 10) {
+
+        const query = `
+            SELECT
+                p.id,
+                p.nome,
+                SUM(iv.quantidade) AS quantidade
+            FROM itens_venda iv
+            INNER JOIN vendas v
+                ON v.id = iv.venda_id
+            INNER JOIN produtos p
+                ON p.id = iv.produto_id
+            WHERE v.empresa_id = $1
+            GROUP BY p.id, p.nome
+            ORDER BY quantidade DESC
+            LIMIT $2;
+        `;
+
+        const { rows } = await db.query(query, [
+            empresaId,
+            limite
+        ]);
+
+        return rows;
+
+    }
+
+    /* ==============================================
+       SERVIÇOS MAIS REALIZADOS
+    ============================================== */
+
+    static async servicosMaisRealizados(empresaId, limite = 10) {
+
+        const query = `
+            SELECT
+                a.servico AS nome,
+                COUNT(*) AS quantidade
+            FROM agendamentos a
+            WHERE a.empresa_id = $1
+            GROUP BY a.servico
+            ORDER BY quantidade DESC
+            LIMIT $2;
+        `;
+
+        const { rows } = await db.query(query, [
+            empresaId,
+            limite
+        ]);
+
+        return rows;
+
+    }
+
+}
+
+module.exports = DashboardModel;

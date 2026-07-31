@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <!-- ==================================================
+         META TAGS
+    ================================================== -->
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="PetFlow - Tudo para o seu pet em um só lugar. Produtos, serviços, banho, tosa, veterinário e muito mais.">
+
+    <meta
+        name="keywords"
+        content="pet shop, petflow, banho e tosa, veterinário, ração, acessórios">
+
+    <meta
+        name="author"
+        content="Tiger Tech">
+
+    <title>PetFlow | Tudo para o seu pet</title>
+
+    <!-- ==================================================
+         FAVICON
+    ================================================== -->
+
+    <link
+        rel="icon"
+        href="../../public/favicon.ico"
+        type="image/x-icon">
+
+    <!-- ==================================================
+         CSS
+    ================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="../../public/css/base/main.css">
+
+</head>
+
+<body>
+
+    <!-- ==================================================
+         HEADER
+    ================================================== -->
+
+        <header class="header">
+
+            <div class="container">
+
+                <!-- ==========================================
+                    LOGO
+                =========================================== -->
+
+                <a
+                    href="#hero"
+                    class="logo"
+                    aria-label="Ir para a página inicial">
+
+                    <img
+                        src="../../public/images/logo/logo.png"
+                        alt="Logo da PetFlow"
+                        width="60"
+                        height="60">
+
+                    <span class="logo-text">
+
+                        PetFlow
+
+                    </span>
+
+                </a>
+
+                <!-- ==========================================
+                    PESQUISA
+                =========================================== -->
+
+                <form
+                    class="search-form"
+                    role="search"
+                    aria-label="Pesquisar produtos"
+                    autocomplete="off">
+
+                    <label
+                        class="sr-only"
+                        for="search">
+
+                        Pesquisar produtos
+
+                    </label>
+
+                    <input
+                        class="form-control"
+                        type="search"
+                        id="search"
+                        name="search"
+                        placeholder="O que seu pet precisa hoje?"
+                        maxlength="100"
+                        aria-label="Pesquisar produtos">
+
+                    <button
+                        class="search-button"
+                        type="submit"
+                        aria-label="Pesquisar">
+
+                        🔍
+
+                    </button>
+
+                </form>
+
+                <!-- ==========================================
+                    MENU
+                =========================================== -->
+
+                <nav
+                    class="menu"
+                    id="menu"
+                    aria-label="Menu principal">
+
+                    <ul class="menu-list">
+
+                        <li class="menu-item">
+
+                            <a
+                                href="#hero"
+                                class="menu-link active">
+
+                                Início
+
+                            </a>
+
+                        </li>
+
+                        <li class="menu-item">
+
+                            <a
+                                href="#categories"
+                                class="menu-link">
+
+                                Categorias
+
+                            </a>
+
+                        </li>
+
+                        <li class="menu-item">
+
+                            <a
+                                href="#products"
+                                class="menu-link">
+
+                                Produtos
+
+                            </a>
+
+                        </li>
+
+                        <li class="menu-item">
+
+                            <a
+                                href="#services"
+                                class="menu-link">
+
+                                Serviços
+
+                            </a>
+
+                        </li>
+
+                        <li class="menu-item">
+
+                            <a
+                                href="#newsletter"
+                                class="menu-link">
+
+                                Contato
+
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+                </nav>
+
+                <!-- ==========================================
+                    AÇÕES
+                =========================================== -->
+
+                <div class="header-actions">
+
+                    <a
+                        href="#"
+                        class="icon-badge"
+                        aria-label="Favoritos">
+
+                        ❤
+
+                        <span class="badge badge-danger">
+
+                            0
+
+                        </span>
+
+                    </a>
+
+                    <a
+                        href="../produtos/produtos.html"
+                        class="icon-badge"
+                        aria-label="Carrinho">
+
+                        🛒
+
+                        <span class="badge badge-primary">
+
+                            0
+
+                        </span>
+
+                    </a>
+
+                    <a
+                        href="../auth/login.html"
+                        class="btn btn-primary">
+
+                        Entrar
+
+                    </a>
+
+                    <button
+                        class="menu-toggle"
+                        type="button"
+                        aria-label="Abrir menu"
+                        aria-controls="menu"
+                        aria-expanded="false">
+
+                        ☰
+
+                    </button>
+
+                </div>
+
+            </div>
+
+    </header>
+
+    <!-- ==================================================
+         MAIN
+    ================================================== -->
+
+    <main class="home">
+
+        <!-- ==========================================
+             HERO
+        ========================================== -->
+
+            <section
+                class="hero carousel"
+                id="hero"
+                aria-label="Banner principal">
+
+                <div class="carousel-track">
+
+            <!-- ==========================================
+                SLIDE 1
+            =========================================== -->
+
+                <article class="carousel-item">
+
+                    <div class="container hero-container">
+
+                        <div class="hero-content">
+
+                            <span class="hero-subtitle">
+
+                                Cuidado e carinho para seu pet
+
+                            </span>
+
+                            <h1 class="hero-title">
+
+                                Tudo o que seu melhor amigo precisa em um só lugar.
+
+                            </h1>
+
+                            <p class="hero-description">
+
+                                Produtos de qualidade, banho e tosa, atendimento veterinário e muito mais para cuidar do seu melhor amigo.
+
+                            </p>
+
+                            <div class="hero-buttons">
+
+                                <a
+                                    href="#products"
+                                    class="btn btn-primary">
+
+                                    Comprar Agora
+
+                                </a>
+
+                                <a
+                                    href="#services"
+                                    class="btn btn-outline">
+
+                                    Conheça os Serviços
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                        <div class="hero-image">
+
+                            <img
+                                src="../../public/images/hero/hero-01.jpg"
+                                alt="Cachorro feliz brincando"
+                                loading="eager"
+                                decoding="async">
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+                <!-- ==========================================
+                    SLIDE 2
+                =========================================== -->
+
+                <article class="carousel-item">
+
+                    <div class="container hero-container">
+
+                        <div class="hero-content">
+
+                            <span class="hero-subtitle">
+
+                                Banho & Tosa
+
+                            </span>
+
+                            <h2 class="hero-title">
+
+                                O cuidado que seu pet merece.
+
+                            </h2>
+
+                            <p class="hero-description">
+
+                                Profissionais preparados para deixar seu pet limpo, cheiroso e feliz.
+
+                            </p>
+
+                            <div class="hero-buttons">
+
+                                <a
+                                    href="#services"
+                                    class="btn btn-primary">
+
+                                    Agendar Serviço
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                        <div class="hero-image">
+
+                            <img
+                                src="../../public/images/hero/hero-02.jpg"
+                                alt="Banho e tosa"
+                                loading="lazy"
+                                decoding="async">
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            <!-- ==========================================
+                SLIDE 3
+            =========================================== -->
+
+                <article class="carousel-item">
+
+                    <div class="container hero-container">
+
+                        <div class="hero-content">
+
+                            <span class="hero-subtitle">
+
+                                Delivery
+
+                            </span>
+
+                            <h2 class="hero-title">
+
+                                Receba tudo sem sair de casa.
+
+                            </h2>
+
+                            <p class="hero-description">
+
+                                Entregamos produtos para seu pet com rapidez, segurança e comodidade.
+
+                            </p>
+
+                            <div class="hero-buttons">
+
+                                <a
+                                    href="#products"
+                                    class="btn btn-primary">
+
+                                    Ver Produtos
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                        <div class="hero-image">
+
+                            <img
+                                src="../../public/images/hero/hero-03.jpg"
+                                alt="Entrega de produtos pet"
+                                loading="lazy"
+                                decoding="async">
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            <!-- ==========================================
+                SLIDE 4
+            =========================================== -->
+
+            <article class="carousel-item">
+
+                <div class="container hero-container">
+
+                    <div class="hero-content">
+
+                        <span class="hero-subtitle">
+
+                            Atendimento Veterinário
+
+                        </span>
+
+                        <h2 class="hero-title">
+
+                            Saúde em primeiro lugar.
+
+                        </h2>
+
+                        <p class="hero-description">
+
+                            Conte com profissionais qualificados para cuidar da saúde do seu pet.
+
+                        </p>
+
+                        <div class="hero-buttons">
+
+                            <a
+                                href="#services"
+                                class="btn btn-primary">
+
+                                Saiba Mais
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                    <div class="hero-image">
+
+                        <img
+                            src="../../public/images/hero/hero-04.jpg"
+                            alt="Veterinário examinando um cachorro"
+                            loading="lazy"
+                            decoding="async">
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        </div>
+
+        <!-- ==========================================
+            CONTROLES
+        =========================================== -->
+
+        <button
+            class="carousel-control prev"
+            type="button"
+            aria-label="Slide anterior">
+
+            ❮
+
+        </button>
+
+        <button
+            class="carousel-control next"
+            type="button"
+            aria-label="Próximo slide">
+
+            ❯
+
+        </button>
+
+        <!-- ==========================================
+            INDICADORES
+        =========================================== -->
+
+        <div
+            class="carousel-indicators"
+            aria-label="Indicadores do carrossel">
+
+            <button
+                class="carousel-indicator active"
+                type="button"
+                aria-label="Ir para o slide 1"></button>
+
+            <button
+                class="carousel-indicator"
+                type="button"
+                aria-label="Ir para o slide 2"></button>
+
+            <button
+                class="carousel-indicator"
+                type="button"
+                aria-label="Ir para o slide 3"></button>
+
+            <button
+                class="carousel-indicator"
+                type="button"
+                aria-label="Ir para o slide 4"></button>
+
+        </div>
+
+    </section>
+
+        <!-- ==========================================
+             CATEGORIAS
+        ========================================== -->
+
+            <section
+                class="categories"
+                id="categories"
+                aria-labelledby="categories-title">
+
+                <div class="container">
+
+            <!-- ==========================================
+                CABEÇALHO
+            =========================================== -->
+
+            <div class="section-header">
+
+                <span class="section-subtitle">
+
+                    Categorias
+
+                </span>
+
+                <h2 id="categories-title">
+
+                    Tudo o que seu pet precisa
+
+                </h2>
+
+                <p>
+
+                    Encontre produtos de qualidade para todas as fases da vida do seu melhor amigo.
+
+                </p>
+
+            </div>
+
+            <!-- ==========================================
+                GRID
+            =========================================== -->
+
+            <div class="categories-grid">
+
+                <!-- Cães -->
+
+                <article class="category-card">
+
+                    <a
+                        href="../produtos/produtos.html?categoria=caes"
+                        aria-label="Ver produtos para cães">
+
+                        <img
+                            src="../../public/images/categories/dogs.jpg"
+                            alt="Produtos para cães"
+                            loading="lazy"
+                            decoding="async">
+
+                        <h3>
+
+                            Cães
+
+                        </h3>
+
+                    </a>
+
+                </article>
+
+                <!-- Gatos -->
+
+                <article class="category-card">
+
+                    <a
+                        href="../produtos/produtos.html?categoria=gatos"
+                        aria-label="Ver produtos para gatos">
+
+                        <img
+                            src="../../public/images/categories/cats.jpg"
+                            alt="Produtos para gatos"
+                            loading="lazy"
+                            decoding="async">
+
+                        <h3>
+
+                            Gatos
+
+                        </h3>
+
+                    </a>
+
+                </article>
+
+                <!-- Aves -->
+
+                <article class="category-card">
+
+                    <a
+                        href="../produtos/produtos.html?categoria=aves"
+                        aria-label="Ver produtos para aves">
+
+                        <img
+                            src="../../public/images/categories/birds.jpg"
+                            alt="Produtos para aves"
+                            loading="lazy"
+                            decoding="async">
+
+                        <h3>
+
+                            Aves
+
+                        </h3>
+
+                    </a>
+
+                </article>
+
+                <!-- Peixes -->
+
+                <article class="category-card">
+
+                    <a
+                        href="../produtos/produtos.html?categoria=peixes"
+                        aria-label="Ver produtos para peixes">
+
+                        <img
+                            src="../../public/images/categories/fish.jpg"
+                            alt="Produtos para peixes"
+                            loading="lazy"
+                            decoding="async">
+
+                        <h3>
+
+                            Peixes
+
+                        </h3>
+
+                    </a>
+
+                </article>
+
+                <!-- Roedores -->
+
+                <article class="category-card">
+
+                    <a
+                        href="../produtos/produtos.html?categoria=roedores"
+                        aria-label="Ver produtos para roedores">
+
+                        <img
+                            src="../../public/images/categories/rodents.jpg"
+                            alt="Produtos para roedores"
+                            loading="lazy"
+                            decoding="async">
+
+                        <h3>
+
+                            Roedores
+
+                        </h3>
+
+                    </a>
+
+                </article>
+
+                <!-- Acessórios -->
+
+                <article class="category-card">
+
+                    <a
+                        href="../produtos/produtos.html?categoria=acessorios"
+                        aria-label="Ver acessórios para pets">
+
+                        <img
+                            src="../../public/images/categories/accessories.jpg"
+                            alt="Acessórios para pets"
+                            loading="lazy"
+                            decoding="async">
+
+                        <h3>
+
+                            Acessórios
+
+                        </h3>
+
+                    </a>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </section>
+
+        <!-- ==========================================
+             PRODUTOS
+        ========================================== -->
+
+            <section
+                class="products"
+                id="products"
+                aria-labelledby="products-title">
+
+                <div class="container">
+
+        <!-- ==========================================
+             CABEÇALHO
+        =========================================== -->
+
+                <div class="section-header">
+
+                    <span class="section-subtitle">
+
+                        Produtos
+
+                    </span>
+
+                    <h2 id="products-title">
+
+                        Produtos em Destaque
+
+                    </h2>
+
+                    <p>
+
+                        Selecionamos alguns dos produtos mais procurados para o bem-estar do seu pet.
+
+                    </p>
+
+                </div>
+
+                <!-- ==========================================
+                    GRID
+                =========================================== -->
+
+                <div class="products-grid">
+
+                    <!-- Produto 1 -->
+
+                    <article class="product-card">
+
+                        <img
+                            class="product-image"
+                            src="../../public/images/products/racao-premium.jpg"
+                            alt="Ração Premium para cães"
+                            loading="lazy"
+                            decoding="async">
+
+                        <div class="product-content">
+
+                            <span class="product-category">
+
+                                Rações
+
+                            </span>
+
+                            <h3 class="product-title">
+
+                                Ração Premium
+
+                            </h3>
+
+                            <p class="product-description">
+
+                                Nutrição completa para cães adultos.
+
+                            </p>
+
+                            <div class="product-footer">
+
+                                <strong class="product-price">
+
+                                    R$ 149,90
+
+                                </strong>
+
+                                <button
+                                    class="btn btn-primary"
+                                    type="button"
+                                    aria-label="Adicionar Ração Premium ao carrinho">
+
+                                    Comprar
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    <!-- Produto 2 -->
+
+                    <article class="product-card">
+
+                        <img
+                            class="product-image"
+                            src="../../public/images/products/brinquedo.jpg"
+                            alt="Brinquedo para cachorro"
+                            loading="lazy"
+                            decoding="async">
+
+                        <div class="product-content">
+
+                            <span class="product-category">
+
+                                Brinquedos
+
+                            </span>
+
+                            <h3 class="product-title">
+
+                                Mordedor Interativo
+
+                            </h3>
+
+                            <p class="product-description">
+
+                                Diversão garantida para o seu melhor amigo.
+
+                            </p>
+
+                            <div class="product-footer">
+
+                                <strong class="product-price">
+
+                                    R$ 39,90
+
+                                </strong>
+
+                                <button
+                                    class="btn btn-primary"
+                                    type="button"
+                                    aria-label="Adicionar Mordedor Interativo ao carrinho">
+
+                                    Comprar
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    <!-- Produto 3 -->
+
+                    <article class="product-card">
+
+                        <img
+                            class="product-image"
+                            src="../../public/images/products/caminha.jpg"
+                            alt="Caminha confortável para cachorro"
+                            loading="lazy"
+                            decoding="async">
+
+                        <div class="product-content">
+
+                            <span class="product-category">
+
+                                Caminhas
+
+                            </span>
+
+                            <h3 class="product-title">
+
+                                Caminha Confort Plus
+
+                            </h3>
+
+                            <p class="product-description">
+
+                                Maciez e conforto para o descanso do seu pet.
+
+                            </p>
+
+                            <div class="product-footer">
+
+                                <strong class="product-price">
+
+                                    R$ 189,90
+
+                                </strong>
+
+                                <button
+                                    class="btn btn-primary"
+                                    type="button"
+                                    aria-label="Adicionar Caminha Confort Plus ao carrinho">
+
+                                    Comprar
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    <!-- Produto 4 -->
+
+                    <article class="product-card">
+
+                        <img
+                            class="product-image"
+                            src="../../public/images/products/shampoo.jpg"
+                            alt="Shampoo para cães"
+                            loading="lazy"
+                            decoding="async">
+
+                        <div class="product-content">
+
+                            <span class="product-category">
+
+                                Higiene
+
+                            </span>
+
+                            <h3 class="product-title">
+
+                                Shampoo Neutro
+
+                            </h3>
+
+                            <p class="product-description">
+
+                                Limpeza suave com fragrância agradável.
+
+                            </p>
+
+                            <div class="product-footer">
+
+                                <strong class="product-price">
+
+                                    R$ 29,90
+
+                                </strong>
+
+                                <button
+                                    class="btn btn-primary"
+                                    type="button"
+                                    aria-label="Adicionar Shampoo Neutro ao carrinho">
+
+                                    Comprar
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+                <!-- ==========================================
+                    BOTÃO
+                =========================================== -->
+
+                <div class="section-action">
+
+                        <a
+                            href="../produtos/produtos.html"
+                            class="btn btn-outline">
+
+                            Ver Todos os Produtos
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+        </section>
+
+        <!-- ==========================================
+             SERVIÇOS
+        ========================================== -->
+
+    <section
+        class="services"
+        id="services"
+        aria-labelledby="services-title">
+
+        <div class="container">
+
+                <!-- ==========================================
+                    CABEÇALHO
+                =========================================== -->
+
+            <div class="section-header">
+
+                <span class="section-subtitle">
+
+                    Serviços
+
+                </span>
+
+                <h2 id="services-title">
+
+                    Cuidamos do seu pet com carinho
+
+                </h2>
+
+                <p>
+
+                    Nossa equipe oferece serviços especializados para garantir saúde,
+                    bem-estar e qualidade de vida ao seu melhor amigo.
+
+                </p>
+
+            </div>
+
+            <!-- ==========================================
+                GRID
+            =========================================== -->
+
+            <div class="services-grid">
+
+                <!-- Banho -->
+
+                <article class="service-card">
+
+                    <img
+                        src="../../public/images/services/bath.jpg"
+                        alt="Serviço de banho para pets"
+                        loading="lazy"
+                        decoding="async">
+
+                    <h3>
+
+                        Banho
+
+                    </h3>
+
+                    <p>
+
+                        Higiene completa com produtos de alta qualidade.
+
+                    </p>
+
+                </article>
+
+                <!-- Tosa -->
+
+                <article class="service-card">
+
+                    <img
+                        src="../../public/images/services/grooming.jpg"
+                        alt="Serviço de tosa"
+                        loading="lazy"
+                        decoding="async">
+
+                    <h3>
+
+                        Tosa
+
+                    </h3>
+
+                    <p>
+
+                        Tosa higiênica, na tesoura e na máquina.
+
+                    </p>
+
+                </article>
+
+                <!-- Veterinário -->
+
+                <article class="service-card">
+
+                    <img
+                        src="../../public/images/services/veterinary.jpg"
+                        alt="Atendimento veterinário"
+                        loading="lazy"
+                        decoding="async">
+
+                    <h3>
+
+                        Veterinário
+
+                    </h3>
+
+                    <p>
+
+                        Atendimento especializado para cães, gatos e outros pets.
+
+                    </p>
+
+                </article>
+
+                <!-- Vacinação -->
+
+                <article class="service-card">
+
+                    <img
+                        src="../../public/images/services/vaccine.jpg"
+                        alt="Vacinação de pets"
+                        loading="lazy"
+                        decoding="async">
+
+                    <h3>
+
+                        Vacinação
+
+                    </h3>
+
+                    <p>
+
+                        Proteção completa para manter seu pet saudável.
+
+                    </p>
+
+                </article>
+
+                <!-- Hotel -->
+
+                <article class="service-card">
+
+                    <img
+                        src="../../public/images/services/hotel.jpg"
+                        alt="Hotel para pets"
+                        loading="lazy"
+                        decoding="async">
+
+                    <h3>
+
+                        Hotelzinho
+
+                    </h3>
+
+                    <p>
+
+                        Hospedagem segura e confortável enquanto você viaja.
+
+                    </p>
+
+                </article>
+
+                <!-- Delivery -->
+
+                <article class="service-card">
+
+                    <img
+                        src="../../public/images/services/delivery.jpg"
+                        alt="Entrega de produtos para pets"
+                        loading="lazy"
+                        decoding="async">
+
+                    <h3>
+
+                        Delivery
+
+                    </h3>
+
+                    <p>
+
+                        Receba produtos e medicamentos no conforto da sua casa.
+
+                    </p>
+
+                </article>
+
+            </div>
+
+            <!-- ==========================================
+                BOTÃO
+            =========================================== -->
+
+            <div class="section-action">
+
+                <a
+                    href="../contato/contato.html"
+                    class="btn btn-primary">
+
+                    Agendar um Serviço
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+        <!-- ==========================================
+             BENEFÍCIOS
+        ========================================== -->
+
+            <section
+    class="benefits"
+    id="benefits"
+    aria-labelledby="benefits-title">
+
+        <div class="container">
+
+            <!-- ==========================================
+                CABEÇALHO
+            =========================================== -->
+
+            <div class="section-header">
+
+                <span class="section-subtitle">
+                    Diferenciais
+                </span>
+
+                <h2 id="benefits-title">
+                    Por que escolher a PetFlow?
+                </h2>
+
+                <p>
+                    Trabalhamos para oferecer a melhor experiência para você e seu pet.
+                </p>
+
+            </div>
+
+            <!-- ==========================================
+                BENEFÍCIOS
+            =========================================== -->
+
+            <div class="benefits-grid">
+
+                <article class="benefit-card">
+
+                    <div class="benefit-icon">
+                        🐶
+                    </div>
+
+                    <h3>
+                        Atendimento Especializado
+                    </h3>
+
+                    <p>
+                        Equipe preparada para cuidar do seu pet com carinho e dedicação.
+                    </p>
+
+                </article>
+
+                <article class="benefit-card">
+
+                    <div class="benefit-icon">
+                        🚚
+                    </div>
+
+                    <h3>
+                        Entrega Rápida
+                    </h3>
+
+                    <p>
+                        Receba seus produtos com rapidez e segurança.
+                    </p>
+
+                </article>
+
+                <article class="benefit-card">
+
+                    <div class="benefit-icon">
+                        💳
+                    </div>
+
+                    <h3>
+                        Pagamento Seguro
+                    </h3>
+
+                    <p>
+                        Diversas formas de pagamento com total segurança.
+                    </p>
+
+                </article>
+
+                <article class="benefit-card">
+
+                    <div class="benefit-icon">
+                        ⭐
+                    </div>
+
+                    <h3>
+                        Produtos de Qualidade
+                    </h3>
+
+                    <p>
+                        Trabalhamos apenas com marcas reconhecidas no mercado pet.
+                    </p>
+
+                </article>
+
+                <article class="benefit-card">
+
+                    <div class="benefit-icon">
+                        ❤️
+                    </div>
+
+                    <h3>
+                        Amor pelos Animais
+                    </h3>
+
+                    <p>
+                        Cada atendimento é realizado pensando no bem-estar do seu pet.
+                    </p>
+
+                </article>
+
+                <article class="benefit-card">
+
+                        <div class="benefit-icon">
+                            📞
+                        </div>
+
+                        <h3>
+                            Suporte ao Cliente
+                        </h3>
+
+                        <p>
+                            Estamos sempre disponíveis para tirar dúvidas e ajudar você.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+    </section>
+        <!-- ==========================================
+             DEPOIMENTOS
+        ========================================== -->
+
+    <section
+    class="testimonials"
+    id="testimonials"
+    aria-labelledby="testimonials-title">
+
+        <div class="container">
+
+            <!-- ==========================================
+                CABEÇALHO
+            =========================================== -->
+
+            <div class="section-header">
+
+                <span class="section-subtitle">
+
+                    Depoimentos
+
+                </span>
+
+                <h2 id="testimonials-title">
+
+                    Quem conhece a PetFlow recomenda
+
+                </h2>
+
+                <p>
+
+                    Veja o que nossos clientes dizem sobre nossos produtos e serviços.
+
+                </p>
+
+            </div>
+
+            <!-- ==========================================
+                DEPOIMENTOS
+            =========================================== -->
+
+            <div class="testimonials-grid">
+
+                <!-- Depoimento 1 -->
+
+                <article class="testimonial-card">
+
+                    <div class="testimonial-header">
+
+                        <img
+                            src="../../public/images/testimonials/client-01.jpg"
+                            alt="Foto da cliente Ana Souza"
+                            class="testimonial-avatar"
+                            loading="lazy"
+                            decoding="async">
+
+                        <div>
+
+                            <h3>
+
+                                Ana Souza
+
+                            </h3>
+
+                            <span>
+
+                                Tutora da Mel 🐶
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <p>
+
+                        Atendimento excelente. Minha cachorrinha voltou linda do banho e tosa. Super recomendo!
+
+                    </p>
+
+                </article>
+
+                <!-- Depoimento 2 -->
+
+                <article class="testimonial-card">
+
+                    <div class="testimonial-header">
+
+                        <img
+                            src="../../public/images/testimonials/client-02.jpg"
+                            alt="Foto do cliente Carlos Lima"
+                            class="testimonial-avatar"
+                            loading="lazy"
+                            decoding="async">
+
+                        <div>
+
+                            <h3>
+
+                                Carlos Lima
+
+                            </h3>
+
+                            <span>
+
+                                Tutor do Thor 🐕
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <p>
+
+                        Produtos de ótima qualidade e entrega muito rápida. Virei cliente fiel.
+
+                    </p>
+
+                </article>
+
+                <!-- Depoimento 3 -->
+
+                <article class="testimonial-card">
+
+                    <div class="testimonial-header">
+
+                        <img
+                            src="../../public/images/testimonials/client-03.jpg"
+                            alt="Foto da cliente Juliana Martins"
+                            class="testimonial-avatar"
+                            loading="lazy"
+                            decoding="async">
+
+                        <div>
+
+                            <h3>
+
+                                Juliana Martins
+
+                            </h3>
+
+                            <span>
+
+                                Tutora da Luna 🐱
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <p>
+
+                        O veterinário foi muito atencioso e explicou tudo com calma. Atendimento impecável.
+
+                    </p>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </section>
+        <!-- ==========================================
+             NEWSLETTER
+        ========================================== -->
+
+    <section
+    class="newsletter"
+    id="newsletter"
+    aria-labelledby="newsletter-title">
+
+        <div class="container">
+
+            <!-- ==========================================
+                CONTEÚDO
+            =========================================== -->
+
+            <div class="newsletter-content">
+
+                <div class="newsletter-text">
+
+                    <span class="section-subtitle">
+
+                        Newsletter
+
+                    </span>
+
+                    <h2 id="newsletter-title">
+
+                        Receba novidades e ofertas exclusivas
+
+                    </h2>
+
+                    <p>
+
+                        Cadastre seu e-mail e fique por dentro das promoções,
+                        lançamentos e dicas para cuidar do seu pet.
+
+                    </p>
+
+                </div>
+
+                <!-- ==========================================
+                    FORMULÁRIO
+                =========================================== -->
+
+                <form
+                    class="newsletter-form"
+                    id="newsletterForm"
+                    autocomplete="on"
+                    novalidate>
+
+                    <div class="form-group">
+
+                        <label for="newsletterName">
+
+                            Nome
+
+                        </label>
+
+                        <input
+                            class="form-control"
+                            type="text"
+                            id="newsletterName"
+                            name="name"
+                            placeholder="Digite seu nome"
+                            maxlength="100"
+                            autocomplete="name"
+                            required
+                            aria-label="Nome">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="newsletterEmail">
+
+                            E-mail
+
+                        </label>
+
+                        <input
+                            class="form-control"
+                            type="email"
+                            id="newsletterEmail"
+                            name="email"
+                            placeholder="Digite seu e-mail"
+                            maxlength="150"
+                            autocomplete="email"
+                            required
+                            aria-label="E-mail">
+
+                    </div>
+
+                    <button
+                        class="btn btn-primary"
+                        type="submit"
+                        aria-label="Inscrever-se na newsletter">
+
+                        Quero Receber
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+    <!-- ==================================================
+         FOOTER
+    ================================================== -->
+
+        <footer
+            class="footer"
+            aria-labelledby="footer-title">
+
+            <div class="container">
+
+                <div class="footer-content">
+
+                    <!-- ==========================================
+                        EMPRESA
+                    =========================================== -->
+
+                    <div class="footer-column">
+
+                        <h2
+                            id="footer-title"
+                            class="footer-logo">
+
+                            PetFlow
+
+                        </h2>
+
+                        <p>
+
+                            Tudo para o seu pet em um só lugar.
+                            Produtos de qualidade, serviços especializados
+                            e atendimento com carinho.
+
+                        </p>
+
+                    </div>
+
+                    <!-- ==========================================
+                        INSTITUCIONAL
+                    =========================================== -->
+
+                    <div class="footer-column">
+
+                        <h3>
+
+                            Institucional
+
+                        </h3>
+
+                        <ul>
+
+                            <li>
+
+                                <a href="#hero">
+
+                                    Início
+
+                                </a>
+
+                            </li>
+
+                            <li>
+
+                                <a href="#services">
+
+                                    Serviços
+
+                                </a>
+
+                            </li>
+
+                            <li>
+
+                                <a href="#products">
+
+                                    Produtos
+
+                                </a>
+
+                            </li>
+
+                            <li>
+
+                                <a href="#newsletter">
+
+                                    Contato
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                    <!-- ==========================================
+                        CATEGORIAS
+                    =========================================== -->
+
+                    <div class="footer-column">
+
+                        <h3>
+
+                            Categorias
+
+                        </h3>
+
+                        <ul>
+
+                            <li>
+
+                                <a href="../produtos/produtos.html">
+
+                                    Rações
+
+                                </a>
+
+                            </li>
+
+                            <li>
+
+                                <a href="../produtos/produtos.html">
+
+                                    Brinquedos
+
+                                </a>
+
+                            </li>
+
+                            <li>
+
+                                <a href="../produtos/produtos.html">
+
+                                    Higiene
+
+                                </a>
+
+                            </li>
+
+                            <li>
+
+                                <a href="../produtos/produtos.html">
+
+                                    Acessórios
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                    <!-- ==========================================
+                        CONTATO
+                    =========================================== -->
+
+                    <div class="footer-column">
+
+                        <h3>
+
+                            Contato
+
+                        </h3>
+
+                        <ul>
+
+                            <li>
+
+                                (11) 99999-9999
+
+                            </li>
+
+                            <li>
+
+                                contato@petflow.com.br
+
+                            </li>
+
+                            <li>
+
+                                Santo André - SP
+
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+                <!-- ==========================================
+                    COPYRIGHT
+                =========================================== -->
+
+                <div class="footer-bottom">
+
+                    <p>
+
+                        © 2026 PetFlow. Todos os direitos reservados.
+
+                    </p>
+
+                    <p>
+
+                        Desenvolvido por Tiger Tech.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </footer>
+
+    <!-- ==================================================
+         JAVASCRIPT
+    ================================================== -->
+
+    <script
+        src="../../public/js/components/menu.js"
+        defer></script>
+
+    <script
+        src="../../public/js/components/carousel.js"
+        defer></script>
+
+</body>
+
+</html>

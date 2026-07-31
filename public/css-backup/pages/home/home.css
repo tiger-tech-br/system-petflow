@@ -1,0 +1,70 @@
+/* ==================================================
+   HOME
+================================================== */
+
+.home {
+
+    display: flex;
+    flex-direction: column;
+
+}
+
+/* ==================================================
+   CABEÇALHO DAS SEÇÕES
+================================================== */
+
+.section-header {
+
+    max-width: 700px;
+
+    margin: 0 auto var(--space-3xl);
+
+    text-align: center;
+
+}
+
+.section-subtitle {
+
+    display: inline-block;
+
+    margin-bottom: var(--space-sm);
+
+    color: var(--primary);
+
+    font-size: var(--fs-sm);
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 2px;
+
+}
+
+.section-header h2 {
+
+    margin-bottom: var(--space-md);
+
+}
+
+.section-header p {
+
+    font-size: var(--fs-lg);
+
+}
+
+@media (max-width:768px){
+
+    .section-header{
+
+        margin-bottom: var(--space-2xl);
+
+    }
+
+    .section-header p{
+
+        font-size: var(--fs-md);
+
+    }
+
+}

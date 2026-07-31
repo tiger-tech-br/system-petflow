@@ -1,0 +1,146 @@
+/* ==================================================
+   ALERTA BASE
+================================================== */
+
+.alert {
+
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+
+    width: 100%;
+
+    padding: 1rem 1.25rem;
+
+    border-left: 5px solid transparent;
+    border-radius: var(--radius-md);
+
+    box-shadow: var(--shadow-sm);
+
+}
+
+/* ==================================================
+   CONTEÚDO
+================================================== */
+
+.alert-content {
+
+    flex: 1;
+
+}
+
+.alert-title {
+
+    display: block;
+
+    margin-bottom: var(--space-xs);
+
+    font-size: var(--fs-md);
+    font-weight: 700;
+
+}
+
+.alert-message {
+
+    margin: 0;
+
+    color: inherit;
+
+    font-size: var(--fs-sm);
+
+}
+
+/* ==================================================
+   SUCESSO
+================================================== */
+
+.alert-success {
+
+    background: #ECFDF5;
+
+    color: #166534;
+
+    border-color: var(--success);
+
+}
+
+/* ==================================================
+   ERRO
+================================================== */
+
+.alert-danger {
+
+    background: #FEF2F2;
+
+    color: #991B1B;
+
+    border-color: var(--danger);
+
+}
+
+/* ==================================================
+   AVISO
+================================================== */
+
+.alert-warning {
+
+    background: #FFFBEB;
+
+    color: #92400E;
+
+    border-color: var(--warning);
+
+}
+
+/* ==================================================
+   INFORMAÇÃO
+================================================== */
+
+.alert-info {
+
+    background: #EFF6FF;
+
+    color: #1E40AF;
+
+    border-color: var(--info);
+
+}
+
+/* ==================================================
+   BOTÃO FECHAR
+================================================== */
+
+.alert-close {
+
+    width: 35px;
+    height: 35px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: var(--radius-round);
+
+    transition: var(--transition);
+
+}
+
+.alert-close:hover {
+
+    background: rgba(0,0,0,.08);
+
+}
+
+/* ==================================================
+   RESPONSIVIDADE
+================================================== */
+
+@media (max-width:768px){
+
+    .alert{
+
+        align-items:flex-start;
+
+    }
+
+}

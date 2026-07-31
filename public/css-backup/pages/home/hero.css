@@ -1,0 +1,245 @@
+/* ==================================================
+   HERO
+================================================== */
+
+.hero {
+
+    position: relative;
+
+    width: 100%;
+    min-height: calc(100vh - var(--header-height));
+
+    display: flex;
+    align-items: center;
+
+    overflow: hidden;
+
+}
+
+/* ==================================================
+   HERO CONTAINER
+================================================== */
+
+.hero-container {
+
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    align-items: center;
+
+    gap: var(--space-3xl);
+
+}
+
+/* ==================================================
+   HERO CONTENT
+================================================== */
+
+.hero-content {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: var(--space-lg);
+
+}
+
+.hero-subtitle {
+
+    display: inline-block;
+
+    color: var(--primary);
+
+    font-size: var(--fs-sm);
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 2px;
+
+}
+
+.hero-title {
+
+    font-size: clamp(2.8rem, 5vw, 4.5rem);
+
+    line-height: 1.1;
+
+}
+
+.hero-description {
+
+    max-width: 560px;
+
+    font-size: var(--fs-lg);
+
+    color: var(--text-light);
+
+}
+
+/* ==================================================
+   HERO BUTTONS
+================================================== */
+
+.hero-buttons {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: var(--space-md);
+
+    margin-top: var(--space-md);
+
+}
+
+/* ==================================================
+   HERO IMAGE
+================================================== */
+
+.hero-image {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.hero-image img {
+
+    width: 100%;
+    max-width: 650px;
+
+    object-fit: contain;
+
+    user-select: none;
+
+}
+
+/* ==================================================
+   HERO DECORATION
+================================================== */
+
+.hero::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: -180px;
+    right: -180px;
+
+    width: 420px;
+    height: 420px;
+
+    background: rgba(59, 130, 246, .08);
+
+    border-radius: 50%;
+
+    z-index: -1;
+
+}
+
+.hero::after {
+
+    content: "";
+
+    position: absolute;
+
+    bottom: -150px;
+    left: -150px;
+
+    width: 320px;
+    height: 320px;
+
+    background: rgba(34, 197, 94, .08);
+
+    border-radius: 50%;
+
+    z-index: -1;
+
+}
+
+/* ==================================================
+   RESPONSIVIDADE
+================================================== */
+
+@media (max-width: 992px) {
+
+    .hero {
+
+        min-height: auto;
+
+        padding: var(--space-3xl) 0;
+
+    }
+
+    .hero-container {
+
+        grid-template-columns: 1fr;
+
+        text-align: center;
+
+    }
+
+    .hero-content {
+
+        align-items: center;
+
+    }
+
+    .hero-image {
+
+        order: -1;
+
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .hero-buttons {
+
+        width: 100%;
+
+        flex-direction: column;
+
+    }
+
+    .hero-buttons .btn {
+
+        width: 100%;
+
+    }
+
+    .hero-image img {
+
+        max-width: 400px;
+
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .hero {
+
+        padding: var(--space-2xl) 0;
+
+    }
+
+    .hero-title {
+
+        font-size: 2.2rem;
+
+    }
+
+    .hero-description {
+
+        font-size: var(--fs-md);
+
+    }
+
+}

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+    <!-- ==================================================
+         META TAGS
+    =================================================== -->
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>PetFlow • Pets</title>
+
+    <!-- ==================================================
+         CSS
+    =================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="../../../public/css/base/main.css">
+
+    <!-- ==================================================
+         FONT AWESOME
+    =================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+</head>
+
+<body>
+
+    <div class="admin-wrapper">
+
+        <!-- Sidebar -->
+
+        <aside id="sidebar"></aside>
+
+        <!-- Conteúdo -->
+
+        <main class="main-content">
+
+            <div class="page-container">
+
+                <!-- =====================================
+                     CABEÇALHO
+                ====================================== -->
+
+                <header class="page-header">
+
+                    <div class="page-title">
+
+                        <div class="page-title-header">
+
+                            <i class="fa-solid fa-paw"></i>
+
+                            <h1>Pets</h1>
+
+                        </div>
+
+                        <p>
+
+                            Gerencie todos os pets cadastrados no sistema.
+                            Consulte informações, pesquise, edite e cadastre
+                            novos animais de forma rápida.
+
+                        </p>
+
+                    </div>
+
+                    <div class="page-actions">
+
+                        <a
+                            href="cadastrar.html"
+                            class="btn btn-primary">
+
+                            <i class="fa-solid fa-plus"></i>
+
+                            Novo Pet
+
+                        </a>
+
+                    </div>
+
+                </header>
+
+                <!-- =====================================
+                     CONTEÚDO
+                ====================================== -->
+
+                <!-- Parte 2 -->
+
+                <!-- =====================================
+     FERRAMENTAS
+====================================== -->
+
+                    <section class="toolbar">
+
+                        <div class="toolbar-search">
+
+                            <i class="fa-solid fa-magnifying-glass"></i>
+
+                            <input
+                                type="text"
+                                id="buscarPet"
+                                class="form-control"
+                                placeholder="Pesquisar por nome do pet, tutor, raça ou espécie">
+
+                        </div>
+
+                        <div class="toolbar-filters">
+
+                            <select
+                                id="filtroEspecie"
+                                class="form-control">
+
+                                <option value="">Todas as espécies</option>
+
+                                <option value="cachorro">Cachorros</option>
+
+                                <option value="gato">Gatos</option>
+
+                                <option value="ave">Aves</option>
+
+                                <option value="roedor">Roedores</option>
+
+                                <option value="outros">Outros</option>
+
+                            </select>
+
+                            <select
+                                id="filtroStatus"
+                                class="form-control">
+
+                                <option value="">Todos os status</option>
+
+                                <option value="ativo">Ativos</option>
+
+                                <option value="inativo">Inativos</option>
+
+                            </select>
+
+                            <button
+                                class="btn btn-secondary"
+                                id="btnLimparFiltros">
+
+                                <i class="fa-solid fa-filter-circle-xmark"></i>
+
+                                Limpar
+
+                            </button>
+
+                        </div>
+
+                    </section>
+
+                    <!-- =====================================
+     ESTATÍSTICAS
+====================================== -->
+
+                    <section class="stats-grid">
+
+                        <article class="stat-card">
+
+                            <div class="stat-icon">
+
+                                <i class="fa-solid fa-paw"></i>
+
+                            </div>
+
+                            <div class="stat-info">
+
+                                <span>Total de Pets</span>
+
+                                <h3 id="totalPets">0</h3>
+
+                            </div>
+
+                        </article>
+
+                        <article class="stat-card">
+
+                            <div class="stat-icon">
+
+                                <i class="fa-solid fa-dog"></i>
+
+                            </div>
+
+                            <div class="stat-info">
+
+                                <span>Cachorros</span>
+
+                                <h3 id="totalCachorros">0</h3>
+
+                            </div>
+
+                        </article>
+
+                        <article class="stat-card">
+
+                            <div class="stat-icon">
+
+                                <i class="fa-solid fa-cat"></i>
+
+                            </div>
+
+                            <div class="stat-info">
+
+                                <span>Gatos</span>
+
+                                <h3 id="totalGatos">0</h3>
+
+                            </div>
+
+                        </article>
+
+                        <article class="stat-card">
+
+                            <div class="stat-icon">
+
+                                <i class="fa-solid fa-cake-candles"></i>
+
+                            </div>
+
+                            <div class="stat-info">
+
+                                <span>Aniversariantes</span>
+
+                                <h3 id="totalAniversariantes">0</h3>
+
+                            </div>
+
+                        </article>
+
+                    </section>
+
+                    <!-- =====================================
+                        TABELA DE PETS
+                        ====================================== -->
+
+                    <section class="table-card">
+
+                        <div class="table-header">
+
+                            <div class="table-title">
+
+                                <h2>
+
+                                    <i class="fa-solid fa-list"></i>
+
+                                    Lista de Pets
+
+                                </h2>
+
+                                <p>
+
+                                    Visualize e gerencie todos os pets cadastrados.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="table-responsive">
+
+                            <table class="table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Foto</th>
+
+                                        <th>Nome</th>
+
+                                        <th>Tutor</th>
+
+                                        <th>Espécie</th>
+
+                                        <th>Raça</th>
+
+                                        <th>Idade</th>
+
+                                        <th>Status</th>
+
+                                        <th class="text-center">Ações</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="tabelaPets">
+
+                                    <!-- Exemplo -->
+
+                                    <tr>
+
+                                        <td>
+
+                                            <img
+                                                src="../../../public/images/pets/default-pet.png"
+                                                alt="Pet"
+                                                class="pet-avatar">
+
+                                        </td>
+
+                                        <td>
+
+                                            <strong>Thor</strong>
+
+                                        </td>
+
+                                        <td>
+
+                                            João Silva
+
+                                        </td>
+
+                                        <td>
+
+                                            Cachorro
+
+                                        </td>
+
+                                        <td>
+
+                                            Golden Retriever
+
+                                        </td>
+
+                                        <td>
+
+                                            3 anos
+
+                                        </td>
+
+                                        <td>
+
+                                            <span class="badge badge-success">
+
+                                                Ativo
+
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+
+                                            <div class="table-actions">
+
+                                                <button
+                                                    class="btn-icon btn-view"
+                                                    title="Visualizar">
+
+                                                    <i class="fa-solid fa-eye"></i>
+
+                                                </button>
+
+                                                <button
+                                                    class="btn-icon btn-edit"
+                                                    title="Editar">
+
+                                                    <i class="fa-solid fa-pen"></i>
+
+                                                </button>
+
+                                                <button
+                                                    class="btn-icon btn-delete"
+                                                    title="Excluir">
+
+                                                    <i class="fa-solid fa-trash"></i>
+
+                                                </button>
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </section>
+
+                    <!-- =====================================
+     PAGINAÇÃO
+====================================== -->
+
+                    <section class="table-footer">
+
+                        <div class="table-info">
+
+                            Exibindo
+
+                            <strong id="inicioRegistro">
+
+                                1
+
+                            </strong>
+
+                            -
+
+                            <strong id="fimRegistro">
+
+                                10
+
+                            </strong>
+
+                            de
+
+                            <strong id="totalRegistros">
+
+                                0
+
+                            </strong>
+
+                            registros
+
+                        </div>
+
+                        <div class="table-pagination">
+
+                            <div class="pagination-size">
+
+                                <label for="itensPorPagina">
+
+                                    Itens por página
+
+                                </label>
+
+                                <select
+                                    id="itensPorPagina"
+                                    class="form-control">
+
+                                    <option value="10">10</option>
+
+                                    <option value="25">25</option>
+
+                                    <option value="50">50</option>
+
+                                    <option value="100">100</option>
+
+                                </select>
+
+                            </div>
+
+                            <div class="pagination-buttons">
+
+                                <button
+                                    class="btn btn-secondary"
+                                    id="primeiraPagina">
+
+                                    <i class="fa-solid fa-angles-left"></i>
+
+                                </button>
+
+                                <button
+                                    class="btn btn-secondary"
+                                    id="paginaAnterior">
+
+                                    <i class="fa-solid fa-angle-left"></i>
+
+                                </button>
+
+                                <span class="pagination-page">
+
+                                    Página
+
+                                    <strong id="paginaAtual">
+
+                                        1
+
+                                    </strong>
+
+                                    de
+
+                                    <strong id="totalPaginas">
+
+                                        1
+
+                                    </strong>
+
+                                </span>
+
+                                <button
+                                    class="btn btn-secondary"
+                                    id="proximaPagina">
+
+                                    <i class="fa-solid fa-angle-right"></i>
+
+                                </button>
+
+                                <button
+                                    class="btn btn-secondary"
+                                    id="ultimaPagina">
+
+                                    <i class="fa-solid fa-angles-right"></i>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+        </main>
+
+    </div>
+
+    <!-- ==================================================
+         SCRIPTS
+    =================================================== -->
+
+    <script src="../../../public/js/layout/sidebar.js"></script>
+
+    <script src="../../../public/js/layout/menu.js"></script>
+
+    <script src="../../../public/js/pets/pets.js"></script>
+
+</body>
+
+</html>

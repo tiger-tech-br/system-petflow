@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <!-- ==================================================
+         META TAGS
+    =================================================== -->
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="Gerenciamento de clientes do sistema PetFlow">
+
+    <meta
+        name="robots"
+        content="noindex,nofollow">
+
+    <title>PetFlow • Clientes</title>
+
+    <!-- ==================================================
+         CSS
+    =================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="../../../public/css/base/main.css">
+
+
+    
+
+    <!-- ==================================================
+         FONT AWESOME
+    =================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer">
+
+</head>
+
+<body>
+
+    <!-- ==================================================
+         SIDEBAR
+    =================================================== -->
+
+    <aside
+        id="sidebar"
+        aria-label="Menu lateral">
+    </aside>
+
+    <!-- ==================================================
+         CONTEÚDO PRINCIPAL
+    =================================================== -->
+
+    <main
+        class="main-content"
+        id="mainContent">
+
+        <!-- ==========================================
+             TOPBAR
+        =========================================== -->
+
+        <header
+            id="topbar"
+            aria-label="Barra superior">
+        </header>
+
+        <!-- ==========================================
+             CONTEÚDO DA PÁGINA
+        =========================================== -->
+
+        <section
+            class="page-container"
+            aria-labelledby="pageTitle">
+
+            <!-- ==========================================
+                 CABEÇALHO
+            =========================================== -->
+
+            <header class="page-header">
+
+                <div class="page-title">
+
+                    <div class="page-title-header">
+
+                        <i
+                            class="fa-solid fa-users"
+                            aria-hidden="true"></i>
+
+                        <h1 id="pageTitle">
+
+                            Clientes
+
+                        </h1>
+
+                    </div>
+
+                    <p>
+
+                        Gerencie todos os clientes cadastrados no PetFlow.
+
+                    </p>
+
+                </div>
+
+            </header>
+
+            <!-- ==========================================
+                 TOOLBAR
+            =========================================== -->
+
+                        <!-- ==========================================
+     TOOLBAR
+========================================== -->
+
+    <section
+        class="page-toolbar"
+        aria-label="Ferramentas da página">
+
+        <!-- Pesquisa -->
+
+        <i
+            class="fa-solid fa-magnifying-glass search-icon"
+            aria-hidden="true">
+        </i>
+
+
+                <div class="toolbar-search">
+
+                    <i
+                        class="fa-solid fa-magnifying-glass search-icon"
+                        aria-hidden="true">
+                    </i>
+
+                    <input
+                        type="search"
+                        id="searchCliente"
+                        class="form-control"
+                        placeholder="Pesquisar por nome, telefone ou CPF"
+                        autocomplete="off"
+                        spellcheck="false"
+                        enterkeyhint="search"
+                        aria-label="Pesquisar clientes">
+
+                </div>
+
+
+        <!-- Lado direito -->
+
+        <div class="toolbar-right">
+
+            <!-- Filtros -->
+
+            <div class="toolbar-filters">
+
+                <select
+                    id="statusFilter"
+                    class="form-control"
+                    aria-label="Filtrar por status">
+
+                    <option value="">
+                        Todos os status
+                    </option>
+
+                    <option value="ativo">
+                        Ativos
+                    </option>
+
+                    <option value="inativo">
+                        Inativos
+                    </option>
+
+                </select>
+
+                <select
+                    id="petFilter"
+                    class="form-control"
+                    aria-label="Filtrar por pets">
+
+                    <option value="">
+                        Todos
+                    </option>
+
+                    <option value="com-pets">
+                        Com Pets
+                    </option>
+
+                    <option value="sem-pets">
+                        Sem Pets
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- Botões -->
+
+            <div class="toolbar-actions">
+
+                <button
+                    type="button"
+                    id="btnAtualizar"
+                    class="btn btn-secondary">
+
+                    <i
+                        class="fa-solid fa-rotate-right"
+                        aria-hidden="true"></i>
+
+                    <span>Atualizar</span>
+
+                </button>
+
+                <button
+                    type="button"
+                    id="btnNovoCliente"
+                    class="btn btn-primary">
+
+                    <i
+                        class="fa-solid fa-user-plus"
+                        aria-hidden="true"></i>
+
+                    <span>Novo Cliente</span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+            <!-- ==========================================
+                 TABELA
+            =========================================== -->
+
+                    <section
+                        class="table-card"
+                        aria-label="Tabela de clientes">
+
+                        <div class="table-responsive">
+
+                            <table class="table">
+
+                                ...
+
+                            </table>
+
+                        </div>
+
+                    </section>
+
+            <!-- ==========================================
+                 PAGINAÇÃO
+            =========================================== -->
+
+            <nav
+                class="pagination"
+                aria-label="Paginação">
+
+            </nav>
+
+        </section>
+
+    </main>
+
+    <!-- ==================================================
+         COMPONENTES
+    =================================================== -->
+
+    <script
+        src="../../../public/js/components/sidebar.js"
+        defer></script>
+
+    <script
+        src="../../../public/js/components/topbar.js"
+        defer></script>
+
+    <!-- ==================================================
+         PÁGINA
+    =================================================== -->
+
+    <script
+        src="../../../public/js/pages/clientes/clientes.js"
+        defer></script>
+
+</body>
+
+</html>

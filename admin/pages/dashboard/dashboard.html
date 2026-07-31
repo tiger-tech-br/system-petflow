@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+    <!-- ==================================================
+         META TAGS
+    =================================================== -->
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>PetFlow • Dashboard</title>
+
+    <!-- ==================================================
+         CSS
+    =================================================== -->
+
+            <!-- ==================================================
+     DASHBOARD
+=================================================== -->
+                <!-- ==================================================
+     CSS BASE
+=================================================== -->
+
+<link
+    rel="stylesheet"
+    href="../../../public/css/base/main.css">
+
+<!-- ==================================================
+     LAYOUT
+=================================================== -->
+
+<link
+    rel="stylesheet"
+    href="../../../public/css/layout/admin.css">
+
+<link
+    rel="stylesheet"
+    href="../../../public/css/layout/sidebar.css">
+
+<link
+    rel="stylesheet"
+    href="../../../public/css/layout/topbar.css">
+
+<!-- ==================================================
+     COMPONENTS
+=================================================== -->
+
+<link
+    rel="stylesheet"
+    href="../../../public/css/components/buttons.css">
+
+<link
+    rel="stylesheet"
+    href="../../../public/css/components/cards.css">
+
+<link
+    rel="stylesheet"
+    href="../../../public/css/components/widgets.css">
+
+<link
+    rel="stylesheet"
+    href="../../../public/css/components/badges.css">
+
+<link
+    rel="stylesheet"
+    href="../../../public/css/components/alerts.css">
+
+<link
+    rel="stylesheet"
+    href="../../../publiccss/components/dropdown.css">
+
+<link
+    rel="stylesheet"
+    href="../../../public/css/components/loading.css">
+
+<!-- ==================================================
+     DASHBOARD
+=================================================== -->
+
+<link
+    rel="stylesheet"
+    href="../../../public/css/pages/dashboard/dashboard.css">
+
+<link
+    rel="stylesheet"
+    href="../../../public/css/pages/dashboard/dashboard-widgets.css">
+
+
+    <!-- ==================================================
+         FONT AWESOME
+    =================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <!-- =============================================
+         SIDEBAR
+    ============================================== -->
+
+    <aside class="sidebar">
+
+            <!-- ==================================================
+     SIDEBAR HEADER
+=================================================== -->
+
+<div class="sidebar-header">
+
+            <a
+                href="dashboard.html"
+                class="sidebar-logo">
+
+                <i class="fa-solid fa-paw"></i>
+
+                <div>
+
+                    <h2>PetFlow</h2>
+
+                    <span>Sistema de Gestão</span>
+
+                </div>
+
+            </a>
+
+        </div>
+
+        <!-- ==================================================
+            MENU
+        =================================================== -->
+
+        <nav class="sidebar-menu">
+
+            <a
+                href="dashboard.html"
+                class="menu-item active">
+
+                <i class="fa-solid fa-house"></i>
+
+                <span>Dashboard</span>
+
+            </a>
+
+            <a
+                href="../clientes/clientes.html"
+                class="menu-item">
+
+                <i class="fa-solid fa-users"></i>
+
+                <span>Clientes</span>
+
+            </a>
+
+            <a
+                href="../pets/pets.html"
+                class="menu-item">
+
+                <i class="fa-solid fa-dog"></i>
+
+                <span>Pets</span>
+
+            </a>
+
+            <a
+                href="../agendamentos/agendamentos.html"
+                class="menu-item">
+
+                <i class="fa-solid fa-calendar-days"></i>
+
+                <span>Agendamentos</span>
+
+            </a>
+
+            <a
+                href="../vendas/vendas.html"
+                class="menu-item">
+
+                <i class="fa-solid fa-cart-shopping"></i>
+
+                <span>Vendas</span>
+
+            </a>
+
+            <a
+                href="../produtos/produtos.html"
+                class="menu-item">
+
+                <i class="fa-solid fa-box"></i>
+
+                <span>Produtos</span>
+
+            </a>
+
+            <a
+                href="../estoque/estoque.html"
+                class="menu-item">
+
+                <i class="fa-solid fa-boxes-stacked"></i>
+
+                <span>Estoque</span>
+
+            </a>
+
+            <a
+                href="../financeiro/financeiro.html"
+                class="menu-item">
+
+                <i class="fa-solid fa-wallet"></i>
+
+                <span>Financeiro</span>
+
+            </a>
+
+            <a
+                href="../delivery/delivery.html"
+                class="menu-item">
+
+                <i class="fa-solid fa-truck-fast"></i>
+
+                <span>Delivery</span>
+
+            </a>
+
+            <a
+                href="../relatorios/relatorios.html"
+                class="menu-item">
+
+                <i class="fa-solid fa-chart-column"></i>
+
+                <span>Relatórios</span>
+
+            </a>
+
+            <a
+                href="../configuracoes/configuracoes.html"
+                class="menu-item">
+
+                <i class="fa-solid fa-gear"></i>
+
+                <span>Configurações</span>
+
+            </a>
+
+        </nav>
+
+        <!-- ==================================================
+            FOOTER
+        =================================================== -->
+
+        <div class="sidebar-footer">
+
+            <div class="sidebar-user">
+
+                <div class="user-avatar">
+
+                  <i class="fa-solid fa-user"></i>
+
+                </div>
+
+                <div class="user-info">
+
+                    <strong>
+
+                        Administrador
+
+                    </strong>
+
+                    <span>
+
+                        Online
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <a
+                href="../../index.html"
+                class="logout-button">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                <span>Sair</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+    <!-- =============================================
+         MAIN
+    ============================================== -->
+
+    <main class="main-content">
+
+        <!-- =============================================
+             TOPBAR
+        ============================================== -->
+
+                <!-- ==================================================
+     TOPBAR
+=================================================== -->
+
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button
+                    class="menu-toggle"
+                    type="button"
+                    aria-label="Abrir menu">
+
+                    <i class="fa-solid fa-bars"></i>
+
+                </button>
+
+                        <div class="page-title">
+
+                            <span class="page-label">
+
+                                Painel Administrativo
+
+                            </span>
+
+                            <h1>
+
+                                Dashboard
+
+                            </h1>
+
+                        </div>
+
+            </div>
+
+            <div class="topbar-right">
+
+                <button
+                    class="topbar-icon"
+                    title="Pesquisar">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                </button>
+
+                <button
+                    class="topbar-icon"
+                    title="Notificações">
+
+                    <i class="fa-regular fa-bell"></i>
+
+                    <span class="notification-badge">
+
+                        3
+
+                    </span>
+
+                </button>
+
+                <button
+                    class="topbar-icon"
+                    title="Mensagens">
+
+                    <i class="fa-regular fa-envelope"></i>
+
+                </button>
+
+                <div class="topbar-user">
+
+                    <div class="topbar-avatar">
+
+                        <i class="fa-solid fa-user"></i>
+
+                    </div>
+
+                    <div class="topbar-user-info">
+
+                        <strong>
+
+                            Administrador
+
+                        </strong>
+
+                        <span>
+
+                            Online
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- =============================================
+             PAGE
+        ============================================== -->
+
+        <section class="page-content">
+
+            <div class="dashboard">
+
+                <!-- =============================================
+                     DASHBOARD HEADER
+                ============================================== -->
+
+                <div class="dashboard-header">
+
+                    <div>
+
+                        <h1 class="dashboard-title">
+
+                            Dashboard
+
+                        </h1>
+
+                        <p class="dashboard-subtitle">
+
+                            Bem-vindo ao painel administrativo do PetFlow.
+
+                        </p>
+
+                    </div>
+
+                    <div class="dashboard-actions">
+
+                        <button class="btn btn-light">
+
+                            <i class="fa-solid fa-rotate"></i>
+
+                            Atualizar
+
+                        </button>
+
+                        <button class="btn btn-primary">
+
+                            <i class="fa-solid fa-plus"></i>
+
+                            Novo Pedido
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- =============================================
+                     WIDGETS
+                ============================================== -->
+
+                <section class="dashboard-section">
+
+                        <div class="section-header">
+
+                            <div>
+
+                                <h2 class="section-title">
+
+                                    Visão Geral
+
+                                </h2>
+
+                                <p class="section-description">
+
+                                    Resumo das principais informações do sistema.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                            <div class="widgets-grid">
+
+        <!-- =============================================
+            FATURAMENTO
+        ============================================== -->
+
+        <article class="widget">
+
+            <div class="widget-header">
+
+                <div>
+
+                    <div class="widget-title">
+
+                        Faturamento Hoje
+
+                    </div>
+
+                    <div class="widget-value">
+
+                        R$ 2.840,00
+
+                    </div>
+
+                </div>
+
+                <div class="widget-icon widget-green">
+
+                    <i class="fa-solid fa-sack-dollar"></i>
+
+                </div>
+
+            </div>
+
+            <div class="widget-description">
+
+                Total recebido hoje.
+
+            </div>
+
+            <div class="widget-footer">
+
+                <div class="widget-trend trend-up">
+
+                    <i class="fa-solid fa-arrow-trend-up"></i>
+
+                    +18%
+
+                </div>
+
+            </div>
+
+        </article>
+
+        <!-- =============================================
+            PEDIDOS
+        ============================================== -->
+
+        <article class="widget">
+
+            <div class="widget-header">
+
+                <div>
+
+                    <div class="widget-title">
+
+                        Pedidos Hoje
+
+                    </div>
+
+                    <div class="widget-value">
+
+                        42
+
+                    </div>
+
+                </div>
+
+                <div class="widget-icon widget-blue">
+
+                    <i class="fa-solid fa-cart-shopping"></i>
+
+                </div>
+
+            </div>
+
+            <div class="widget-description">
+
+                Pedidos realizados hoje.
+
+            </div>
+
+            <div class="widget-footer">
+
+                <div class="widget-trend trend-up">
+
+                    <i class="fa-solid fa-arrow-trend-up"></i>
+
+                    +9%
+
+                </div>
+
+            </div>
+
+        </article>
+
+        <!-- =============================================
+            CLIENTES
+        ============================================== -->
+
+        <article class="widget">
+
+            <div class="widget-header">
+
+                <div>
+
+                    <div class="widget-title">
+
+                        Clientes
+
+                    </div>
+
+                    <div class="widget-value">
+
+                        1.284
+
+                    </div>
+
+                </div>
+
+                <div class="widget-icon widget-purple">
+
+                    <i class="fa-solid fa-users"></i>
+
+                </div>
+
+            </div>
+
+            <div class="widget-description">
+
+                Clientes cadastrados.
+
+            </div>
+
+            <div class="widget-footer">
+
+                <div class="widget-trend trend-up">
+
+                    <i class="fa-solid fa-user-plus"></i>
+
+                    +12 este mês
+
+                </div>
+
+            </div>
+
+        </article>
+
+        <!-- =============================================
+            PETS
+        ============================================== -->
+
+        <article class="widget">
+
+            <div class="widget-header">
+
+                <div>
+
+                    <div class="widget-title">
+
+                        Pets
+
+                    </div>
+
+                    <div class="widget-value">
+
+                        2.356
+
+                    </div>
+
+                </div>
+
+                <div class="widget-icon widget-orange">
+
+                    <i class="fa-solid fa-paw"></i>
+
+                </div>
+
+            </div>
+
+            <div class="widget-description">
+
+                Pets cadastrados.
+
+            </div>
+
+            <div class="widget-footer">
+
+                <div class="widget-trend trend-up">
+
+                    <i class="fa-solid fa-paw"></i>
+
+                    +21 este mês
+
+                </div>
+
+            </div>
+
+        </article>
+
+    </div>
+
+                    </section>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+<script src="../../../public/js/layout/menu.js"></script>
+<script src="../../../public/js/pages/dashboard/"></script>
+
+</body>
+
+</html>

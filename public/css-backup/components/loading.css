@@ -1,0 +1,103 @@
+/* ==================================================
+   LOADING
+================================================== */
+
+.loading {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    padding: var(--space-xl);
+
+}
+
+/* ==================================================
+   SPINNER
+================================================== */
+
+.spinner {
+
+    width: 45px;
+    height: 45px;
+
+    border: 4px solid var(--gray-200);
+    border-top-color: var(--primary);
+
+    border-radius: 50%;
+
+    animation: spinner .8s linear infinite;
+
+}
+
+/* ==================================================
+   TAMANHOS
+================================================== */
+
+.spinner-sm {
+
+    width: 28px;
+    height: 28px;
+
+    border-width: 3px;
+
+}
+
+.spinner-lg {
+
+    width: 60px;
+    height: 60px;
+
+    border-width: 5px;
+
+}
+
+/* ==================================================
+   TELA INTEIRA
+================================================== */
+
+.loading-screen {
+
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255,255,255,.85);
+
+    backdrop-filter: blur(3px);
+
+    z-index: var(--z-toast);
+
+}
+
+/* ==================================================
+   TEXTO
+================================================== */
+
+.loading-text {
+
+    margin-top: var(--space-md);
+
+    text-align: center;
+
+    color: var(--text-light);
+
+}
+
+/* ==================================================
+   ANIMAÇÃO
+================================================== */
+
+@keyframes spinner {
+
+    to {
+
+        transform: rotate(360deg);
+
+    }
+
+}

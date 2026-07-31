@@ -1,0 +1,127 @@
+/* ==================================================
+   TABLE RESPONSIVE
+================================================== */
+
+.table-responsive {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+}
+
+/* ==================================================
+   TABLE
+================================================== */
+
+.table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    background: var(--surface);
+
+    border-radius: var(--radius-lg);
+
+    overflow: hidden;
+
+    box-shadow: var(--shadow-sm);
+
+}
+
+/* ==================================================
+   HEAD
+================================================== */
+
+.table thead {
+
+    background: var(--primary);
+
+    color: var(--white);
+
+}
+
+.table th {
+
+    padding: 1rem;
+
+    text-align: left;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+}
+
+/* ==================================================
+   BODY
+================================================== */
+
+.table td {
+
+    padding: 1rem;
+
+    border-bottom: 1px solid var(--border);
+
+    vertical-align: middle;
+
+}
+
+/* ==================================================
+   HOVER
+================================================== */
+
+.table tbody tr {
+
+    transition: var(--transition);
+
+}
+
+.table tbody tr:hover {
+
+    background: var(--gray-100);
+
+}
+
+/* ==================================================
+   ÚLTIMA LINHA
+================================================== */
+
+.table tbody tr:last-child td {
+
+    border-bottom: none;
+
+}
+
+/* ==================================================
+   IMAGENS
+================================================== */
+
+.table img {
+
+    width: 45px;
+    height: 45px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+}
+
+/* ==================================================
+   RESPONSIVIDADE
+================================================== */
+
+@media (max-width: 768px) {
+
+    .table th,
+    .table td {
+
+        padding: .8rem;
+
+        font-size: var(--fs-sm);
+
+    }
+
+}

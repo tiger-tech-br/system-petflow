@@ -1,0 +1,167 @@
+/* ==================================================
+   BADGE
+================================================== */
+
+.badge {
+
+    position: absolute;
+    top: -6px;
+    right: -6px;
+
+    min-width: 20px;
+    height: 20px;
+
+    padding: 0 .35rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--danger);
+    color: var(--white);
+
+    border: 2px solid var(--white);
+    border-radius: 999px;
+
+    font-size: .75rem;
+    font-weight: 700;
+
+    line-height: 1;
+
+    user-select: none;
+
+}
+
+/* ==================================================
+   CORES
+================================================== */
+
+.badge-primary {
+
+    background: var(--primary);
+
+}
+
+.badge-success {
+
+    background: var(--success);
+
+}
+
+.badge-warning {
+
+    background: var(--warning);
+
+}
+
+.badge-danger {
+
+    background: var(--danger);
+
+}
+
+.badge-info {
+
+    background: var(--info);
+
+}
+
+/* ==================================================
+   TAMANHOS
+================================================== */
+
+.badge-sm {
+
+    min-width: 18px;
+    height: 18px;
+
+    font-size: .65rem;
+
+}
+
+.badge-lg {
+
+    min-width: 24px;
+    height: 24px;
+
+    font-size: .85rem;
+
+}
+
+/* ==================================================
+   BADGE DOT
+================================================== */
+
+.badge-dot {
+
+    width: 12px;
+    height: 12px;
+
+    min-width: 12px;
+
+    padding: 0;
+
+}
+
+/* ==================================================
+   ÍCONE
+================================================== */
+
+.icon-badge {
+
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+/* ==================================================
+   ANIMAÇÃO
+================================================== */
+
+.badge-pulse {
+
+    animation: badgePulse 1.5s infinite;
+
+}
+
+@keyframes badgePulse {
+
+    0% {
+
+        transform: scale(1);
+
+    }
+
+    50% {
+
+        transform: scale(1.15);
+
+    }
+
+    100% {
+
+        transform: scale(1);
+
+    }
+
+}
+
+/* ==================================================
+   RESPONSIVIDADE
+================================================== */
+
+@media (max-width:768px){
+
+    .badge{
+
+        min-width:18px;
+        height:18px;
+
+        font-size:.65rem;
+
+    }
+
+}

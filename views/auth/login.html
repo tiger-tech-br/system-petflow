@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <!-- ==================================================
+         META TAGS
+    ================================================== -->
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="Faça login para acessar o sistema PetFlow.">
+
+    <meta
+        name="keywords"
+        content="petflow, login, sistema pet shop">
+
+    <meta
+        name="author"
+        content="Tiger Tech">
+
+    <title>PetFlow | Login</title>
+
+    <!-- ==================================================
+         FAVICON
+    ================================================== -->
+
+    <link
+        rel="icon"
+        href="../../public/favicon.ico"
+        type="image/x-icon">
+
+    <!-- ==================================================
+         CSS
+    ================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="../../public/css/base/main.css">
+
+</head>
+
+<body>
+
+    <!-- ==================================================
+         MAIN
+    ================================================== -->
+
+    <main class="login-container">
+
+        <section
+            class="login-card"
+            aria-labelledby="login-title">
+
+            <!-- ==========================================
+                 HEADER
+            =========================================== -->
+
+            <header class="login-header">
+
+                <h1 id="login-title">
+
+                    🐾 PetFlow
+
+                </h1>
+
+                <p>
+
+                    Sistema de Gestão para Pet Shops
+
+                </p>
+
+            </header>
+
+            <!-- ==========================================
+                 FORMULÁRIO
+            =========================================== -->
+
+            <form
+                id="loginForm"
+                class="login-form"
+                autocomplete="on"
+                novalidate>
+
+                <div class="form-group">
+
+                    <label for="email">
+
+                        E-mail
+
+                    </label>
+
+                    <input
+                        class="form-control"
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Digite seu e-mail"
+                        autocomplete="email"
+                        maxlength="150"
+                        required
+                        aria-label="E-mail">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="senha">
+
+                        Senha
+
+                    </label>
+
+                    <input
+                        class="form-control"
+                        type="password"
+                        id="senha"
+                        name="senha"
+                        placeholder="Digite sua senha"
+                        autocomplete="current-password"
+                        minlength="6"
+                        maxlength="50"
+                        required
+                        aria-label="Senha">
+
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    type="submit"
+                    aria-label="Entrar no sistema">
+
+                    Entrar
+
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+    <!-- ==================================================
+         JAVASCRIPT
+    ================================================== -->
+
+    <script
+        src="../../public/js/pages/auth/login.js"
+        defer></script>
+
+</body>
+
+</html>
