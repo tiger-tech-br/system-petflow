@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupPublicOrders();
     setupCepLookup();
     setupForgotPassword();
+    setupPublicResetPassword();
 });
 
 function setupTabs() {
@@ -104,6 +105,25 @@ async function setupPublicAccount() {
         localStorage.removeItem("petflow_customer_token");
         localStorage.removeItem("petflow_customer_user");
         window.location.href = "/";
+    });
+
+    document.getElementById("publicDeleteAccount")?.addEventListener("click", async () => {
+        const confirmed = window.confirm("Tem certeza que deseja excluir seu cadastro? Você perderá o acesso à área do cliente.");
+
+        if (!confirmed) {
+            return;
+        }
+
+        setStatus(status, "Excluindo cadastro...");
+
+        try {
+            await request("/clientes/me", "DELETE");
+            localStorage.removeItem("petflow_customer_token");
+            localStorage.removeItem("petflow_customer_user");
+            window.location.href = "/";
+        } catch (error) {
+            setStatus(status, error.message || "Não foi possível excluir o cadastro.");
+        }
     });
 }
 
@@ -256,12 +276,69 @@ function setupCepLookup() {
 }
 
 function setupForgotPassword() {
-    document.querySelector("[data-public-forgot-password]")?.addEventListener("click", event => {
+    document.querySelector("[data-public-forgot-password]")?.addEventListener("click", async event => {
         event.preventDefault();
-        setStatus(
-            document.getElementById("loginStatus"),
-            "A recuperação de senha do cliente será enviada por e-mail quando o módulo estiver configurado."
-        );
+        const status = document.getElementById("loginStatus");
+        const email = document.getElementById("loginEmail")?.value?.trim();
+
+        if (!email) {
+            setStatus(status, "Informe seu e-mail para receber o link de recuperação.");
+            return;
+        }
+
+        setStatus(status, "Enviando e-mail de recuperação...");
+
+        try {
+            const payload = await request("/clientes/esqueci-senha", "POST", { email });
+            setStatus(status, payload.message || "Verifique seu e-mail.");
+        } catch (error) {
+            setStatus(status, error.message || "Não foi possível enviar o e-mail.");
+        }
+    });
+}
+
+function setupPublicResetPassword() {
+    const form = document.getElementById("publicResetPasswordForm");
+
+    if (!form) {
+        return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token") || "";
+    const status = document.getElementById("resetStatus");
+    const tokenInput = document.getElementById("resetToken");
+
+    if (tokenInput) {
+        tokenInput.value = token;
+    }
+
+    if (!token) {
+        setStatus(status, "Link inválido. Solicite uma nova recuperação de senha.");
+    }
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const senha = form.senha.value;
+        const senhaConfirmacao = form.senhaConfirmacao.value;
+
+        if (senha !== senhaConfirmacao) {
+            setStatus(status, "As senhas não conferem.");
+            return;
+        }
+
+        setStatus(status, "Salvando nova senha...");
+
+        try {
+            await request("/clientes/redefinir-senha", "POST", { token, senha });
+            setStatus(status, "Senha redefinida com sucesso. Você já pode entrar.");
+            setTimeout(() => {
+                window.location.href = "/login";
+            }, 1500);
+        } catch (error) {
+            setStatus(status, error.message || "Não foi possível redefinir a senha.");
+        }
     });
 }
 

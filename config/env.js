@@ -80,6 +80,14 @@ module.exports = {
 
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
 
-    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET
+    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+
+    EMAIL_FROM: process.env.EMAIL_FROM || "PetFlow <suporte@tigertech.dev.br>",
+
+    EMAIL_TEST_TO: process.env.EMAIL_TEST_TO || "suporte@tigertech.dev.br",
+
+    APP_URL: process.env.APP_URL || `http://localhost:${process.env.PORT || 4500}`
 
 };

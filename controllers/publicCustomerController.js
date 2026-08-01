@@ -1,9 +1,14 @@
 "use strict";
 
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const db = require("../database/connection");
-const { JWT_SECRET, JWT_EXPIRES_IN } = require("../config/env");
+const { JWT_SECRET, JWT_EXPIRES_IN, APP_URL } = require("../config/env");
+const {
+    sendEmail,
+    passwordResetTemplate
+} = require("../services/emailService");
 
 async function register(request, response, next) {
     try {
@@ -154,7 +159,7 @@ async function login(request, response, next) {
 
         const cliente = rows[0];
 
-        if (!cliente || !cliente.usuario_ativo) {
+        if (!cliente || !cliente.usuario_ativo || !cliente.ativo) {
             return response.status(401).json({
                 success: false,
                 message: "E-mail ou senha inválidos."
@@ -179,6 +184,135 @@ async function login(request, response, next) {
             success: true,
             message: "Login realizado com sucesso.",
             data: buildAuthPayload(cliente)
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function forgotPassword(request, response, next) {
+    try {
+        const { email } = request.body;
+
+        if (!email) {
+            return response.status(400).json({
+                success: false,
+                message: "Informe seu e-mail."
+            });
+        }
+
+        const { rows } = await db.query(
+            `
+                SELECT
+                    c.id,
+                    c.nome,
+                    c.email,
+                    uc.ativo AS usuario_ativo
+                FROM clientes c
+                INNER JOIN usuarios_clientes uc
+                    ON uc.cliente_id = c.id
+                WHERE LOWER(c.email) = LOWER($1)
+                AND c.ativo = TRUE
+                LIMIT 1
+            `,
+            [email]
+        );
+
+        const cliente = rows[0];
+
+        if (!cliente || !cliente.usuario_ativo) {
+            return response.status(200).json({
+                success: true,
+                message: "Se o e-mail estiver cadastrado, enviaremos as instruções de recuperação."
+            });
+        }
+
+        const token = crypto.randomBytes(32).toString("hex");
+        const expiresAt = new Date(Date.now() + 1000 * 60 * 30);
+
+        await db.query(
+            `
+                UPDATE usuarios_clientes
+                SET token_recuperacao = $1,
+                    token_expiracao = $2,
+                    updated_at = NOW()
+                WHERE cliente_id = $3
+            `,
+            [token, expiresAt, cliente.id]
+        );
+
+        const resetUrl = `${APP_URL}/redefinir-senha?token=${token}`;
+        const template = passwordResetTemplate({
+            name: cliente.nome,
+            resetUrl
+        });
+
+        await sendEmail({
+            to: cliente.email,
+            subject: template.subject,
+            html: template.html,
+            text: template.text
+        });
+
+        return response.status(200).json({
+            success: true,
+            message: "Enviamos as instruções de recuperação para seu e-mail."
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function resetPassword(request, response, next) {
+    try {
+        const { token, senha } = request.body;
+
+        if (!token || !senha || String(senha).length < 6) {
+            return response.status(400).json({
+                success: false,
+                message: "Informe o token e uma senha com no mínimo 6 caracteres."
+            });
+        }
+
+        const { rows } = await db.query(
+            `
+                SELECT
+                    cliente_id
+                FROM usuarios_clientes
+                WHERE token_recuperacao = $1
+                AND token_expiracao > NOW()
+                AND ativo = TRUE
+                LIMIT 1
+            `,
+            [token]
+        );
+
+        const usuarioCliente = rows[0];
+
+        if (!usuarioCliente) {
+            return response.status(400).json({
+                success: false,
+                message: "Link inválido ou expirado."
+            });
+        }
+
+        const senhaHash = await bcrypt.hash(senha, 10);
+
+        await db.query(
+            `
+                UPDATE usuarios_clientes
+                SET senha_hash = $1,
+                    token_recuperacao = NULL,
+                    token_expiracao = NULL,
+                    updated_at = NOW()
+                WHERE cliente_id = $2
+            `,
+            [senhaHash, usuarioCliente.cliente_id]
+        );
+
+        return response.status(200).json({
+            success: true,
+            message: "Senha redefinida com sucesso."
         });
     } catch (error) {
         next(error);
@@ -246,6 +380,37 @@ async function update(request, response, next) {
             success: true,
             message: "Dados atualizados com sucesso.",
             data: profile
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function remove(request, response, next) {
+    try {
+        await db.query(
+            `
+                UPDATE usuarios_clientes
+                SET ativo = FALSE,
+                    updated_at = NOW()
+                WHERE cliente_id = $1
+            `,
+            [request.customer.id]
+        );
+
+        await db.query(
+            `
+                UPDATE clientes
+                SET ativo = FALSE,
+                    updated_at = NOW()
+                WHERE id = $1
+            `,
+            [request.customer.id]
+        );
+
+        return response.status(200).json({
+            success: true,
+            message: "Cadastro excluído com sucesso."
         });
     } catch (error) {
         next(error);
@@ -384,7 +549,10 @@ function hasRequiredProfileData(data) {
 module.exports = {
     register,
     login,
+    forgotPassword,
+    resetPassword,
     me,
     update,
+    remove,
     orders
 };

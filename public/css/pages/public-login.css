@@ -143,13 +143,66 @@ a {
 .auth-tabs,
 .account-links {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 8px;
     margin-bottom: 30px;
     padding: 6px;
     border: 1px solid var(--line);
     border-radius: 8px;
     background: var(--surface);
+}
+
+.pet-form {
+    margin-bottom: 26px;
+}
+
+.pet-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.public-pets-list {
+    display: grid;
+    gap: 12px;
+}
+
+.public-pet-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+}
+
+.public-pet-card span {
+    color: var(--teal);
+    font-size: .74rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.public-pet-card strong {
+    display: block;
+    margin-top: 4px;
+    color: var(--ink);
+    font-size: 1.05rem;
+}
+
+.public-pet-card p {
+    margin: 6px 0 0;
+    color: var(--muted);
+    line-height: 1.45;
+}
+
+.pet-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .auth-tab,
@@ -174,6 +227,12 @@ a {
     color: #ffffff;
     background: linear-gradient(135deg, var(--teal), var(--teal-2));
     box-shadow: 0 12px 26px rgba(4, 118, 109, .18);
+}
+
+.btn-danger {
+    color: #ffffff;
+    background: #d94b3d;
+    box-shadow: 0 12px 24px rgba(217, 75, 61, .18);
 }
 
 .auth-panel {

@@ -553,6 +553,19 @@ body {
     background: #edf7f5;
 }
 
+.product-link,
+.product-title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.service-card a {
+    height: 100%;
+    display: grid;
+    color: inherit;
+    text-decoration: none;
+}
+
 .category-card h3,
 .service-card h3,
 .benefit-card h3,

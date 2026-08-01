@@ -1,6 +1,7 @@
 ﻿"use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
+    enhanceStaticServiceCards();
     loadPublicCatalog();
     loadPublicServices();
     setupPublicSearch();
@@ -87,18 +88,58 @@ function renderServices(services) {
 
     grid.innerHTML = services.map(service => {
         const image = serviceImage(service.nome);
+        const href = `/servicos/${serviceSlug(service.nome)}`;
 
         return `
             <article class="service-card">
-                <img src="${escapeHtml(image)}" alt="${escapeHtml(service.nome)}" loading="lazy" decoding="async">
-                <h3>${escapeHtml(service.nome)}</h3>
-                <p>${escapeHtml(service.descricao || "Atendimento profissional para cuidar do bem-estar do seu pet.")}</p>
-                <div class="service-meta">
-                    <strong>${currency(service.preco)}</strong>
-                </div>
+                <a href="${escapeHtml(href)}" aria-label="Ver serviço ${escapeHtml(service.nome)}">
+                    <img src="${escapeHtml(image)}" alt="${escapeHtml(service.nome)}" loading="lazy" decoding="async">
+                    <h3>${escapeHtml(service.nome)}</h3>
+                    <p>${escapeHtml(service.descricao || "Atendimento profissional para cuidar do bem-estar do seu pet.")}</p>
+                    <div class="service-meta">
+                        <strong>${currency(service.preco)}</strong>
+                    </div>
+                </a>
             </article>
         `;
     }).join("");
+}
+
+function enhanceStaticServiceCards() {
+    document.querySelectorAll(".service-card").forEach(card => {
+        if (card.querySelector("a")) {
+            return;
+        }
+
+        const title = card.querySelector("h3")?.textContent;
+        const slug = staticServiceSlug(title);
+
+        if (!slug) {
+            return;
+        }
+
+        const link = document.createElement("a");
+        link.href = `/servicos/${slug}`;
+        link.setAttribute("aria-label", `Ver serviço ${String(title || "").trim()}`);
+
+        while (card.firstChild) {
+            link.appendChild(card.firstChild);
+        }
+
+        card.appendChild(link);
+    });
+}
+
+function staticServiceSlug(value) {
+    const normalized = normalize(value);
+
+    if (normalized === "tosa") return "tosa-completa";
+    if (normalized.includes("veterin")) return "consulta-veterinaria";
+    if (normalized.includes("banho")) return "banho";
+    if (normalized.includes("vacin")) return "vacinacao";
+    if (normalized.includes("hotel")) return "hotelzinho";
+
+    return "";
 }
 
 function serviceImage(name) {
@@ -112,6 +153,18 @@ function serviceImage(name) {
     if (normalized.includes("delivery")) return "/images/services/delivery.jpg";
 
     return "/images/services/banho-tosa.jpg";
+}
+
+function serviceSlug(value) {
+    return normalize(value)
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+}
+
+function productSlug(product) {
+    return normalize(product.sku || product.nome || product.id)
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
 }
 
 function setupPublicSearch() {
@@ -167,13 +220,16 @@ function renderProducts(products, options = {}) {
         const id = product.id || product.sku || product.nome;
         const inCart = Boolean(publicCart[String(id)]);
         const favorite = publicFavorites.has(String(id));
+        const href = `/produtos/${productSlug(product)}`;
 
         return `
             <article class="product-card" data-product-card data-id="${escapeHtml(id)}">
-                <img class="product-image" src="${escapeHtml(product.foto || "/images/products/petflow-prime-racao.jpg")}" alt="${escapeHtml(product.nome)}" loading="lazy" decoding="async">
+                <a class="product-link" href="${escapeHtml(href)}" aria-label="Ver produto ${escapeHtml(product.nome)}">
+                    <img class="product-image" src="${escapeHtml(product.foto || "/images/products/petflow-prime-racao.jpg")}" alt="${escapeHtml(product.nome)}" loading="lazy" decoding="async">
+                </a>
                 <div class="product-content">
                     <span class="product-category">${escapeHtml(product.categoria || "PetFlow")}</span>
-                    <h3 class="product-title">${escapeHtml(product.nome)}</h3>
+                    <h3 class="product-title"><a href="${escapeHtml(href)}">${escapeHtml(product.nome)}</a></h3>
                     <p class="product-description">${escapeHtml(product.descricao || "Produto selecionado para cuidar melhor do seu pet.")}</p>
                     <div class="product-footer">
                         <strong class="product-price">${currency(product.preco)}</strong>

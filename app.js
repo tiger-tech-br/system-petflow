@@ -110,6 +110,12 @@ app.get("/login", (request, response) => {
 
 });
 
+app.get("/redefinir-senha", (request, response) => {
+
+    response.sendFile(path.join(__dirname, "views", "auth", "reset-password.html"));
+
+});
+
 app.get("/conta", (request, response) => {
 
     response.sendFile(path.join(__dirname, "views", "auth", "account.html"));
@@ -119,6 +125,36 @@ app.get("/conta", (request, response) => {
 app.get("/meus-pedidos", (request, response) => {
 
     response.sendFile(path.join(__dirname, "views", "auth", "orders.html"));
+
+});
+
+app.get("/meus-pets", (request, response) => {
+
+    response.sendFile(path.join(__dirname, "views", "auth", "pets.html"));
+
+});
+
+app.get("/sacola", (request, response) => {
+
+    response.sendFile(path.join(__dirname, "views", "cart", "index.html"));
+
+});
+
+app.get("/categorias/:slug", (request, response) => {
+
+    response.sendFile(path.join(__dirname, "views", "categories", "detail.html"));
+
+});
+
+app.get("/produtos/:slug", (request, response) => {
+
+    response.sendFile(path.join(__dirname, "views", "products", "detail.html"));
+
+});
+
+app.get("/servicos/:slug", (request, response) => {
+
+    response.sendFile(path.join(__dirname, "views", "services", "detail.html"));
 
 });
 
