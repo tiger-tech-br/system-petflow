@@ -96,11 +96,17 @@ app.use("/admin", express.static(path.join(__dirname, "admin")));
 
 app.get("/", (request, response) => {
 
+    response.sendFile(path.join(__dirname, "views", "home", "index.html"));
+
+});
+
+app.get("/api", (request, response) => {
+
     response.status(200).json({
 
         success: true,
 
-        message: "🐾 Bem-vindo à API do PetFlow."
+        message: "Bem-vindo a API do PetFlow."
 
     });
 

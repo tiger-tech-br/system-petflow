@@ -20,7 +20,7 @@ function requireAuth() {
 
     if (!isAuthenticated()) {
 
-        redirect("/admin/index.html");
+        window.location.href = "/admin/index.html";
 
     }
 
