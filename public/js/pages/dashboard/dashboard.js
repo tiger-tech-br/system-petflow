@@ -1,11 +1,27 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
+    requireDashboardAuth();
     setupDashboardDate();
     setupDashboardNavigation();
     setupDashboardNotifications();
     bindDashboardActions();
+    loadDashboard();
 });
+
+const DASHBOARD_API = window.location.hostname === "localhost"
+    ?"http://localhost:4500/api"
+    : "/api";
+
+let dashboardNotifications = [];
+let unreadNotifications = 0;
+let audioUnlocked = false;
+
+function requireDashboardAuth() {
+    if (!localStorage.getItem("token")) {
+        window.location.href = "/admin/index.html";
+    }
+}
 
 function setupDashboardDate() {
     const date = document.getElementById("dashboardDate");
@@ -77,99 +93,348 @@ function setupDashboardNavigation() {
 
 function bindDashboardActions() {
     const refresh = document.getElementById("btnAtualizar");
+    const logout = document.querySelector(".admin-profile a");
 
-    if (!refresh) {
-        return;
-    }
-
-    refresh.addEventListener("click", () => {
+    refresh?.addEventListener("click", async () => {
         refresh.classList.add("is-loading");
-        window.setTimeout(() => refresh.classList.remove("is-loading"), 500);
+        await loadDashboard();
+        window.setTimeout(() => refresh.classList.remove("is-loading"), 350);
+    });
+
+    logout?.addEventListener("click", () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
     });
 }
 
 function setupDashboardNotifications() {
     const button = document.getElementById("notificationButton");
     const panel = document.getElementById("notificationPanel");
-    const count = document.getElementById("notificationCount");
-    const status = document.getElementById("notificationStatus");
 
-    if (!button || !panel || !count || !status) {
+    if (!button || !panel) {
         return;
-    }
-
-    let unread = Number(count.textContent || 0);
-    let audioUnlocked = false;
-
-    function updateNotificationState() {
-        count.textContent = String(unread);
-        count.hidden = unread <= 0;
-        status.textContent = unread === 1 ? "1 novo pedido" : `${unread} novos pedidos`;
-        button.classList.toggle("has-notification", unread > 0);
-    }
-
-    function playNotificationSound() {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-
-        if (!AudioContext) {
-            return;
-        }
-
-        const context = new AudioContext();
-        const gain = context.createGain();
-        gain.gain.setValueAtTime(0.0001, context.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.18, context.currentTime + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.42);
-        gain.connect(context.destination);
-
-        [740, 980].forEach((frequency, index) => {
-            const oscillator = context.createOscillator();
-            oscillator.type = "sine";
-            oscillator.frequency.setValueAtTime(frequency, context.currentTime + index * 0.12);
-            oscillator.connect(gain);
-            oscillator.start(context.currentTime + index * 0.12);
-            oscillator.stop(context.currentTime + index * 0.12 + 0.18);
-        });
-    }
-
-    function openPanel() {
-        panel.classList.add("active");
-        button.setAttribute("aria-expanded", "true");
-        unread = 0;
-        updateNotificationState();
-    }
-
-    function closePanel() {
-        panel.classList.remove("active");
-        button.setAttribute("aria-expanded", "false");
     }
 
     button.addEventListener("click", event => {
         event.stopPropagation();
         audioUnlocked = true;
 
-        if (panel.classList.contains("active")) {
-            closePanel();
-            return;
-        }
+        const willOpen = !panel.classList.contains("active");
+        panel.classList.toggle("active", willOpen);
+        button.setAttribute("aria-expanded", String(willOpen));
 
-        openPanel();
+        if (willOpen) {
+            unreadNotifications = 0;
+            renderNotifications();
+        }
     });
 
     document.addEventListener("click", event => {
         if (!event.target.closest(".notification-menu")) {
-            closePanel();
+            panel.classList.remove("active");
+            button.setAttribute("aria-expanded", "false");
         }
     });
 
-    window.setTimeout(() => {
-        unread = Math.max(unread, 1);
-        updateNotificationState();
+    renderNotifications();
+}
 
-        if (audioUnlocked) {
-            playNotificationSound();
+async function loadDashboard() {
+    try {
+        const data = await apiGet("/dashboard");
+        const dashboard = data?.data || data || {};
+
+        renderSummary(dashboard.resumo || {});
+        renderSchedule(dashboard.agendamentosHoje || []);
+        renderSales(dashboard.ultimasVendas || []);
+        renderSuppliers(dashboard.estoqueBaixo || [], dashboard.ultimasCompras || []);
+        updateProfileName();
+        updateNotifications(dashboard.ultimasVendas || []);
+    } catch (error) {
+        if (String(error.message).includes("401")) {
+            window.location.href = "/admin/index.html";
+            return;
         }
-    }, 1200);
 
-    updateNotificationState();
+        renderDashboardError(error.message || "Não foi possível carregar o painel.");
+    }
+}
+
+function renderSummary(summary) {
+    const cards = document.querySelectorAll(".metric-card");
+    const values = [
+        {
+            label: "Faturamento hoje",
+            value: currency(summary.vendas_hoje),
+            note: `${currency(summary.vendas_mes)} no mês`
+        },
+        {
+            label: "Pedidos recebidos",
+            value: number(summary.total_pedidos || summary.total_vendas || 0),
+            note: `${currency(summary.contas_receber)} a receber`
+        },
+        {
+            label: "Agenda de hoje",
+            value: number(summary.agendamentos_hoje),
+            note: `${number(summary.total_pets)} pets cadastrados`
+        },
+        {
+            label: "Reposição pendente",
+            value: number(summary.estoque_baixo || 0),
+            note: `${currency(summary.compras_mes)} em compras no mês`
+        }
+    ];
+
+    cards.forEach((card, index) => {
+        const item = values[index];
+
+        if (!item) {
+            return;
+        }
+
+        const label = card.querySelector("span");
+        const strong = card.querySelector("strong");
+        const small = card.querySelector("small");
+
+        if (label) label.textContent = item.label;
+        if (strong) strong.textContent = item.value;
+        if (small) small.textContent = item.note;
+    });
+}
+
+function renderSchedule(items) {
+    const list = document.querySelector(".schedule-list");
+
+    if (!list) {
+        return;
+    }
+
+    if (!items.length) {
+        list.innerHTML = emptyState("Nenhum agendamento para hoje.");
+        return;
+    }
+
+    list.innerHTML = items.map(item => `
+        <article>
+            <time>${escapeHtml(formatTime(item.hora))}</time>
+            <div>
+                <strong>${escapeHtml(item.servico || "Serviço agendado")} - ${escapeHtml(item.pet || "Pet")}</strong>
+                <span>Cliente: ${escapeHtml(item.cliente || "Não informado")}</span>
+            </div>
+        </article>
+    `).join("");
+}
+
+function renderSales(items) {
+    const list = document.querySelector(".sales-list");
+
+    if (!list) {
+        return;
+    }
+
+    if (!items.length) {
+        list.innerHTML = emptyState("Nenhum pedido registrado ainda.");
+        return;
+    }
+
+    list.innerHTML = items.slice(0, 5).map(item => `
+        <article>
+            <span>Pedido #${escapeHtml(shortId(item.id))} - ${escapeHtml(item.cliente || "Cliente avulso")}</span>
+            <strong>${currency(item.valor_total)}</strong>
+        </article>
+    `).join("");
+}
+
+function renderSuppliers(lowStock, purchases) {
+    const list = document.querySelector(".supplier-list");
+
+    if (!list) {
+        return;
+    }
+
+    const cards = [];
+
+    lowStock.slice(0, 2).forEach(item => {
+        cards.push({
+            icon: "fa-box-open",
+            title: item.nome,
+            text: `${number(item.quantidade)} unidade(s) em estoque.`,
+            link: "/admin/pages/compras/compras.html",
+            linkText: "Criar compra"
+        });
+    });
+
+    purchases.slice(0, 2).forEach(item => {
+        cards.push({
+            icon: "fa-truck-field",
+            title: item.fornecedor || "Fornecedor",
+            text: `Última compra: ${currency(item.valor_total)}.`,
+            link: "/admin/pages/fornecedores/fornecedores.html",
+            linkText: "Ver fornecedor"
+        });
+    });
+
+    if (!cards.length) {
+        list.innerHTML = emptyState("Sem alertas de fornecedor ou estoque.");
+        return;
+    }
+
+    list.innerHTML = cards.map(card => `
+        <article>
+            <i class="fa-solid ${card.icon}"></i>
+            <div>
+                <strong>${escapeHtml(card.title || "Item")}</strong>
+                <span>${escapeHtml(card.text)}</span>
+            </div>
+            <a href="${card.link}">${escapeHtml(card.linkText)}</a>
+        </article>
+    `).join("");
+}
+
+function updateNotifications(sales) {
+    dashboardNotifications = sales.slice(0, 5).map(item => ({
+        title: `Pedido #${shortId(item.id)} recebido`,
+        text: `${item.cliente || "Cliente avulso"} - ${currency(item.valor_total)}`
+    }));
+
+    unreadNotifications = dashboardNotifications.length;
+    renderNotifications();
+
+    if (unreadNotifications > 0 && audioUnlocked) {
+        playNotificationSound();
+    }
+}
+
+function renderNotifications() {
+    const count = document.getElementById("notificationCount");
+    const status = document.getElementById("notificationStatus");
+    const list = document.getElementById("notificationList");
+    const button = document.getElementById("notificationButton");
+
+    if (!count || !status || !list || !button) {
+        return;
+    }
+
+    count.textContent = String(unreadNotifications);
+    count.hidden = unreadNotifications <= 0;
+    status.textContent = unreadNotifications === 1
+        ?"1 novo pedido"
+        : `${unreadNotifications} novos pedidos`;
+    button.classList.toggle("has-notification", unreadNotifications > 0);
+
+    if (!dashboardNotifications.length) {
+        list.innerHTML = emptyState("Nenhuma notificação nova.");
+        return;
+    }
+
+    list.innerHTML = dashboardNotifications.map(item => `
+        <article>
+            <i class="fa-solid fa-bag-shopping"></i>
+            <div>
+                <strong>${escapeHtml(item.title)}</strong>
+                <span>${escapeHtml(item.text)}</span>
+            </div>
+        </article>
+    `).join("");
+}
+
+function updateProfileName() {
+    const profile = document.querySelector(".admin-profile span");
+
+    try {
+        const user = JSON.parse(localStorage.getItem("user") || "null");
+        const name = user?.nome || "Admin";
+
+        if (profile) {
+            profile.textContent = `Olá, ${name}!`;
+        }
+    } catch {
+        if (profile) {
+            profile.textContent = "Olá, Admin!";
+        }
+    }
+}
+
+async function apiGet(endpoint) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${DASHBOARD_API}${endpoint}`, {
+        headers: {
+            ...(token ?{ Authorization: `Bearer ${token}` } : {})
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Erro ${response.status}`);
+    }
+
+    return response.json();
+}
+
+function renderDashboardError(message) {
+    document.querySelectorAll(".metric-card strong").forEach(item => {
+        item.textContent = "-";
+    });
+
+    const lists = document.querySelectorAll(".schedule-list, .sales-list, .supplier-list");
+    lists.forEach(list => {
+        list.innerHTML = emptyState(message);
+    });
+}
+
+function playNotificationSound() {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+
+    if (!AudioContext) {
+        return;
+    }
+
+    const context = new AudioContext();
+    const gain = context.createGain();
+    gain.gain.setValueAtTime(0.0001, context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.18, context.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.42);
+    gain.connect(context.destination);
+
+    [740, 980].forEach((frequency, index) => {
+        const oscillator = context.createOscillator();
+        oscillator.type = "sine";
+        oscillator.frequency.setValueAtTime(frequency, context.currentTime + index * 0.12);
+        oscillator.connect(gain);
+        oscillator.start(context.currentTime + index * 0.12);
+        oscillator.stop(context.currentTime + index * 0.12 + 0.18);
+    });
+}
+
+function emptyState(message) {
+    return `<div class="dashboard-empty">${escapeHtml(message)}</div>`;
+}
+
+function currency(value) {
+    const numberValue = Number(value || 0);
+
+    return numberValue.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
+}
+
+function number(value) {
+    return Number(value || 0).toLocaleString("pt-BR");
+}
+
+function shortId(value) {
+    return String(value || "").slice(0, 6).toUpperCase() || "NOVO";
+}
+
+function formatTime(value) {
+    return String(value || "").slice(0, 5) || "--:--";
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }

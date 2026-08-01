@@ -8,7 +8,7 @@ const API = {
 
     baseURL: window.location.hostname === "localhost"
 
-        ? "http://localhost:4500/api"
+        ?"http://localhost:4500/api"
 
         : "/api"
 

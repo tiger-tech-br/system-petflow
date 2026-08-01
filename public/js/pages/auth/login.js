@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     loginForm.addEventListener("submit", handleLogin);
+    document.querySelector("[data-admin-forgot-password]")?.addEventListener("click", handleForgotPassword);
 });
 
 async function handleLogin(event) {
@@ -45,4 +46,9 @@ async function handleLogin(event) {
     } catch (error) {
         alert(error.message || "Erro ao realizar login.");
     }
+}
+
+function handleForgotPassword(event) {
+    event.preventDefault();
+    alert("Recuperacao de senha administrativa em preparacao. Por enquanto, solicite a redefinicao ao responsavel pela loja.");
 }

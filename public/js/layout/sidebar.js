@@ -42,7 +42,7 @@
             </a>
             <nav class="sidebar-nav">
                 ${links.map(([key, href, icon, label]) => `
-                    <a href="${href}" class="${currentPath.includes(`/${key}/`) ? "active" : ""}">
+                    <a href="${href}" class="${currentPath.includes(`/${key}/`) ?"active" : ""}">
                         <i class="fa-solid ${icon}"></i>${label}
                     </a>
                 `).join("")}
@@ -109,7 +109,7 @@
             sidebar.classList.toggle("active", willOpen);
             overlay.classList.toggle("active", willOpen);
             document.body.classList.toggle("admin-menu-open", willOpen);
-            document.body.style.overflow = willOpen ? "hidden" : "";
+            document.body.style.overflow = willOpen ?"hidden" : "";
             toggle.setAttribute("aria-expanded", String(willOpen));
         });
 

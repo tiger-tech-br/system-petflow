@@ -58,6 +58,17 @@ class DashboardModel {
                 ) AS vendas_hoje,
 
                 (
+                    SELECT COUNT(*)
+
+                    FROM vendas
+
+                    WHERE empresa_id = $1
+
+                    AND DATE(data_venda)=CURRENT_DATE
+
+                ) AS total_pedidos,
+
+                (
                     SELECT COALESCE(SUM(valor_total),0)
 
                     FROM vendas
@@ -120,7 +131,18 @@ class DashboardModel {
 
                     AND DATE(data_agendamento)=CURRENT_DATE
 
-                ) AS agendamentos_hoje;
+                ) AS agendamentos_hoje,
+
+                (
+                    SELECT COUNT(*)
+
+                    FROM estoque
+
+                    WHERE empresa_id=$1
+
+                    AND quantidade <= 5
+
+                ) AS estoque_baixo;
 
         `;
 

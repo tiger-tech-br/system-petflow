@@ -185,7 +185,7 @@
         const fields = config.fields || [];
 
         form.innerHTML = fields.map(field => {
-            const required = field.required ? "required" : "";
+            const required = field.required ?"required" : "";
             const value = field.value || "";
 
             if (field.type === "items-builder") {
@@ -203,12 +203,12 @@
 
             if (field.type === "select" || field.type === "remote-select") {
                 const options = (field.options || []).map(option => {
-                    const selected = String(option.value) === String(value) ? "selected" : "";
+                    const selected = String(option.value) === String(value) ?"selected" : "";
                     return `<option value="${escapeHtml(option.value)}" ${selected}>${escapeHtml(option.label)}</option>`;
                 }).join("");
                 const placeholder = field.placeholder || "Selecione";
                 const remoteOption = field.type === "remote-select" && !options
-                    ? `<option value="">Carregando...</option>`
+                    ?`<option value="">Carregando...</option>`
                     : `<option value="">${escapeHtml(placeholder)}</option>`;
 
                 return `
@@ -251,8 +251,8 @@
                 const placeholder = field.placeholder || "Selecione";
 
                 select.innerHTML = `<option value="">${escapeHtml(placeholder)}</option>` + rows.map(row => {
-                    const value = row[valueKey] ?? "";
-                    const label = row[labelKey] ?? row.nome ?? row.email ?? value;
+                    const value = row[valueKey] || "";
+                    const label = row[labelKey] || row.nome || row.email || value;
                     return `<option value="${escapeHtml(value)}">${escapeHtml(label)}</option>`;
                 }).join("");
             } catch {
@@ -448,7 +448,7 @@
             const input = document.querySelector(`[name="${field.name}"]`);
 
             if (field.type === "items-builder") {
-                fillItemsBuilder(field.name, record[field.name] ?? record[toSnake(field.name)] ?? []);
+                fillItemsBuilder(field.name, record[field.name] || record[toSnake(field.name)] || []);
                 return;
             }
 
@@ -456,7 +456,7 @@
                 return;
             }
 
-            const value = record[field.name] ?? record[toSnake(field.name)] ?? "";
+            const value = record[field.name] || record[toSnake(field.name)] || "";
             input.value = field.type === "json" && typeof value !== "string"
                 ? JSON.stringify(value || [], null, 2)
                 : value;
@@ -493,10 +493,10 @@
             }
 
             const input = form.elements[field.name];
-            let value = input ? input.value : "";
+            let value = input ?input.value : "";
 
             if (field.type === "number") {
-                value = value === "" ? null : Number(value);
+                value = value === "" ?null : Number(value);
             }
 
             if ((field.type === "select" || field.type === "remote-select") && value === "") {
@@ -505,7 +505,7 @@
 
             if (field.type === "json") {
                 try {
-                    value = value ? JSON.parse(value) : [];
+                    value = value ?JSON.parse(value) : [];
                 } catch {
                     value = [];
                 }
@@ -532,7 +532,7 @@
         head.innerHTML = `
             <tr>
                 ${columns.map(column => `<th>${escapeHtml(column.label)}</th>`).join("")}
-                ${config.mode === "single" ? "" : "<th>Ações</th>"}
+                ${config.mode === "single" ?"" : "<th>Ações</th>"}
             </tr>
         `;
 
@@ -553,7 +553,7 @@
 
         body.innerHTML = filtered.map(record => `
             <tr>
-                ${columns.map(column => `<td>${formatValue(record[column.key] ?? record[toSnake(column.key)], column)}</td>`).join("")}
+                ${columns.map(column => `<td>${formatValue(record[column.key] || record[toSnake(column.key)], column)}</td>`).join("")}
                 ${config.mode === "single" ? "" : `
                     <td>
                         <div class="row-actions">
@@ -592,7 +592,7 @@
         }
 
         if (typeof value === "boolean") {
-            return value ? "Sim" : "Não";
+            return value ?"Sim" : "Não";
         }
 
         if (Array.isArray(value)) {
@@ -688,7 +688,7 @@
             <select class="form-control" data-item-product required>
                 <option value="">Selecione</option>
                 ${options.map(option => `
-                    <option value="${escapeHtml(option.value)}" data-price="${escapeHtml(option.price)}" ${String(option.value) === String(productValue) ? "selected" : ""}>
+                    <option value="${escapeHtml(option.value)}" data-price="${escapeHtml(option.price)}" ${String(option.value) === String(productValue) ?"selected" : ""}>
                         ${escapeHtml(option.label || option.value)}
                     </option>
                 `).join("")}
@@ -713,7 +713,7 @@
         }
 
         list.innerHTML = "";
-        (Array.isArray(items) && items.length ? items : [{}]).forEach(item => addItemRow(fieldName, item));
+        (Array.isArray(items) && items.length ?items : [{}]).forEach(item => addItemRow(fieldName, item));
         refreshItemsBuilderTotal(builder);
     }
 

@@ -54,6 +54,8 @@ const itemCompraRoutes = require("./routes/itemCompraRoutes");
 
 const financeiroRoutes = require("./routes/financeiroRoutes");
 
+const publicCatalogRoutes = require("./routes/publicCatalogRoutes");
+
 /* ==========================
    DASHBOARD
 ========================== */
@@ -108,6 +110,18 @@ app.get("/login", (request, response) => {
 
 });
 
+app.get("/conta", (request, response) => {
+
+    response.sendFile(path.join(__dirname, "views", "auth", "account.html"));
+
+});
+
+app.get("/meus-pedidos", (request, response) => {
+
+    response.sendFile(path.join(__dirname, "views", "auth", "orders.html"));
+
+});
+
 app.get("/api", (request, response) => {
 
     response.status(200).json({
@@ -125,6 +139,8 @@ app.get("/api", (request, response) => {
 ================================================== */
 
 app.use("/api/auth", authRoutes);
+
+app.use("/api/public", publicCatalogRoutes);
 
 app.use("/api/clientes", clienteRoutes);
 

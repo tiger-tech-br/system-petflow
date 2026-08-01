@@ -25,7 +25,7 @@ async function buscarPorId(req, res, next) {
         if (!lancamento) {
             return res.status(404).json({
                 success: false,
-                message: "Lancamento financeiro nao encontrado."
+                message: "Lançamento financeiro não encontrado."
             });
         }
 
@@ -47,7 +47,7 @@ async function criar(req, res, next) {
 
         return res.status(201).json({
             success: true,
-            message: "Lancamento financeiro cadastrado com sucesso.",
+            message: "Lançamento financeiro cadastrado com sucesso.",
             data: lancamento
         });
     } catch (error) {
@@ -66,13 +66,13 @@ async function atualizar(req, res, next) {
         if (!lancamento) {
             return res.status(404).json({
                 success: false,
-                message: "Lancamento financeiro nao encontrado."
+                message: "Lançamento financeiro não encontrado."
             });
         }
 
         return res.status(200).json({
             success: true,
-            message: "Lancamento financeiro atualizado com sucesso.",
+            message: "Lançamento financeiro atualizado com sucesso.",
             data: lancamento
         });
     } catch (error) {
@@ -90,13 +90,13 @@ async function excluir(req, res, next) {
         if (!lancamento) {
             return res.status(404).json({
                 success: false,
-                message: "Lancamento financeiro nao encontrado."
+                message: "Lançamento financeiro não encontrado."
             });
         }
 
         return res.status(200).json({
             success: true,
-            message: "Lancamento financeiro removido com sucesso."
+            message: "Lançamento financeiro removido com sucesso."
         });
     } catch (error) {
         next(error);

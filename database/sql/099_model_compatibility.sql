@@ -64,6 +64,16 @@ ALTER TABLE vendas ADD COLUMN IF NOT EXISTS empresa_id UUID;
 ALTER TABLE itens_compra ADD COLUMN IF NOT EXISTS empresa_id UUID;
 ALTER TABLE itens_venda ADD COLUMN IF NOT EXISTS empresa_id UUID;
 ALTER TABLE agendamentos ADD COLUMN IF NOT EXISTS empresa_id UUID;
+ALTER TABLE usuarios_clientes ADD COLUMN IF NOT EXISTS email VARCHAR(150);
+
+UPDATE usuarios_clientes uc
+SET email = c.email
+FROM clientes c
+WHERE uc.cliente_id = c.id
+  AND uc.email IS NULL;
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_usuarios_clientes_cliente_unique
+ON usuarios_clientes(cliente_id);
 
 UPDATE usuarios SET empresa_id = get_petflow_empresa_id() WHERE empresa_id IS NULL;
 UPDATE clientes SET empresa_id = get_petflow_empresa_id() WHERE empresa_id IS NULL;

@@ -11,7 +11,7 @@ body {
     margin: 0;
     display: grid;
     place-items: center;
-    padding: 24px;
+    padding: 16px;
     background:
         radial-gradient(circle at 18% 18%, rgba(247, 201, 72, .30), transparent 22rem),
         radial-gradient(circle at 82% 20%, rgba(4, 118, 109, .22), transparent 24rem),
@@ -21,9 +21,10 @@ body {
 }
 
 .login-container {
-    width: min(100%, 1080px);
+    width: min(100%, 860px);
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
+    grid-template-columns: minmax(300px, 1fr) minmax(320px, 380px);
+    max-height: calc(100vh - 32px);
     align-items: stretch;
     overflow: hidden;
     border: 1px solid rgba(220, 230, 234, .92);
@@ -36,13 +37,13 @@ body {
     content: "PetFlow";
     display: flex;
     align-items: flex-end;
-    min-height: 620px;
-    padding: 42px;
+    min-height: 0;
+    padding: 28px;
     color: #ffffff;
     background:
-        linear-gradient(180deg, rgba(16, 33, 43, .06), rgba(16, 33, 43, .68)),
-        url("/images/hero/price-racao-premium.jpg") center / cover;
-    font-size: clamp(42px, 6vw, 72px);
+        linear-gradient(180deg, rgba(16, 33, 43, .03), rgba(16, 33, 43, .58)),
+        url("/images/services/veterinario.jpg") center / cover;
+    font-size: clamp(34px, 4.8vw, 56px);
     font-weight: 900;
     letter-spacing: 0;
 }
@@ -51,25 +52,25 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: clamp(28px, 5vw, 46px);
+    padding: clamp(22px, 3vw, 34px);
 }
 
 .login-header {
-    margin-bottom: 26px;
+    margin-bottom: 18px;
     text-align: left;
 }
 
 .login-header img {
-    width: 82px;
-    height: 82px;
+    width: 64px;
+    height: 64px;
     object-fit: contain;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
     filter: drop-shadow(0 14px 22px rgba(4, 118, 109, .20));
 }
 
 .login-header h1 {
     margin: 0 0 8px;
-    font-size: clamp(28px, 4vw, 38px);
+    font-size: clamp(24px, 3vw, 32px);
     line-height: 1.05;
 }
 
@@ -81,12 +82,12 @@ body {
 
 .login-form {
     display: grid;
-    gap: 16px;
+    gap: 12px;
 }
 
 .form-group {
     display: grid;
-    gap: 8px;
+    gap: 6px;
 }
 
 .form-group label,
@@ -98,7 +99,7 @@ body {
 
 .form-control {
     width: 100%;
-    min-height: 48px;
+    min-height: 42px;
     padding: 0 14px;
     border: 1px solid #dce6ea;
     border-radius: 8px;
@@ -119,9 +120,26 @@ body {
     gap: 9px;
 }
 
+.login-links {
+    display: flex;
+    justify-content: center;
+    margin-top: -4px;
+}
+
+.login-links a {
+    color: #04766d;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.login-links a:hover {
+    text-decoration: underline;
+}
+
 .btn {
     width: 100%;
-    min-height: 50px;
+    min-height: 44px;
     border: 1px solid #04766d;
     border-radius: 8px;
     color: #ffffff;
@@ -141,10 +159,11 @@ body {
 @media (max-width: 820px) {
     .login-container {
         grid-template-columns: 1fr;
+        max-height: none;
     }
 
     .login-container::before {
-        min-height: 210px;
+        min-height: 150px;
         align-items: flex-end;
         padding: 24px;
     }

@@ -316,7 +316,7 @@ function criarLinhaVenda(venda) {
 
         criarColuna(
 
-            venda.cliente ?? "-"
+            venda.cliente   "-"
 
         ),
 
@@ -698,7 +698,7 @@ function pesquisarVendas(event) {
 
                 .includes(texto)
 
-            ? ""
+            ?""
 
             : "none";
 
@@ -782,19 +782,19 @@ function preencherFormulario(venda) {
 
         "#observacoes"
 
-    ).value = venda.observacoes ?? "";
+    ).value = venda.observacoes   "";
 
     document.querySelector(
 
         "#desconto"
 
-    ).value = venda.desconto ?? 0;
+    ).value = venda.desconto   0;
 
     document.querySelector(
 
         "#acrescimo"
 
-    ).value = venda.acrescimo ?? 0;
+    ).value = venda.acrescimo   0;
 
 }
 

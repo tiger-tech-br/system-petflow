@@ -20,7 +20,7 @@ function getLocalStorage(key) {
 
     const data = localStorage.getItem(key);
 
-    return data ? JSON.parse(data) : null;
+    return data ?JSON.parse(data) : null;
 
 }
 
@@ -56,7 +56,7 @@ function getSessionStorage(key) {
 
     const data = sessionStorage.getItem(key);
 
-    return data ? JSON.parse(data) : null;
+    return data ?JSON.parse(data) : null;
 
 }
 

@@ -403,6 +403,20 @@
     color: var(--admin-teal);
 }
 
+.dashboard-empty {
+    display: grid;
+    place-items: center;
+    min-height: 92px;
+    padding: 18px;
+    color: var(--admin-muted);
+    border: 1px dashed rgba(102, 117, 132, .28);
+    border-radius: 8px;
+    background: #f8fcfb;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: center;
+}
+
 @media (max-width: 1180px) {
     .metric-grid,
     .quick-actions {

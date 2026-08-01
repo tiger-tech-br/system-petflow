@@ -292,7 +292,7 @@
 
                 input.addEventListener("input", () => {
                     const value = input.value.trim();
-                    input.setCustomValidity(value && !rule.regex.test(value) ? rule.message : "");
+                    input.setCustomValidity(value && !rule.regex.test(value) ?rule.message : "");
                 });
             });
 
@@ -302,7 +302,7 @@
 
             function formatCep(value) {
                 const digits = onlyDigits(value).slice(0, 8);
-                return digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
+                return digits.length > 5 ?`${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
             }
 
             function updateFullAddress() {
@@ -374,7 +374,7 @@
                     const value = input?.value.trim() || "";
 
                     if (input) {
-                        input.setCustomValidity(value && !rule.regex.test(value) ? rule.message : "");
+                        input.setCustomValidity(value && !rule.regex.test(value) ?rule.message : "");
                     }
                 });
 
