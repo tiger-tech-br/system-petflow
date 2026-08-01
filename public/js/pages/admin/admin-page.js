@@ -611,7 +611,7 @@
         }
 
         if (column.type === "status" || column.key === "status") {
-            return `<span class="status-badge">${escapeHtml(String(value).replaceAll("_", " ").toLowerCase())}</span>`;
+            return `<span class="status-badge">${escapeHtml(formatStatusLabel(value))}</span>`;
         }
 
         return escapeHtml(String(value));
@@ -627,6 +627,27 @@
 
     function setStatus(message) {
         setText("statusLine", message);
+    }
+
+    function formatStatusLabel(value) {
+        const labels = {
+            PENDENTE: "Pendente",
+            AGUARDANDO_PAGAMENTO: "Aguardando pagamento",
+            PAGAMENTO_APROVADO: "Pagamento aprovado",
+            EM_SEPARACAO: "Em separação",
+            SAIU_PARA_ENTREGA: "Saiu para entrega",
+            ENTREGUE: "Entregue",
+            FINALIZADA: "Finalizado",
+            CANCELADA: "Cancelado",
+            AGENDADO: "Agendado",
+            CONFIRMADO: "Confirmado",
+            CONCLUIDO: "Concluído",
+            CANCELADO: "Cancelado",
+            PAGO: "Pago",
+            ATRASADO: "Atrasado"
+        };
+
+        return labels[value] || String(value).replaceAll("_", " ").toLowerCase();
     }
 
     function toSnake(value) {

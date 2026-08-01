@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 const { Pool } = require("pg");
 
@@ -13,31 +13,31 @@ const pool = new Pool({
 });
 
 const categories = [
-    ["Rações", "Alimentos secos e úmidos para cães, gatos e pets especiais."],
+    ["RaÃ§Ãµes", "Alimentos secos e Ãºmidos para cÃ£es, gatos e pets especiais."],
     ["Petiscos", "Snacks, bifinhos e recompensas para rotina de treino."],
-    ["Higiene", "Produtos de banho, limpeza, tapetes e cuidados diários."],
-    ["Acessórios", "Coleiras, guias, brinquedos, camas e transporte."],
-    ["Farmácia Pet", "Suplementos, antipulgas e itens de saúde animal."]
+    ["Higiene", "Produtos de banho, limpeza, tapetes e cuidados diÃ¡rios."],
+    ["AcessÃ³rios", "Coleiras, guias, brinquedos, camas e transporte."],
+    ["FarmÃ¡cia Pet", "Suplementos, antipulgas e itens de saÃºde animal."]
 ];
 
 const services = [
     ["Banho", "Banho completo com shampoo profissional.", 59.9, 60],
-    ["Tosa higiênica", "Acabamento de patas, barriga e região íntima.", 49.9, 45],
+    ["Tosa higiÃªnica", "Acabamento de patas, barriga e regiÃ£o Ã­ntima.", 49.9, 45],
     ["Tosa completa", "Tosa personalizada por porte e tipo de pelagem.", 89.9, 90],
-    ["Consulta veterinária", "Avaliação clínica com veterinário.", 129.9, 40],
-    ["Vacinação", "Aplicação e registro de vacina.", 99.9, 30],
-    ["Hotelzinho", "Diária supervisionada para cães.", 79.9, 480]
+    ["Consulta veterinÃ¡ria", "AvaliaÃ§Ã£o clÃ­nica com veterinÃ¡rio.", 129.9, 40],
+    ["VacinaÃ§Ã£o", "AplicaÃ§Ã£o e registro de vacina.", 99.9, 30],
+    ["Hotelzinho", "DiÃ¡ria supervisionada para cÃ£es.", 79.9, 480]
 ];
 
 const products = [
-    ["Rações", "Ração Canis Prime Adultos 10kg", "Alimento premium para cães adultos.", "CANIS-PRIME-10KG", "PetFlow Prime", 189.9, 128.5, 18, "/images/products/petflow-prime-racao.jpg"],
-    ["Rações", "Ração Felis Prime Gatos Castrados 7,5kg", "Alimento premium para gatos castrados.", "FELIS-CAST-75", "PetFlow Prime", 169.9, 112.3, 14, "/images/products/petflow-prime-racao.jpg"],
-    ["Petiscos", "Bifinho Natural Frango 500g", "Petisco macio para cães de todos os portes.", "BIF-FRANGO-500", "Fred Snacks", 34.9, 18.7, 32, "/images/products/fredbites-petiscos.jpg"],
-    ["Higiene", "Shampoo Neutro Pelos Sensíveis 500ml", "Shampoo suave para banho profissional ou doméstico.", "SHA-NEUTRO-500", "FlowCare", 42.9, 21.4, 24, "/images/products/pelozen-shampoo.jpg"],
-    ["Higiene", "Tapete Higiênico Ultra Absorção 30un", "Tapete higiênico com controle de odor.", "TAP-ULTRA-30", "FlowCare", 69.9, 38.2, 20, "/images/products/pelozen-shampoo.jpg"],
-    ["Acessórios", "Coleira Ajustável Fred Azul", "Coleira confortável com regulagem reforçada.", "COL-FRED-AZUL", "Fred Design", 39.9, 16.5, 26, "/images/products/fred10-coleira.jpg"],
-    ["Acessórios", "Brinquedo Mordedor Dental", "Brinquedo para estímulo e higiene oral.", "MOR-DENTAL-01", "PetJoy", 29.9, 11.8, 30, "/images/products/ninhopet-caminha.jpg"],
-    ["Farmácia Pet", "Suplemento Ômega Pet 60 cápsulas", "Suplemento para pele e pelagem.", "OMEGA-PET-60", "VitaPet", 54.9, 29.6, 12, "/images/products/vitapet-care-kit.jpg"]
+    ["RaÃ§Ãµes", "RaÃ§Ã£o Canis Prime Adultos 10kg", "Alimento premium para cÃ£es adultos.", "CANIS-PRIME-10KG", "PetFlow Prime", 189.9, 128.5, 18, "/images/products/petflow-prime-racao.jpg"],
+    ["RaÃ§Ãµes", "RaÃ§Ã£o Felis Prime Gatos Castrados 7,5kg", "Alimento premium para gatos castrados.", "FELIS-CAST-75", "PetFlow Prime", 169.9, 112.3, 14, "/images/products/felis-prime-racao.jpg"],
+    ["Petiscos", "Bifinho Natural Frango 500g", "Petisco macio para cÃ£es de todos os portes.", "BIF-FRANGO-500", "Fred Snacks", 34.9, 18.7, 32, "/images/products/fredbites-petiscos.jpg"],
+    ["Higiene", "Shampoo Neutro Pelos SensÃ­veis 500ml", "Shampoo suave para banho profissional ou domÃ©stico.", "SHA-NEUTRO-500", "FlowCare", 42.9, 21.4, 24, "/images/products/pelozen-shampoo.jpg"],
+    ["Higiene", "Tapete HigiÃªnico Ultra AbsorÃ§Ã£o 30un", "Tapete higiÃªnico com controle de odor.", "TAP-ULTRA-30", "FlowCare", 69.9, 38.2, 20, "/images/products/ultrapad-30.jpg"],
+    ["AcessÃ³rios", "Coleira AjustÃ¡vel Fred Azul", "Coleira confortÃ¡vel com regulagem reforÃ§ada.", "COL-FRED-AZUL", "Fred Design", 39.9, 16.5, 26, "/images/products/fred10-coleira.jpg"],
+    ["AcessÃ³rios", "Brinquedo Mordedor Dental", "Brinquedo para estÃ­mulo e higiene oral.", "MOR-DENTAL-01", "PetJoy", 29.9, 11.8, 30, "/images/products/petjoy-dental.jpg"],
+    ["FarmÃ¡cia Pet", "Suplemento Ã”mega Pet 60 cÃ¡psulas", "Suplemento para pele e pelagem.", "OMEGA-PET-60", "VitaPet", 54.9, 29.6, 12, "/images/products/vitapet-care-kit.jpg"]
 ];
 
 async function run() {

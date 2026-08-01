@@ -24,10 +24,15 @@ CREATE TABLE IF NOT EXISTS vendas (
 
     valor_final NUMERIC(10,2) NOT NULL DEFAULT 0,
 
-    status VARCHAR(20) NOT NULL DEFAULT 'FINALIZADA'
+    status VARCHAR(30) NOT NULL DEFAULT 'AGUARDANDO_PAGAMENTO'
         CHECK (
             status IN (
                 'PENDENTE',
+                'AGUARDANDO_PAGAMENTO',
+                'PAGAMENTO_APROVADO',
+                'EM_SEPARACAO',
+                'SAIU_PARA_ENTREGA',
+                'ENTREGUE',
                 'FINALIZADA',
                 'CANCELADA'
             )

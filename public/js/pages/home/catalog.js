@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
     loadPublicCatalog();
@@ -95,7 +95,6 @@ function renderServices(services) {
                 <p>${escapeHtml(service.descricao || "Atendimento profissional para cuidar do bem-estar do seu pet.")}</p>
                 <div class="service-meta">
                     <strong>${currency(service.preco)}</strong>
-                    <span>${Number(service.duracao || 0) || 30} min</span>
                 </div>
             </article>
         `;
@@ -105,6 +104,7 @@ function renderServices(services) {
 function serviceImage(name) {
     const normalized = normalize(name);
 
+    if (normalized.includes("higienica")) return "/images/services/tosa-higienica.jpg";
     if (normalized.includes("tosa")) return "/images/services/tosa.jpg";
     if (normalized.includes("consulta") || normalized.includes("veterin")) return "/images/services/veterinario.jpg";
     if (normalized.includes("vacina")) return "/images/services/vacinacao.jpg";
@@ -182,7 +182,7 @@ function renderProducts(products, options = {}) {
                                 <i class="fa-solid ${inCart ?"fa-check" : "fa-plus"}"></i>
                                 <span>${inCart ?"Na sacola" : "Adicionar à sacola"}</span>
                             </button>
-                            <button class="cart-action remove ${favorite ?"is-active" : ""}" type="button" data-action="toggle-favorite">
+                            <button class="cart-action favorite ${favorite ?"is-active" : ""}" type="button" data-action="toggle-favorite">
                                 <i class="fa-${favorite ?"solid" : "regular"} fa-heart"></i>
                                 <span>${favorite ?"Favorito" : "Favoritar"}</span>
                             </button>
@@ -344,7 +344,7 @@ function injectCheckoutModal() {
                 <div class="checkout-items" id="checkoutItems"></div>
                 <form class="checkout-form" id="checkoutForm">
                     <div class="checkout-customer" id="checkoutCustomer"></div>
-                    <label>Observacoes<textarea class="form-control" name="observacoes" placeholder="Ex: entregar a tarde"></textarea></label>
+                    <label>Observações<textarea class="form-control" name="observacoes" placeholder="Ex: entregar à tarde"></textarea></label>
                     <div class="checkout-total">
                         <span>Total</span>
                         <strong id="checkoutTotal">R$ 0,00</strong>
@@ -503,20 +503,51 @@ async function submitPublicOrder(event) {
 function setupCustomerHeader() {
     const token = getCustomerToken();
     const cached = readCustomerCache();
-    const label = token ?"Minha conta" : "Entrar";
-    const href = token ?"/conta" : "/login";
+    const firstName = getFirstName(cached?.nome);
 
-    document.querySelectorAll("a[href='/login'], .menu-login-link").forEach(link => {
-        link.href = href;
-        link.textContent = label;
-        link.setAttribute("aria-label", token ?"Abrir minha conta" : "Entrar na conta");
+    document.querySelectorAll("[data-public-logout]").forEach(link => link.remove());
+
+    document.querySelectorAll("a[href='/login'], a[href='/conta'], .menu-login-link").forEach(link => {
+        if (token) {
+            link.href = "/conta";
+            link.textContent = firstName;
+            link.classList.add("is-authenticated");
+            link.setAttribute("aria-label", "Abrir minha conta");
+            insertLogoutLink(link);
+            return;
+        }
+
+        link.href = "/login";
+        link.textContent = "Entrar";
+        link.classList.remove("is-authenticated");
+        link.setAttribute("aria-label", "Entrar na conta");
     });
+}
 
-    if (token && cached?.nome) {
-        document.querySelectorAll(".menu-login-link").forEach(link => {
-            link.textContent = "Minha conta";
-        });
-    }
+function insertLogoutLink(accountLink) {
+    const logout = document.createElement("a");
+    logout.href = "#";
+    logout.className = accountLink.classList.contains("menu-login-link")
+        ? "menu-link public-logout-link"
+        : "btn btn-secondary public-logout-link";
+    logout.dataset.publicLogout = "true";
+    logout.textContent = "Sair";
+    logout.setAttribute("aria-label", "Sair da conta");
+    logout.addEventListener("click", handleCustomerLogout);
+    accountLink.insertAdjacentElement("afterend", logout);
+}
+
+function handleCustomerLogout(event) {
+    event.preventDefault();
+    localStorage.removeItem("petflow_customer_token");
+    localStorage.removeItem("petflow_customer_user");
+    publicCustomer = null;
+    setupCustomerHeader();
+    renderCheckoutCustomer();
+}
+
+function getFirstName(name) {
+    return String(name || "Cliente").trim().split(/\s+/)[0] || "Cliente";
 }
 
 async function renderCheckoutCustomer() {

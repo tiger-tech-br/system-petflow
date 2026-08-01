@@ -221,6 +221,22 @@ body {
     box-shadow: 0 14px 28px rgba(4, 118, 109, .18);
 }
 
+.header-actions > .btn.is-authenticated {
+    min-width: 112px;
+    color: var(--pf-teal);
+    border-color: rgba(4, 118, 109, .18);
+    background: #e6f6f3;
+    box-shadow: none;
+}
+
+.header-actions > .public-logout-link {
+    min-width: 64px;
+    color: #425460;
+    border-color: rgba(4, 118, 109, .14);
+    background: #ffffff;
+    box-shadow: 0 10px 22px rgba(16, 33, 43, .06);
+}
+
 .icon-badge {
     position: relative;
     width: 42px;
@@ -432,17 +448,7 @@ body {
 }
 
 .carousel-indicators {
-    position: absolute;
-    left: 50%;
-    bottom: 18px;
-    z-index: 5;
-    display: flex;
-    gap: 8px;
-    padding: 8px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, .66);
-    backdrop-filter: blur(12px);
-    transform: translateX(-50%);
+    display: none;
 }
 
 .carousel-indicator {
@@ -568,7 +574,7 @@ body {
 .service-meta {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 10px;
     margin: 0 18px 18px;
     padding-top: 12px;
@@ -578,18 +584,6 @@ body {
 .service-meta strong {
     color: var(--pf-teal-dark);
     font-size: 1.08rem;
-    font-weight: 900;
-}
-
-.service-meta span {
-    display: inline-flex;
-    align-items: center;
-    min-height: 28px;
-    padding: 0 10px;
-    border-radius: 999px;
-    color: var(--pf-teal);
-    background: #e8f7f4;
-    font-size: .78rem;
     font-weight: 900;
 }
 
@@ -669,9 +663,13 @@ body {
     background: linear-gradient(135deg, var(--pf-teal), #12a594);
 }
 
-.cart-action.remove {
+.cart-action.favorite {
     color: #7b8790;
     background: #f6faf9;
+}
+
+.cart-action.favorite i {
+    color: var(--pf-coral);
 }
 
 .cart-action:hover {
@@ -682,6 +680,10 @@ body {
     border-color: var(--pf-teal);
     color: #ffffff;
     background: linear-gradient(135deg, var(--pf-teal), #12a594);
+}
+
+.cart-action.favorite.is-active i {
+    color: #ffffff;
 }
 
 .icon-badge.has-count::after {
@@ -814,6 +816,11 @@ body {
     color: var(--pf-ink);
     font-size: .84rem;
     font-weight: 900;
+}
+
+.checkout-form textarea::placeholder {
+    color: #9aa8b2;
+    font-weight: 500;
 }
 
 .checkout-grid {
@@ -1240,6 +1247,20 @@ body.checkout-open {
         color: #ffffff;
         background: linear-gradient(135deg, var(--pf-teal), #12a594);
         box-shadow: 0 14px 30px rgba(4, 118, 109, .20);
+    }
+
+    .menu-login-link.is-authenticated {
+        color: var(--pf-teal);
+        background: #e6f6f3;
+        box-shadow: none;
+    }
+
+    .menu-login-item .public-logout-link {
+        justify-content: center;
+        color: #425460;
+        border: 1px solid rgba(4, 118, 109, .14);
+        background: #ffffff;
+        box-shadow: 0 8px 18px rgba(16, 33, 43, .05);
     }
 
     .menu-actions-item {

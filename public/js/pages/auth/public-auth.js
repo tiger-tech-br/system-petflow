@@ -189,6 +189,16 @@ function formatStatus(status) {
         CANCELADO: "Cancelado"
     };
 
+    Object.assign(labels, {
+        AGUARDANDO_PAGAMENTO: "Aguardando pagamento",
+        PAGAMENTO_APROVADO: "Pagamento aprovado",
+        EM_SEPARACAO: "Em separação",
+        SAIU_PARA_ENTREGA: "Saiu para entrega",
+        ENTREGUE: "Entregue",
+        FINALIZADA: "Finalizado",
+        CONCLUIDO: "Concluído"
+    });
+
     return labels[status] || status || "Pendente";
 }
 

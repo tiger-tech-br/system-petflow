@@ -221,6 +221,39 @@ EXECUTE FUNCTION sync_fornecedores_nome();
 
 ALTER TABLE vendas ADD COLUMN IF NOT EXISTS forma_pagamento VARCHAR(40);
 ALTER TABLE vendas ALTER COLUMN usuario_id DROP NOT NULL;
+ALTER TABLE vendas ALTER COLUMN status TYPE VARCHAR(30);
+ALTER TABLE vendas ALTER COLUMN status SET DEFAULT 'AGUARDANDO_PAGAMENTO';
+
+DO $$
+DECLARE
+    constraint_name TEXT;
+BEGIN
+    FOR constraint_name IN
+        SELECT conname
+        FROM pg_constraint
+        WHERE conrelid = 'vendas'::regclass
+          AND contype = 'c'
+          AND pg_get_constraintdef(oid) ILIKE '%status%'
+    LOOP
+        EXECUTE format('ALTER TABLE vendas DROP CONSTRAINT IF EXISTS %I', constraint_name);
+    END LOOP;
+END;
+$$;
+
+ALTER TABLE vendas
+ADD CONSTRAINT chk_vendas_status
+CHECK (
+    status IN (
+        'PENDENTE',
+        'AGUARDANDO_PAGAMENTO',
+        'PAGAMENTO_APROVADO',
+        'EM_SEPARACAO',
+        'SAIU_PARA_ENTREGA',
+        'ENTREGUE',
+        'FINALIZADA',
+        'CANCELADA'
+    )
+);
 
 CREATE OR REPLACE FUNCTION sync_vendas_total()
 RETURNS TRIGGER

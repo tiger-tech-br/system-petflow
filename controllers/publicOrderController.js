@@ -27,7 +27,7 @@ async function criarPedido(request, response, next) {
             {
                 cliente_id: cliente.id,
                 forma_pagamento: formaPagamento,
-                status: "PENDENTE",
+                status: "AGUARDANDO_PAGAMENTO",
                 desconto: 0,
                 acrescimo: 0,
                 observacoes: montarObservacoes(cliente, observacoes),
