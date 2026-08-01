@@ -15,11 +15,94 @@
             requireAuth();
         }
 
+        setupAdminNavigation();
         bindPageText();
+        buildInsights();
         buildForm();
         bindEvents();
         loadData();
     });
+
+    function setupAdminNavigation() {
+        const sidebar = document.querySelector(".sidebar");
+        const topbar = document.querySelector(".topbar");
+
+        if (!sidebar || !topbar || topbar.querySelector(".admin-menu-toggle")) {
+            return;
+        }
+
+        const title = topbar.querySelector(".topbar-title");
+        const left = document.createElement("div");
+        left.className = "topbar-left";
+
+        const toggle = document.createElement("button");
+        toggle.className = "admin-menu-toggle";
+        toggle.type = "button";
+        toggle.setAttribute("aria-label", "Abrir menu administrativo");
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.innerHTML = `<i class="fa-solid fa-bars"></i>`;
+
+        left.appendChild(toggle);
+
+        if (title) {
+            left.appendChild(title);
+        }
+
+        topbar.prepend(left);
+
+        let overlay = document.querySelector(".admin-menu-overlay");
+
+        if (!overlay) {
+            overlay = document.createElement("div");
+            overlay.className = "admin-menu-overlay";
+            document.body.appendChild(overlay);
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+            document.body.classList.remove("admin-menu-open");
+            toggle.setAttribute("aria-expanded", "false");
+        }
+
+        function openSidebar() {
+            sidebar.classList.add("active");
+            overlay.classList.add("active");
+            document.body.classList.add("admin-menu-open");
+            toggle.setAttribute("aria-expanded", "true");
+        }
+
+        toggle.addEventListener("click", () => {
+            if (sidebar.classList.contains("active")) {
+                closeSidebar();
+                return;
+            }
+
+            openSidebar();
+        });
+
+        overlay.addEventListener("click", closeSidebar);
+
+        sidebar.querySelectorAll("a").forEach(link => {
+            link.addEventListener("click", () => {
+                if (window.innerWidth <= 1024) {
+                    closeSidebar();
+                }
+            });
+        });
+
+        document.addEventListener("keydown", event => {
+            if (event.key === "Escape") {
+                closeSidebar();
+            }
+        });
+
+        window.addEventListener("resize", () => {
+            if (window.innerWidth > 1024) {
+                closeSidebar();
+            }
+        });
+    }
 
     function bindPageText() {
         setText("moduleTitle", config.title);
@@ -37,6 +120,30 @@
                 link.classList.add("active");
             }
         });
+    }
+
+    function buildInsights() {
+        const pageHeader = document.querySelector(".page-header");
+
+        if (!pageHeader || !Array.isArray(config.insights) || document.querySelector(".admin-insights")) {
+            return;
+        }
+
+        const insights = document.createElement("section");
+        insights.className = "admin-insights";
+        insights.setAttribute("aria-label", "Resumo da página");
+        insights.innerHTML = config.insights.map(item => `
+            <article class="insight-card">
+                <i class="fa-solid ${item.icon || "fa-circle-info"}"></i>
+                <div>
+                    <span>${escapeHtml(item.label || "")}</span>
+                    <strong>${escapeHtml(item.value || "")}</strong>
+                    <small>${escapeHtml(item.note || "")}</small>
+                </div>
+            </article>
+        `).join("");
+
+        pageHeader.insertAdjacentElement("afterend", insights);
     }
 
     function buildForm() {
@@ -143,7 +250,7 @@
         } catch (error) {
             records = [];
             renderTable();
-            setStatus(error.message || "Nao foi possivel carregar os dados.");
+            setStatus(error.message || "Não foi possível carregar os dados.");
         }
     }
 
@@ -166,7 +273,7 @@
             await loadData();
             setStatus("Registro salvo com sucesso.");
         } catch (error) {
-            setStatus(error.message || "Nao foi possivel salvar.");
+            setStatus(error.message || "Não foi possível salvar.");
         }
     }
 
@@ -182,7 +289,7 @@
             await loadData();
             setStatus("Registro removido com sucesso.");
         } catch (error) {
-            setStatus(error.message || "Nao foi possivel remover.");
+            setStatus(error.message || "Não foi possível remover.");
         }
     }
 
@@ -264,8 +371,8 @@
 
         head.innerHTML = `
             <tr>
-                ${columns.map(column => `<th>${column.label}</th>`).join("")}
-                ${config.mode === "single" ? "" : "<th>Acoes</th>"}
+                ${columns.map(column => `<th>${escapeHtml(column.label)}</th>`).join("")}
+                ${config.mode === "single" ? "" : "<th>Ações</th>"}
             </tr>
         `;
 
@@ -273,7 +380,11 @@
             body.innerHTML = `
                 <tr>
                     <td colspan="${columns.length + 1}">
-                        <div class="empty-state">Nenhum registro encontrado.</div>
+                        <div class="empty-state">
+                            <i class="fa-regular fa-folder-open"></i>
+                            <strong>Nenhum registro encontrado</strong>
+                            <span>Use o formulário ao lado para cadastrar o primeiro item.</span>
+                        </div>
                     </td>
                 </tr>
             `;
@@ -282,7 +393,7 @@
 
         body.innerHTML = filtered.map(record => `
             <tr>
-                ${columns.map(column => `<td>${formatValue(record[column.key] ?? record[toSnake(column.key)])}</td>`).join("")}
+                ${columns.map(column => `<td>${formatValue(record[column.key] ?? record[toSnake(column.key)], column)}</td>`).join("")}
                 ${config.mode === "single" ? "" : `
                     <td>
                         <div class="row-actions">
@@ -315,20 +426,35 @@
         return [];
     }
 
-    function formatValue(value) {
+    function formatValue(value, column = {}) {
         if (value === null || value === undefined || value === "") {
             return "-";
         }
 
         if (typeof value === "boolean") {
-            return value ? "Sim" : "Nao";
+            return value ? "Sim" : "Não";
         }
 
         if (Array.isArray(value)) {
             return `${value.length} item(ns)`;
         }
 
-        return String(value);
+        if (column.type === "currency" || ["preco", "custo", "valor_total", "total"].includes(column.key)) {
+            const number = Number(value);
+
+            if (!Number.isNaN(number)) {
+                return number.toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL"
+                });
+            }
+        }
+
+        if (column.type === "status" || column.key === "status") {
+            return `<span class="status-badge">${escapeHtml(String(value).replaceAll("_", " ").toLowerCase())}</span>`;
+        }
+
+        return escapeHtml(String(value));
     }
 
     function setText(id, value) {
@@ -345,5 +471,14 @@
 
     function toSnake(value) {
         return value.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
     }
 })();

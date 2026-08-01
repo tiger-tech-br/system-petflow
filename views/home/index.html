@@ -74,7 +74,7 @@
                     aria-label="Ir para a página inicial">
 
                     <img
-                        src="/images/logo/fred-petflow-logo.png"
+                        src="/images/logo/fred-petflow-logo-transparent.png"
                         alt="Logo da PetFlow"
                         width="60"
                         height="60">
@@ -119,7 +119,7 @@
                         type="submit"
                         aria-label="Pesquisar">
 
-                        🔍
+                        
 
                     </button>
 
@@ -196,6 +196,42 @@
 
                         </li>
 
+                        <li class="menu-item menu-login-item">
+
+                            <a
+                                href="/login"
+                                class="menu-link menu-login-link">
+
+                                Entrar
+
+                            </a>
+
+                        </li>
+
+                        <li class="menu-item menu-actions-item">
+
+                            <a
+                                href="#products"
+                                class="menu-action-link"
+                                aria-label="Abrir favoritos">
+
+                                <i class="fa-regular fa-heart"></i>
+                                Favoritos
+
+                            </a>
+
+                            <a
+                                href="#products"
+                                class="menu-action-link"
+                                aria-label="Abrir sacola">
+
+                                <i class="fa-solid fa-bag-shopping"></i>
+                                Sacola
+
+                            </a>
+
+                        </li>
+
                     </ul>
 
                 </nav>
@@ -218,7 +254,7 @@
                     <a
                         href="#products"
                         class="icon-badge"
-                        aria-label="Carrinho">
+                        aria-label="Sacola">
 
                         <i class="fa-solid fa-bag-shopping"></i>
 
@@ -239,7 +275,7 @@
                         aria-controls="menu"
                         aria-expanded="false">
 
-                        ☰
+                        
 
                     </button>
 
@@ -790,226 +826,106 @@
 
                 <div class="products-grid">
 
-                    <!-- Produto 1 -->
-
                     <article class="product-card">
-
-                        <img
-                            class="product-image"
-                            src="/images/products/racao-premium.jpg"
-                            alt="Ração Premium para cães"
-                            loading="lazy"
-                            decoding="async">
-
+                        <img class="product-image" src="/images/products/petflow-prime-racao.jpg" alt="Ração Premium para cães" loading="lazy" decoding="async">
                         <div class="product-content">
-
-                            <span class="product-category">
-
-                                Rações
-
-                            </span>
-
-                            <h3 class="product-title">
-
-                                Ração Premium
-
-                            </h3>
-
-                            <p class="product-description">
-
-                                Nutrição completa para cães adultos.
-
-                            </p>
-
+                            <span class="product-category">Rações</span>
+                            <h3 class="product-title">Ração Premium</h3>
+                            <p class="product-description">Nutrição completa para cães adultos.</p>
                             <div class="product-footer">
-
-                                <strong class="product-price">
-
-                                    R$ 149,90
-
-                                </strong>
-
-                                <button
-                                    class="btn btn-primary"
-                                    type="button"
-                                    aria-label="Adicionar Ração Premium ao carrinho">
-
-                                    Comprar
-
-                                </button>
-
+                                <strong class="product-price">R$ 149,90</strong>
+                                <div class="cart-actions" aria-label="Ações da sacola">
+                                    <button class="cart-action add" type="button" aria-label="Adicionar Ração Premium à sacola"><i class="fa-solid fa-plus"></i><span>Adicionar à sacola</span></button>
+                                    <button class="cart-action remove" type="button" aria-label="Remover Ração Premium da sacola"><i class="fa-solid fa-minus"></i><span>Remover</span></button>
+                                </div>
                             </div>
-
                         </div>
-
                     </article>
 
-                    <!-- Produto 2 -->
-
                     <article class="product-card">
-
-                        <img
-                            class="product-image"
-                            src="/images/products/brinquedo.jpg"
-                            alt="Brinquedo para cachorro"
-                            loading="lazy"
-                            decoding="async">
-
+                        <img class="product-image" src="/images/products/fredbites-petiscos.jpg" alt="Petiscos naturais para pets" loading="lazy" decoding="async">
                         <div class="product-content">
-
-                            <span class="product-category">
-
-                                Brinquedos
-
-                            </span>
-
-                            <h3 class="product-title">
-
-                                Mordedor Interativo
-
-                            </h3>
-
-                            <p class="product-description">
-
-                                Diversão garantida para o seu melhor amigo.
-
-                            </p>
-
+                            <span class="product-category">Petiscos</span>
+                            <h3 class="product-title">Petisco Natural</h3>
+                            <p class="product-description">Recompensas saudáveis para treinos e passeios.</p>
                             <div class="product-footer">
-
-                                <strong class="product-price">
-
-                                    R$ 39,90
-
-                                </strong>
-
-                                <button
-                                    class="btn btn-primary"
-                                    type="button"
-                                    aria-label="Adicionar Mordedor Interativo ao carrinho">
-
-                                    Comprar
-
-                                </button>
-
+                                <strong class="product-price">R$ 24,90</strong>
+                                <div class="cart-actions" aria-label="Ações da sacola">
+                                    <button class="cart-action add" type="button" aria-label="Adicionar Petisco Natural à sacola"><i class="fa-solid fa-plus"></i><span>Adicionar à sacola</span></button>
+                                    <button class="cart-action remove" type="button" aria-label="Remover Petisco Natural da sacola"><i class="fa-solid fa-minus"></i><span>Remover</span></button>
+                                </div>
                             </div>
-
                         </div>
-
                     </article>
 
-                    <!-- Produto 3 -->
-
                     <article class="product-card">
-
-                        <img
-                            class="product-image"
-                            src="/images/products/caminha.jpg"
-                            alt="Caminha confortável para cachorro"
-                            loading="lazy"
-                            decoding="async">
-
+                        <img class="product-image" src="/images/products/ninhopet-caminha.jpg" alt="Caminha confortável para cachorro" loading="lazy" decoding="async">
                         <div class="product-content">
-
-                            <span class="product-category">
-
-                                Caminhas
-
-                            </span>
-
-                            <h3 class="product-title">
-
-                                Caminha Confort Plus
-
-                            </h3>
-
-                            <p class="product-description">
-
-                                Maciez e conforto para o descanso do seu pet.
-
-                            </p>
-
+                            <span class="product-category">Caminhas</span>
+                            <h3 class="product-title">Caminha Confort Plus</h3>
+                            <p class="product-description">Maciez e conforto para o descanso do seu pet.</p>
                             <div class="product-footer">
-
-                                <strong class="product-price">
-
-                                    R$ 189,90
-
-                                </strong>
-
-                                <button
-                                    class="btn btn-primary"
-                                    type="button"
-                                    aria-label="Adicionar Caminha Confort Plus ao carrinho">
-
-                                    Comprar
-
-                                </button>
-
+                                <strong class="product-price">R$ 189,90</strong>
+                                <div class="cart-actions" aria-label="Ações da sacola">
+                                    <button class="cart-action add" type="button" aria-label="Adicionar Caminha Confort Plus à sacola"><i class="fa-solid fa-plus"></i><span>Adicionar à sacola</span></button>
+                                    <button class="cart-action remove" type="button" aria-label="Remover Caminha Confort Plus da sacola"><i class="fa-solid fa-minus"></i><span>Remover</span></button>
+                                </div>
                             </div>
-
                         </div>
-
                     </article>
 
-                    <!-- Produto 4 -->
+                    <article class="product-card">
+                        <img class="product-image" src="/images/products/pelozen-shampoo.jpg" alt="Produtos de higiene para pets" loading="lazy" decoding="async">
+                        <div class="product-content">
+                            <span class="product-category">Higiene</span>
+                            <h3 class="product-title">Shampoo Neutro</h3>
+                            <p class="product-description">Limpeza suave com fragrância agradável.</p>
+                            <div class="product-footer">
+                                <strong class="product-price">R$ 29,90</strong>
+                                <div class="cart-actions" aria-label="Ações da sacola">
+                                    <button class="cart-action add" type="button" aria-label="Adicionar Shampoo Neutro à sacola"><i class="fa-solid fa-plus"></i><span>Adicionar à sacola</span></button>
+                                    <button class="cart-action remove" type="button" aria-label="Remover Shampoo Neutro da sacola"><i class="fa-solid fa-minus"></i><span>Remover</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
 
                     <article class="product-card">
-
-                        <img
-                            class="product-image"
-                            src="/images/products/shampoo.jpg"
-                            alt="Shampoo para cães"
-                            loading="lazy"
-                            decoding="async">
-
+                        <img class="product-image" src="/images/products/vitapet-care-kit.jpg" alt="Farmácia pet com cuidados essenciais" loading="lazy" decoding="async">
                         <div class="product-content">
-
-                            <span class="product-category">
-
-                                Higiene
-
-                            </span>
-
-                            <h3 class="product-title">
-
-                                Shampoo Neutro
-
-                            </h3>
-
-                            <p class="product-description">
-
-                                Limpeza suave com fragrância agradável.
-
-                            </p>
-
+                            <span class="product-category">Cuidados</span>
+                            <h3 class="product-title">Kit Saúde Pet</h3>
+                            <p class="product-description">Itens essenciais para cuidado diário e bem-estar.</p>
                             <div class="product-footer">
-
-                                <strong class="product-price">
-
-                                    R$ 29,90
-
-                                </strong>
-
-                                <button
-                                    class="btn btn-primary"
-                                    type="button"
-                                    aria-label="Adicionar Shampoo Neutro ao carrinho">
-
-                                    Comprar
-
-                                </button>
-
+                                <strong class="product-price">R$ 79,90</strong>
+                                <div class="cart-actions" aria-label="Ações da sacola">
+                                    <button class="cart-action add" type="button" aria-label="Adicionar Kit Saúde Pet à sacola"><i class="fa-solid fa-plus"></i><span>Adicionar à sacola</span></button>
+                                    <button class="cart-action remove" type="button" aria-label="Remover Kit Saúde Pet da sacola"><i class="fa-solid fa-minus"></i><span>Remover</span></button>
+                                </div>
                             </div>
-
                         </div>
+                    </article>
 
+                    <article class="product-card">
+                        <img class="product-image" src="/images/products/fred10-coleira.jpg" alt="Acessórios para pets" loading="lazy" decoding="async">
+                        <div class="product-content">
+                            <span class="product-category">Acessórios</span>
+                            <h3 class="product-title">Coleira Fred10</h3>
+                            <p class="product-description">Estilo, segurança e desconto especial para seu pet.</p>
+                            <div class="product-footer">
+                                <strong class="product-price">R$ 49,90</strong>
+                                <div class="cart-actions" aria-label="Ações da sacola">
+                                    <button class="cart-action add" type="button" aria-label="Adicionar Coleira Fred10 à sacola"><i class="fa-solid fa-plus"></i><span>Adicionar à sacola</span></button>
+                                    <button class="cart-action remove" type="button" aria-label="Remover Coleira Fred10 da sacola"><i class="fa-solid fa-minus"></i><span>Remover</span></button>
+                                </div>
+                            </div>
+                        </div>
                     </article>
 
                 </div>
 
                 <!-- ==========================================
-                    BOTÃO
+                    BOTÒO
                 =========================================== -->
 
                 <div class="section-action">
@@ -1077,7 +993,7 @@
                 <article class="service-card">
 
                     <img
-                        src="/images/services/bath.jpg"
+                        src="/images/services/banho-tosa.jpg"
                         alt="Serviço de banho para pets"
                         loading="lazy"
                         decoding="async">
@@ -1101,7 +1017,7 @@
                 <article class="service-card">
 
                     <img
-                        src="/images/services/grooming.jpg"
+                        src="/images/services/tosa.jpg"
                         alt="Serviço de tosa"
                         loading="lazy"
                         decoding="async">
@@ -1125,7 +1041,7 @@
                 <article class="service-card">
 
                     <img
-                        src="/images/services/veterinary.jpg"
+                        src="/images/services/veterinario.jpg"
                         alt="Atendimento veterinário"
                         loading="lazy"
                         decoding="async">
@@ -1149,7 +1065,7 @@
                 <article class="service-card">
 
                     <img
-                        src="/images/services/vaccine.jpg"
+                        src="/images/services/vacinacao.jpg"
                         alt="Vacinação de pets"
                         loading="lazy"
                         decoding="async">
@@ -1173,7 +1089,7 @@
                 <article class="service-card">
 
                     <img
-                        src="/images/services/hotel.jpg"
+                        src="/images/services/hotelzinho.jpg"
                         alt="Hotel para pets"
                         loading="lazy"
                         decoding="async">
@@ -1219,7 +1135,7 @@
             </div>
 
             <!-- ==========================================
-                BOTÃO
+                BOTÒO
             =========================================== -->
 
             <div class="section-action">
@@ -1419,121 +1335,31 @@
 
             <div class="testimonials-grid">
 
-                <!-- Depoimento 1 -->
-
-                <article class="testimonial-card">
-
-                    <div class="testimonial-header">
-
-                        <img
-                            src="/images/testimonials/client-01.jpg"
-                            alt="Foto da cliente Ana Souza"
-                            class="testimonial-avatar"
-                            loading="lazy"
-                            decoding="async">
-
+                <article class="testimonial-card">                    <div class="testimonial-header">
                         <div>
-
-                            <h3>
-
-                                Ana Souza
-
-                            </h3>
-
-                            <span>
-
-                                Tutora da Mel 🐶
-
-                            </span>
-
+                            <h3>Ana Souza</h3>
+                            <span>Tutora da Mel</span>
                         </div>
-
                     </div>
-
-                    <p>
-
-                        Atendimento excelente. Minha cachorrinha voltou linda do banho e tosa. Super recomendo!
-
-                    </p>
-
+                    <p>Atendimento excelente. Minha cachorrinha voltou linda do banho e tosa. Super recomendo!</p>
                 </article>
 
-                <!-- Depoimento 2 -->
-
-                <article class="testimonial-card">
-
-                    <div class="testimonial-header">
-
-                        <img
-                            src="/images/testimonials/client-02.jpg"
-                            alt="Foto do cliente Carlos Lima"
-                            class="testimonial-avatar"
-                            loading="lazy"
-                            decoding="async">
-
+                <article class="testimonial-card">                    <div class="testimonial-header">
                         <div>
-
-                            <h3>
-
-                                Carlos Lima
-
-                            </h3>
-
-                            <span>
-
-                                Tutor do Thor 🐕
-
-                            </span>
-
+                            <h3>Carlos Lima</h3>
+                            <span>Tutor do Thor</span>
                         </div>
-
                     </div>
-
-                    <p>
-
-                        Produtos de ótima qualidade e entrega muito rápida. Virei cliente fiel.
-
-                    </p>
-
+                    <p>Produtos de ótima qualidade e entrega muito rápida. Virei cliente fiel.</p>
                 </article>
 
-                <!-- Depoimento 3 -->
-
-                <article class="testimonial-card">
-
-                    <div class="testimonial-header">
-
-                        <img
-                            src="/images/testimonials/client-03.jpg"
-                            alt="Foto da cliente Juliana Martins"
-                            class="testimonial-avatar"
-                            loading="lazy"
-                            decoding="async">
-
+                <article class="testimonial-card">                    <div class="testimonial-header">
                         <div>
-
-                            <h3>
-
-                                Juliana Martins
-
-                            </h3>
-
-                            <span>
-
-                                Tutora da Luna 🐱
-
-                            </span>
-
+                            <h3>Juliana Martins</h3>
+                            <span>Tutora da Luna</span>
                         </div>
-
                     </div>
-
-                    <p>
-
-                        O veterinário foi muito atencioso e explicou tudo com calma. Atendimento impecável.
-
-                    </p>
-
+                    <p>O veterinário foi muito atencioso e explicou tudo com calma. Atendimento impecável.</p>
                 </article>
 
             </div>
@@ -1881,3 +1707,4 @@
 </body>
 
 </html>
+

@@ -1,142 +1,75 @@
 "use strict";
 
-/* ==================================================
-   SIDEBAR RESPONSIVA
-================================================== */
-
 document.addEventListener("DOMContentLoaded", () => {
-
     const menuToggle = document.querySelector(".menu-toggle");
+    const panel = document.querySelector(".sidebar, .menu");
 
-    const sidebar = document.querySelector(".sidebar");
-
-    if (!menuToggle || !sidebar) {
-
+    if (!menuToggle || !panel) {
         return;
-
     }
 
-    /* ==================================================
-       OVERLAY
-    ================================================== */
+    if (menuToggle.dataset.sidebarReady === "true") {
+        return;
+    }
 
+    const isPublicMenu = panel.classList.contains("menu");
     let overlay = document.querySelector(".menu-overlay");
 
     if (!overlay) {
-
         overlay = document.createElement("div");
-
         overlay.className = "menu-overlay";
-
         document.body.appendChild(overlay);
-
     }
 
-    /* ==================================================
-       ABRIR
-    ================================================== */
-
-    function abrirSidebar() {
-
-        sidebar.classList.add("active");
-
-        overlay.classList.add("active");
-
-        document.body.style.overflow = "hidden";
-
-        menuToggle.setAttribute("aria-expanded", "true");
-
-    }
-
-    /* ==================================================
-       FECHAR
-    ================================================== */
-
-    function fecharSidebar() {
-
-        sidebar.classList.remove("active");
-
-        overlay.classList.remove("active");
-
+    function closePanel() {
+        panel.classList.remove("active");
+        if (!isPublicMenu) {
+            overlay.classList.remove("active");
+        }
+        document.body.classList.remove("menu-open");
         document.body.style.overflow = "";
-
         menuToggle.setAttribute("aria-expanded", "false");
-
     }
 
-    /* ==================================================
-       TOGGLE
-    ================================================== */
-
-    function toggleSidebar() {
-
-        sidebar.classList.toggle("active");
-
-        overlay.classList.toggle("active");
-
-        document.body.style.overflow =
-            sidebar.classList.contains("active")
-                ? "hidden"
-                : "";
-
+    function openPanel() {
+        panel.classList.add("active");
+        if (!isPublicMenu) {
+            overlay.classList.add("active");
+            document.body.classList.add("menu-open");
+            document.body.style.overflow = "hidden";
+        }
+        menuToggle.setAttribute("aria-expanded", "true");
     }
 
-    /* ==================================================
-       EVENTOS
-    ================================================== */
-
-    menuToggle.addEventListener("click", toggleSidebar);
-
-    overlay.addEventListener("click", fecharSidebar);
-
-    /* ==================================================
-       FECHAR AO CLICAR EM UM LINK
-    ================================================== */
-
-    sidebar.querySelectorAll("a").forEach((link) => {
-
-        link.addEventListener("click", () => {
-
-            if (window.innerWidth <= 992) {
-
-                fecharSidebar();
-
-            }
-
-        });
-
-    });
-
-    /* ==================================================
-       ESC
-    ================================================== */
-
-    document.addEventListener("keydown", (event) => {
-
-        if (event.key === "Escape") {
-
-            fecharSidebar();
-
+    function togglePanel() {
+        if (panel.classList.contains("active")) {
+            closePanel();
+            return;
         }
 
+        openPanel();
+    }
+
+    menuToggle.addEventListener("click", togglePanel);
+    overlay.addEventListener("click", closePanel);
+
+    panel.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+            if (window.innerWidth <= 992) {
+                closePanel();
+            }
+        });
     });
 
-    /* ==================================================
-       DESKTOP
-    ================================================== */
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+            closePanel();
+        }
+    });
 
     window.addEventListener("resize", () => {
-
         if (window.innerWidth > 992) {
-
-            sidebar.classList.remove("active");
-
-            overlay.classList.remove("active");
-
-            document.body.style.overflow = "";
-
+            closePanel();
         }
-
     });
-
 });
