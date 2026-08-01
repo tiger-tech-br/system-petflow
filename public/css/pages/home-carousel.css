@@ -50,8 +50,8 @@ body {
 .header .container {
     min-height: 82px;
     display: grid;
-    grid-template-columns: minmax(168px, auto) minmax(360px, 420px) minmax(300px, 1fr) minmax(168px, auto);
-    gap: 16px;
+    grid-template-columns: 156px minmax(340px, 400px) minmax(410px, 1fr) 192px;
+    gap: 14px;
     align-items: center;
 }
 
@@ -79,15 +79,21 @@ body {
 }
 
 .search-form {
-    min-width: 0;
     width: 100%;
+    min-width: 0;
     display: flex;
     align-items: center;
     overflow: hidden;
-    background: #ffffff;
-    border: 1px solid var(--pf-line);
+    background: linear-gradient(180deg, #ffffff 0%, #fbfefd 100%);
+    border: 1px solid rgba(4, 118, 109, .18);
     border-radius: 999px;
-    box-shadow: 0 10px 30px rgba(16, 33, 43, .06);
+    box-shadow: 0 12px 30px rgba(16, 33, 43, .08);
+    transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.search-form:focus-within {
+    border-color: rgba(4, 118, 109, .46);
+    box-shadow: 0 0 0 4px rgba(4, 118, 109, .10), 0 16px 34px rgba(16, 33, 43, .10);
 }
 
 .search-form .form-control {
@@ -106,24 +112,36 @@ body {
 }
 
 .search-form .form-control::placeholder {
-    color: #667584;
+    color: #4f6470;
     opacity: 1;
 }
 
 .search-button {
-    width: 46px;
-    min-width: 46px;
-    height: 46px;
+    width: 54px;
+    min-width: 54px;
+    height: 48px;
     display: grid;
     place-items: center;
     color: #ffffff;
-    background: var(--pf-teal);
+    background: linear-gradient(135deg, var(--pf-teal), #11a796);
     font-size: 0;
+    box-shadow: inset 1px 0 0 rgba(255, 255, 255, .18);
+    transition: filter .18s ease, transform .18s ease;
+}
+
+.search-button:hover {
+    filter: brightness(1.05);
+}
+
+.search-button:active {
+    transform: scale(.98);
 }
 
 .search-button::before {
-    content: "⌕";
+    content: "\f002";
+    font-family: "Font Awesome 6 Free";
     font-size: 22px;
+    font-weight: 900;
     line-height: 1;
 }
 
@@ -136,19 +154,35 @@ body {
 }
 
 .menu-list {
+    width: 100%;
     display: flex;
-    justify-content: center;
-    gap: 4px;
+    justify-content: space-between;
+    gap: 0;
+    min-width: 0;
+}
+
+.menu {
+    min-width: 0;
+    display: flex;
+    justify-content: flex-start;
+    overflow: hidden;
+}
+
+.menu-item {
+    flex: 0 0 auto;
+    width: auto;
+    margin: 0;
+    padding: 0 !important;
 }
 
 .menu-link {
     display: inline-flex;
     align-items: center;
     min-height: 42px;
-    padding: 0 13px;
+    padding: 0 10px;
     border-radius: 999px;
     color: #425460;
-    font-size: .92rem;
+    font-size: .88rem;
     font-weight: 700;
 }
 
@@ -187,14 +221,10 @@ body {
     font-size: 0;
 }
 
-.icon-badge[aria-label="Favoritos"]::before {
-    content: "♡";
-    font-size: 22px;
-}
-
-.icon-badge[aria-label="Carrinho"]::before {
-    content: "🛒";
+.icon-badge i {
+    color: #10212b;
     font-size: 18px;
+    line-height: 1;
 }
 
 .badge {
@@ -211,6 +241,11 @@ body {
     color: #ffffff;
     font-size: 11px;
     font-weight: 800;
+}
+
+.icon-badge .badge {
+    display: none !important;
+    visibility: hidden;
 }
 
 .menu-toggle {
@@ -733,14 +768,26 @@ body {
     border-top: 1px solid rgba(255, 255, 255, .12);
 }
 
-@media (max-width: 1060px) {
+@media (max-width: 1180px) {
     .header .container {
-        grid-template-columns: minmax(160px, auto) 1fr minmax(150px, auto);
+        grid-template-columns: auto 1fr auto;
     }
 
     .search-form {
+        grid-column: 2 / 3;
+        grid-row: 1;
+    }
+
+    .header-actions {
+        grid-column: 3 / 4;
+        grid-row: 1;
+    }
+
+    .menu {
         grid-column: 1 / -1;
-        order: 2;
+        grid-row: 2;
+        justify-content: center;
+        overflow-x: auto;
     }
 }
 
@@ -751,7 +798,6 @@ body {
     }
 
     .menu {
-        grid-column: 1 / -1;
         width: 100%;
         overflow-x: auto;
     }
@@ -787,8 +833,17 @@ body {
     }
 
     .header .container {
-        grid-template-columns: 1fr auto;
         gap: 10px;
+    }
+
+    .search-form {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        min-width: 100%;
+    }
+
+    .menu {
+        grid-row: 3;
     }
 
     .logo-text {

@@ -100,6 +100,12 @@ app.get("/", (request, response) => {
 
 });
 
+app.get("/login", (request, response) => {
+
+    response.sendFile(path.join(__dirname, "views", "auth", "login.html"));
+
+});
+
 app.get("/api", (request, response) => {
 
     response.status(200).json({

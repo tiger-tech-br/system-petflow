@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let autoPlay = null;
 
-    const AUTO_PLAY_TIME = 5000;
+    const AUTO_PLAY_TIME = 4000;
 
     /* ==================================================
        EXIBIR SLIDE
@@ -115,6 +115,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         stopAutoPlay();
 
+        if (slides.length <= 1) {
+
+            return;
+
+        }
+
         autoPlay = setInterval(() => {
 
             nextSlide();
@@ -170,10 +176,6 @@ document.addEventListener("DOMContentLoaded", () => {
     /* ==================================================
        PAUSAR AO PASSAR O MOUSE
     ================================================== */
-
-    carousel.addEventListener("mouseenter", stopAutoPlay);
-
-    carousel.addEventListener("mouseleave", startAutoPlay);
 
     /* ==================================================
        PAUSAR QUANDO A ABA NÃO ESTIVER VISÍVEL

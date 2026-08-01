@@ -2,100 +2,36 @@
 <html lang="pt-BR">
 
 <head>
-
-    <!-- ==================================================
-         META TAGS
-    ================================================== -->
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Entre na sua conta PetFlow para acompanhar pedidos, ofertas e cuidados do seu pet.">
+    <meta name="keywords" content="petflow, login, conta pet shop">
+    <meta name="author" content="Tiger Tech">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
+    <title>PetFlow | Entrar</title>
 
-    <meta
-        name="description"
-        content="Faça login para acessar o sistema PetFlow.">
-
-    <meta
-        name="keywords"
-        content="petflow, login, sistema pet shop">
-
-    <meta
-        name="author"
-        content="Tiger Tech">
-
-    <title>PetFlow | Login</title>
-
-    <!-- ==================================================
-         FAVICON
-    ================================================== -->
-
-    <link
-        rel="icon"
-        href="../../public/favicon.ico"
-        type="image/x-icon">
-
-    <!-- ==================================================
-         CSS
-    ================================================== -->
-
-    <link
-        rel="stylesheet"
-        href="../../public/css/base/main.css">
-
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/pages/public-login.css">
 </head>
 
 <body>
-
-    <!-- ==================================================
-         MAIN
-    ================================================== -->
-
     <main class="login-container">
-
-        <section
-            class="login-card"
-            aria-labelledby="login-title">
-
-            <!-- ==========================================
-                 HEADER
-            =========================================== -->
-
+        <section class="login-card" aria-labelledby="login-title">
             <header class="login-header">
+                <a class="login-logo" href="/" aria-label="Voltar para a página inicial">
+                    <img src="/images/logo/fred-petflow-logo.png" alt="Logo PetFlow" width="88" height="88">
+                </a>
 
-                <h1 id="login-title">
+                <span class="login-eyebrow">Área do cliente</span>
 
-                    🐾 PetFlow
+                <h1 id="login-title">Entre na sua conta PetFlow</h1>
 
-                </h1>
-
-                <p>
-
-                    Sistema de Gestão para Pet Shops
-
-                </p>
-
+                <p>Acompanhe pedidos, favorite produtos e receba ofertas pensadas para o seu pet.</p>
             </header>
 
-            <!-- ==========================================
-                 FORMULÁRIO
-            =========================================== -->
-
-            <form
-                id="loginForm"
-                class="login-form"
-                autocomplete="on"
-                novalidate>
-
+            <form id="publicLoginForm" class="login-form" autocomplete="on" novalidate>
                 <div class="form-group">
-
-                    <label for="email">
-
-                        E-mail
-
-                    </label>
-
+                    <label for="email">E-mail</label>
                     <input
                         class="form-control"
                         type="email"
@@ -104,19 +40,11 @@
                         placeholder="Digite seu e-mail"
                         autocomplete="email"
                         maxlength="150"
-                        required
-                        aria-label="E-mail">
-
+                        required>
                 </div>
 
                 <div class="form-group">
-
-                    <label for="senha">
-
-                        Senha
-
-                    </label>
-
+                    <label for="senha">Senha</label>
                     <input
                         class="form-control"
                         type="password"
@@ -126,34 +54,34 @@
                         autocomplete="current-password"
                         minlength="6"
                         maxlength="50"
-                        required
-                        aria-label="Senha">
-
+                        required>
                 </div>
 
-                <button
-                    class="btn btn-primary"
-                    type="submit"
-                    aria-label="Entrar no sistema">
+                <div class="form-row">
+                    <label class="form-check" for="remember">
+                        <input type="checkbox" id="remember" name="remember">
+                        <span>Permanecer conectado</span>
+                    </label>
 
-                    Entrar
+                    <a href="#">Esqueci minha senha</a>
+                </div>
 
-                </button>
+                <button class="btn btn-primary" type="submit">Entrar</button>
 
+                <p class="login-note">
+                    Ainda não tem conta?
+                    <a href="#">Criar cadastro</a>
+                </p>
             </form>
-
         </section>
-
     </main>
 
-    <!-- ==================================================
-         JAVASCRIPT
-    ================================================== -->
-
-    <script
-        src="../../public/js/pages/auth/login.js"
-        defer></script>
-
+    <script>
+        document.getElementById("publicLoginForm").addEventListener("submit", (event) => {
+            event.preventDefault();
+            alert("Login de cliente em preparação. O painel administrativo continua em /admin.");
+        });
+    </script>
 </body>
 
 </html>
