@@ -64,20 +64,19 @@ CREATE TABLE IF NOT EXISTS clientes (
    ÍNDICES
 ========================================================== */
 
-CREATE INDEX idx_clientes_nome
+CREATE INDEX IF NOT EXISTS idx_clientes_nome
 ON clientes(nome);
 
-CREATE INDEX idx_clientes_telefone
+CREATE INDEX IF NOT EXISTS idx_clientes_telefone
 ON clientes(telefone);
 
-CREATE INDEX idx_clientes_cidade
+CREATE INDEX IF NOT EXISTS idx_clientes_cidade
 ON clientes(cidade);
 
 /* ==========================================================
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_clientes_updated_at
-BEFORE UPDATE ON clientes
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_clientes_updated_at ON clientes;
+CREATE TRIGGER trg_clientes_updated_at BEFORE UPDATE ON clientes FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

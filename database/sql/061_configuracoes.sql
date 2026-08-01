@@ -114,14 +114,13 @@ CREATE TABLE IF NOT EXISTS configuracoes (
    ÍNDICES
 ========================================================== */
 
-CREATE INDEX idx_configuracoes_nome
+CREATE INDEX IF NOT EXISTS idx_configuracoes_nome
 ON configuracoes(nome_petshop);
 
 /* ==========================================================
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_configuracoes_updated_at
-BEFORE UPDATE ON configuracoes
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_configuracoes_updated_at ON configuracoes;
+CREATE TRIGGER trg_configuracoes_updated_at BEFORE UPDATE ON configuracoes FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

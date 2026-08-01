@@ -71,17 +71,16 @@ CREATE TABLE IF NOT EXISTS produtos (
    ÍNDICES
 ========================================================== */
 
-CREATE INDEX idx_produtos_nome
+CREATE INDEX IF NOT EXISTS idx_produtos_nome
 ON produtos(nome);
 
-CREATE INDEX idx_produtos_categoria
+CREATE INDEX IF NOT EXISTS idx_produtos_categoria
 ON produtos(categoria_id);
 
 /* ==========================================================
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_produtos_updated_at
-BEFORE UPDATE ON produtos
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_produtos_updated_at ON produtos;
+CREATE TRIGGER trg_produtos_updated_at BEFORE UPDATE ON produtos FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

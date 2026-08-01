@@ -45,20 +45,19 @@ CREATE TABLE IF NOT EXISTS usuarios (
    ÍNDICES
 ========================================================== */
 
-CREATE INDEX idx_usuarios_nome
+CREATE INDEX IF NOT EXISTS idx_usuarios_nome
 ON usuarios(nome);
 
-CREATE UNIQUE INDEX idx_usuarios_email_lower
+CREATE UNIQUE INDEX IF NOT EXISTS idx_usuarios_email_lower
 ON usuarios(LOWER(email));
 
-CREATE INDEX idx_usuarios_perfil
+CREATE INDEX IF NOT EXISTS idx_usuarios_perfil
 ON usuarios(perfil);
 
 /* ==========================================================
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_usuarios_updated_at
-BEFORE UPDATE ON usuarios
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_usuarios_updated_at ON usuarios;
+CREATE TRIGGER trg_usuarios_updated_at BEFORE UPDATE ON usuarios FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

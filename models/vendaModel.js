@@ -101,13 +101,13 @@ class VendaModel {
 
         const values = [
 
-            dados.empresaId,
-            dados.clienteId,
-            dados.valorTotal,
+            dados.empresaId || dados.empresa_id,
+            dados.clienteId || dados.cliente_id,
+            dados.valorTotal || dados.valor_total || 0,
             dados.desconto,
             dados.acrescimo,
-            dados.formaPagamento,
-            dados.status
+            dados.formaPagamento || dados.forma_pagamento,
+            dados.status || "PENDENTE"
 
         ];
 
@@ -143,11 +143,11 @@ class VendaModel {
 
         const values = [
 
-            dados.clienteId,
-            dados.valorTotal,
+            dados.clienteId || dados.cliente_id,
+            dados.valorTotal || dados.valor_total || 0,
             dados.desconto,
             dados.acrescimo,
-            dados.formaPagamento,
+            dados.formaPagamento || dados.forma_pagamento,
             dados.status,
             id,
             empresaId

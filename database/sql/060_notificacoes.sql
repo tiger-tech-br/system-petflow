@@ -59,27 +59,34 @@ CREATE TABLE IF NOT EXISTS notificacoes (
         )
 );
 
+ALTER TABLE notificacoes ADD COLUMN IF NOT EXISTS cliente_id UUID;
+ALTER TABLE notificacoes ADD COLUMN IF NOT EXISTS titulo VARCHAR(150) NOT NULL DEFAULT 'Notificacao';
+ALTER TABLE notificacoes ADD COLUMN IF NOT EXISTS mensagem TEXT NOT NULL DEFAULT 'Mensagem do sistema';
+ALTER TABLE notificacoes ADD COLUMN IF NOT EXISTS tipo VARCHAR(30) NOT NULL DEFAULT 'SISTEMA';
+ALTER TABLE notificacoes ADD COLUMN IF NOT EXISTS lida BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE notificacoes ADD COLUMN IF NOT EXISTS data_leitura TIMESTAMPTZ;
+ALTER TABLE notificacoes ADD COLUMN IF NOT EXISTS enviada_em TIMESTAMPTZ NOT NULL DEFAULT NOW();
+
 /* ==========================================================
    ÍNDICES
 ========================================================== */
 
-CREATE INDEX idx_notificacoes_cliente
+CREATE INDEX IF NOT EXISTS idx_notificacoes_cliente
 ON notificacoes(cliente_id);
 
-CREATE INDEX idx_notificacoes_tipo
+CREATE INDEX IF NOT EXISTS idx_notificacoes_tipo
 ON notificacoes(tipo);
 
-CREATE INDEX idx_notificacoes_lida
+CREATE INDEX IF NOT EXISTS idx_notificacoes_lida
 ON notificacoes(lida);
 
-CREATE INDEX idx_notificacoes_enviada
+CREATE INDEX IF NOT EXISTS idx_notificacoes_enviada
 ON notificacoes(enviada_em);
 
 /* ==========================================================
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_notificacoes_updated_at
-BEFORE UPDATE ON notificacoes
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_notificacoes_updated_at ON notificacoes;
+CREATE TRIGGER trg_notificacoes_updated_at BEFORE UPDATE ON notificacoes FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

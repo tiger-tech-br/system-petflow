@@ -77,23 +77,22 @@ CREATE TABLE IF NOT EXISTS vendas (
    ÍNDICES
 ========================================================== */
 
-CREATE INDEX idx_vendas_cliente
+CREATE INDEX IF NOT EXISTS idx_vendas_cliente
 ON vendas(cliente_id);
 
-CREATE INDEX idx_vendas_usuario
+CREATE INDEX IF NOT EXISTS idx_vendas_usuario
 ON vendas(usuario_id);
 
-CREATE INDEX idx_vendas_data
+CREATE INDEX IF NOT EXISTS idx_vendas_data
 ON vendas(data_venda);
 
-CREATE INDEX idx_vendas_status
+CREATE INDEX IF NOT EXISTS idx_vendas_status
 ON vendas(status);
 
 /* ==========================================================
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_vendas_updated_at
-BEFORE UPDATE ON vendas
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_vendas_updated_at ON vendas;
+CREATE TRIGGER trg_vendas_updated_at BEFORE UPDATE ON vendas FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

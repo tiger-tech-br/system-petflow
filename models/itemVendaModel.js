@@ -101,11 +101,11 @@ class ItemVendaModel {
 
         const values = [
 
-            dados.vendaId,
-            dados.empresaId,
-            dados.produtoId,
+            dados.vendaId || dados.venda_id,
+            dados.empresaId || dados.empresa_id,
+            dados.produtoId || dados.produto_id,
             dados.quantidade,
-            dados.valorUnitario,
+            dados.valorUnitario || dados.valor_unitario,
             dados.subtotal
 
         ];
@@ -140,9 +140,9 @@ class ItemVendaModel {
 
         const values = [
 
-            dados.produtoId,
+            dados.produtoId || dados.produto_id,
             dados.quantidade,
-            dados.valorUnitario,
+            dados.valorUnitario || dados.valor_unitario,
             dados.subtotal,
             id,
             empresaId

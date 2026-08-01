@@ -40,7 +40,6 @@ CREATE TABLE IF NOT EXISTS vacinas (
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_vacinas_updated_at
-BEFORE UPDATE ON vacinas
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_vacinas_updated_at ON vacinas;
+CREATE TRIGGER trg_vacinas_updated_at BEFORE UPDATE ON vacinas FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

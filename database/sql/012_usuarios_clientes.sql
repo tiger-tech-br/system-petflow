@@ -37,21 +37,33 @@ CREATE TABLE IF NOT EXISTS usuarios_clientes (
         CHECK (LENGTH(TRIM(senha_hash)) > 0)
 );
 
+ALTER TABLE usuarios_clientes
+ADD COLUMN IF NOT EXISTS email_verificado BOOLEAN NOT NULL DEFAULT FALSE;
+
+ALTER TABLE usuarios_clientes
+ADD COLUMN IF NOT EXISTS token_recuperacao VARCHAR(255);
+
+ALTER TABLE usuarios_clientes
+ADD COLUMN IF NOT EXISTS token_expiracao TIMESTAMPTZ;
+
+ALTER TABLE usuarios_clientes
+ADD COLUMN IF NOT EXISTS ultimo_login TIMESTAMPTZ;
+
+
 /* ==========================================================
    ÍNDICES
 ========================================================== */
 
-CREATE INDEX idx_usuarios_clientes_email_verificado
+CREATE INDEX IF NOT EXISTS idx_usuarios_clientes_email_verificado
 ON usuarios_clientes(email_verificado);
 
-CREATE INDEX idx_usuarios_clientes_ultimo_login
+CREATE INDEX IF NOT EXISTS idx_usuarios_clientes_ultimo_login
 ON usuarios_clientes(ultimo_login);
 
 /* ==========================================================
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_usuarios_clientes_updated_at
-BEFORE UPDATE ON usuarios_clientes
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_usuarios_clientes_updated_at ON usuarios_clientes;
+CREATE TRIGGER trg_usuarios_clientes_updated_at BEFORE UPDATE ON usuarios_clientes FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

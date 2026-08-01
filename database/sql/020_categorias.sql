@@ -28,7 +28,6 @@ CREATE TABLE IF NOT EXISTS categorias (
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_categorias_updated_at
-BEFORE UPDATE ON categorias
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_categorias_updated_at ON categorias;
+CREATE TRIGGER trg_categorias_updated_at BEFORE UPDATE ON categorias FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

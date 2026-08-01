@@ -84,33 +84,43 @@ CREATE TABLE IF NOT EXISTS consultas (
         )
 );
 
+ALTER TABLE consultas ADD COLUMN IF NOT EXISTS pet_id UUID;
+ALTER TABLE consultas ADD COLUMN IF NOT EXISTS cliente_id UUID;
+ALTER TABLE consultas ADD COLUMN IF NOT EXISTS usuario_id UUID;
+ALTER TABLE consultas ADD COLUMN IF NOT EXISTS data_consulta DATE NOT NULL DEFAULT CURRENT_DATE;
+ALTER TABLE consultas ADD COLUMN IF NOT EXISTS horario TIME NOT NULL DEFAULT CURRENT_TIME;
+ALTER TABLE consultas ADD COLUMN IF NOT EXISTS peso NUMERIC(5,2);
+ALTER TABLE consultas ADD COLUMN IF NOT EXISTS temperatura NUMERIC(4,1);
+ALTER TABLE consultas ADD COLUMN IF NOT EXISTS motivo_consulta TEXT NOT NULL DEFAULT 'Consulta veterinaria';
+ALTER TABLE consultas ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'AGENDADA';
+ALTER TABLE consultas ADD COLUMN IF NOT EXISTS observacoes TEXT;
+
 /* ==========================================================
    ÍNDICES
 ========================================================== */
 
-CREATE INDEX idx_consultas_pet
+CREATE INDEX IF NOT EXISTS idx_consultas_pet
 ON consultas(pet_id);
 
-CREATE INDEX idx_consultas_cliente
+CREATE INDEX IF NOT EXISTS idx_consultas_cliente
 ON consultas(cliente_id);
 
-CREATE INDEX idx_consultas_usuario
+CREATE INDEX IF NOT EXISTS idx_consultas_usuario
 ON consultas(usuario_id);
 
-CREATE INDEX idx_consultas_data
+CREATE INDEX IF NOT EXISTS idx_consultas_data
 ON consultas(data_consulta);
 
-CREATE INDEX idx_consultas_status
+CREATE INDEX IF NOT EXISTS idx_consultas_status
 ON consultas(status);
 
-CREATE INDEX idx_consultas_data_horario
+CREATE INDEX IF NOT EXISTS idx_consultas_data_horario
 ON consultas(data_consulta, horario);
 
 /* ==========================================================
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_consultas_updated_at
-BEFORE UPDATE ON consultas
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_consultas_updated_at ON consultas;
+CREATE TRIGGER trg_consultas_updated_at BEFORE UPDATE ON consultas FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

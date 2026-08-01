@@ -52,6 +52,8 @@ const compraRoutes = require("./routes/compraRoutes");
 
 const itemCompraRoutes = require("./routes/itemCompraRoutes");
 
+const financeiroRoutes = require("./routes/financeiroRoutes");
+
 /* ==========================
    DASHBOARD
 ========================== */
@@ -151,6 +153,8 @@ app.use("/api/fornecedores", fornecedorRoutes);
 app.use("/api/compras", compraRoutes);
 
 app.use("/api/itens-compra", itemCompraRoutes);
+
+app.use("/api/financeiro", financeiroRoutes);
 
 /* ==========================
    DASHBOARD

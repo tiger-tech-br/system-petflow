@@ -63,21 +63,26 @@ CREATE TABLE IF NOT EXISTS formas_pagamento (
         )
 );
 
+ALTER TABLE formas_pagamento ADD COLUMN IF NOT EXISTS venda_id UUID;
+ALTER TABLE formas_pagamento ADD COLUMN IF NOT EXISTS forma_pagamento VARCHAR(30) NOT NULL DEFAULT 'PIX';
+ALTER TABLE formas_pagamento ADD COLUMN IF NOT EXISTS valor NUMERIC(10,2) NOT NULL DEFAULT 0;
+ALTER TABLE formas_pagamento ADD COLUMN IF NOT EXISTS parcelas INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE formas_pagamento ADD COLUMN IF NOT EXISTS observacoes TEXT;
+
 /* ==========================================================
    ÍNDICES
 ========================================================== */
 
-CREATE INDEX idx_formas_pagamento_venda
+CREATE INDEX IF NOT EXISTS idx_formas_pagamento_venda
 ON formas_pagamento(venda_id);
 
-CREATE INDEX idx_formas_pagamento_forma
+CREATE INDEX IF NOT EXISTS idx_formas_pagamento_forma
 ON formas_pagamento(forma_pagamento);
 
 /* ==========================================================
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_formas_pagamento_updated_at
-BEFORE UPDATE ON formas_pagamento
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_formas_pagamento_updated_at ON formas_pagamento;
+CREATE TRIGGER trg_formas_pagamento_updated_at BEFORE UPDATE ON formas_pagamento FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

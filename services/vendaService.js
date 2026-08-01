@@ -40,6 +40,8 @@ const VendaService = {
 
                 forma_pagamento: venda.forma_pagamento,
 
+                status: venda.status || "PENDENTE",
+
                 desconto: venda.desconto || 0,
 
                 acrescimo: venda.acrescimo || 0,

@@ -55,27 +55,32 @@ CREATE TABLE IF NOT EXISTS movimentacoes_estoque (
         )
 );
 
+ALTER TABLE movimentacoes_estoque ADD COLUMN IF NOT EXISTS tipo VARCHAR(20) NOT NULL DEFAULT 'AJUSTE';
+ALTER TABLE movimentacoes_estoque ADD COLUMN IF NOT EXISTS quantidade INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE movimentacoes_estoque ADD COLUMN IF NOT EXISTS observacao TEXT;
+ALTER TABLE movimentacoes_estoque ADD COLUMN IF NOT EXISTS usuario_id UUID;
+ALTER TABLE movimentacoes_estoque ADD COLUMN IF NOT EXISTS data_movimentacao TIMESTAMPTZ NOT NULL DEFAULT NOW();
+
 /* ==========================================================
    ÍNDICES
 ========================================================== */
 
-CREATE INDEX idx_movimentacoes_produto
+CREATE INDEX IF NOT EXISTS idx_movimentacoes_produto
 ON movimentacoes_estoque(produto_id);
 
-CREATE INDEX idx_movimentacoes_tipo
+CREATE INDEX IF NOT EXISTS idx_movimentacoes_tipo
 ON movimentacoes_estoque(tipo);
 
-CREATE INDEX idx_movimentacoes_data
+CREATE INDEX IF NOT EXISTS idx_movimentacoes_data
 ON movimentacoes_estoque(data_movimentacao);
 
-CREATE INDEX idx_movimentacoes_usuario
+CREATE INDEX IF NOT EXISTS idx_movimentacoes_usuario
 ON movimentacoes_estoque(usuario_id);
 
 /* ==========================================================
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_movimentacoes_estoque_updated_at
-BEFORE UPDATE ON movimentacoes_estoque
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_movimentacoes_estoque_updated_at ON movimentacoes_estoque;
+CREATE TRIGGER trg_movimentacoes_estoque_updated_at BEFORE UPDATE ON movimentacoes_estoque FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

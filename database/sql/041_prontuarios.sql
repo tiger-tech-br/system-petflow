@@ -69,18 +69,26 @@ CREATE TABLE IF NOT EXISTS prontuarios (
         )
 );
 
+ALTER TABLE prontuarios ADD COLUMN IF NOT EXISTS consulta_id UUID;
+ALTER TABLE prontuarios ADD COLUMN IF NOT EXISTS diagnostico TEXT NOT NULL DEFAULT 'Sem diagnostico informado';
+ALTER TABLE prontuarios ADD COLUMN IF NOT EXISTS tratamento TEXT;
+ALTER TABLE prontuarios ADD COLUMN IF NOT EXISTS medicamentos TEXT;
+ALTER TABLE prontuarios ADD COLUMN IF NOT EXISTS receita TEXT;
+ALTER TABLE prontuarios ADD COLUMN IF NOT EXISTS exames_solicitados TEXT;
+ALTER TABLE prontuarios ADD COLUMN IF NOT EXISTS observacoes TEXT;
+ALTER TABLE prontuarios ADD COLUMN IF NOT EXISTS retorno DATE;
+
 /* ==========================================================
    ÍNDICES
 ========================================================== */
 
-CREATE INDEX idx_prontuarios_retorno
+CREATE INDEX IF NOT EXISTS idx_prontuarios_retorno
 ON prontuarios(retorno);
 
 /* ==========================================================
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_prontuarios_updated_at
-BEFORE UPDATE ON prontuarios
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_prontuarios_updated_at ON prontuarios;
+CREATE TRIGGER trg_prontuarios_updated_at BEFORE UPDATE ON prontuarios FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

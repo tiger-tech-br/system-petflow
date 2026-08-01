@@ -56,6 +56,14 @@ const agendamentoValidation = [
 
     body("funcionarioId")
 
+        .optional({
+
+            nullable: true,
+
+            checkFalsy: true
+
+        })
+
         .isUUID()
 
         .withMessage("Funcionário inválido."),

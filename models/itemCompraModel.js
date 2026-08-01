@@ -77,11 +77,11 @@ const ItemCompraModel = {
 
         const valores = [
 
-            dados.compra_id,
-            dados.empresa_id,
-            dados.produto_id,
+            dados.compra_id || dados.compraId,
+            dados.empresa_id || dados.empresaId,
+            dados.produto_id || dados.produtoId,
             dados.quantidade,
-            dados.valor_unitario,
+            dados.valor_unitario || dados.valorUnitario,
             dados.subtotal
 
         ];
@@ -111,9 +111,9 @@ const ItemCompraModel = {
 
         const valores = [
 
-            dados.produto_id,
+            dados.produto_id || dados.produtoId,
             dados.quantidade,
-            dados.valor_unitario,
+            dados.valor_unitario || dados.valorUnitario,
             dados.subtotal,
             id,
             empresaId

@@ -58,17 +58,16 @@ CREATE TABLE IF NOT EXISTS itens_compra (
    ÍNDICES
 ========================================================== */
 
-CREATE INDEX idx_itens_compra_compra
+CREATE INDEX IF NOT EXISTS idx_itens_compra_compra
 ON itens_compra(compra_id);
 
-CREATE INDEX idx_itens_compra_produto
+CREATE INDEX IF NOT EXISTS idx_itens_compra_produto
 ON itens_compra(produto_id);
 
 /* ==========================================================
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_itens_compra_updated_at
-BEFORE UPDATE ON itens_compra
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_itens_compra_updated_at ON itens_compra;
+CREATE TRIGGER trg_itens_compra_updated_at BEFORE UPDATE ON itens_compra FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

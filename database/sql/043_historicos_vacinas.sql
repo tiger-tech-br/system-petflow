@@ -81,29 +81,28 @@ CREATE TABLE IF NOT EXISTS historico_vacinas (
    ÍNDICES
 ========================================================== */
 
-CREATE INDEX idx_historico_vacinas_pet
+CREATE INDEX IF NOT EXISTS idx_historico_vacinas_pet
 ON historico_vacinas(pet_id);
 
-CREATE INDEX idx_historico_vacinas_vacina
+CREATE INDEX IF NOT EXISTS idx_historico_vacinas_vacina
 ON historico_vacinas(vacina_id);
 
-CREATE INDEX idx_historico_vacinas_consulta
+CREATE INDEX IF NOT EXISTS idx_historico_vacinas_consulta
 ON historico_vacinas(consulta_id);
 
-CREATE INDEX idx_historico_vacinas_usuario
+CREATE INDEX IF NOT EXISTS idx_historico_vacinas_usuario
 ON historico_vacinas(usuario_id);
 
-CREATE INDEX idx_historico_vacinas_data
+CREATE INDEX IF NOT EXISTS idx_historico_vacinas_data
 ON historico_vacinas(data_aplicacao);
 
-CREATE INDEX idx_historico_vacinas_proxima_dose
+CREATE INDEX IF NOT EXISTS idx_historico_vacinas_proxima_dose
 ON historico_vacinas(proxima_dose);
 
 /* ==========================================================
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_historico_vacinas_updated_at
-BEFORE UPDATE ON historico_vacinas
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_historico_vacinas_updated_at ON historico_vacinas;
+CREATE TRIGGER trg_historico_vacinas_updated_at BEFORE UPDATE ON historico_vacinas FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

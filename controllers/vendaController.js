@@ -90,6 +90,7 @@ class VendaController {
                 clienteId,
                 usuarioId,
                 formaPagamento,
+                status,
                 desconto = 0,
                 acrescimo = 0,
                 observacoes,
@@ -118,6 +119,8 @@ class VendaController {
                     usuario_id: usuarioId,
 
                     forma_pagamento: formaPagamento,
+
+                    status,
 
                     desconto,
 

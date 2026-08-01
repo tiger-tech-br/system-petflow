@@ -76,32 +76,31 @@ CREATE TABLE IF NOT EXISTS agendamentos (
    ÍNDICES
 ========================================================== */
 
-CREATE INDEX idx_agendamentos_cliente
+CREATE INDEX IF NOT EXISTS idx_agendamentos_cliente
 ON agendamentos(cliente_id);
 
-CREATE INDEX idx_agendamentos_pet
+CREATE INDEX IF NOT EXISTS idx_agendamentos_pet
 ON agendamentos(pet_id);
 
-CREATE INDEX idx_agendamentos_servico
+CREATE INDEX IF NOT EXISTS idx_agendamentos_servico
 ON agendamentos(servico_id);
 
-CREATE INDEX idx_agendamentos_usuario
+CREATE INDEX IF NOT EXISTS idx_agendamentos_usuario
 ON agendamentos(usuario_id);
 
-CREATE INDEX idx_agendamentos_data
+CREATE INDEX IF NOT EXISTS idx_agendamentos_data
 ON agendamentos(data_agendamento);
 
-CREATE INDEX idx_agendamentos_status
+CREATE INDEX IF NOT EXISTS idx_agendamentos_status
 ON agendamentos(status);
 
-CREATE INDEX idx_agendamentos_data_horario
+CREATE INDEX IF NOT EXISTS idx_agendamentos_data_horario
 ON agendamentos(data_agendamento, horario);
 
 /* ==========================================================
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_agendamentos_updated_at
-BEFORE UPDATE ON agendamentos
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_agendamentos_updated_at ON agendamentos;
+CREATE TRIGGER trg_agendamentos_updated_at BEFORE UPDATE ON agendamentos FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

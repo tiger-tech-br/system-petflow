@@ -56,6 +56,10 @@ async function transaction(callback) {
 
 }
 
+async function connect() {
+    return pool.connect();
+}
+
 /* ==================================================
    EXPORTAÇÃO
 ================================================== */
@@ -64,6 +68,8 @@ module.exports = {
 
     query,
 
-    transaction
+    transaction,
+
+    connect
 
 };

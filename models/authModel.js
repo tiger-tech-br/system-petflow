@@ -19,7 +19,7 @@ async function findByEmail(email) {
 
                 id,
 
-                NULL AS empresa_id,
+                COALESCE(empresa_id, get_petflow_empresa_id()) AS empresa_id,
 
                 nome,
 
@@ -59,7 +59,7 @@ async function findById(id) {
 
                 id,
 
-                NULL AS empresa_id,
+                COALESCE(empresa_id, get_petflow_empresa_id()) AS empresa_id,
 
                 nome,
 

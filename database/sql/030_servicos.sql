@@ -38,7 +38,6 @@ CREATE TABLE IF NOT EXISTS servicos (
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_servicos_updated_at
-BEFORE UPDATE ON servicos
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_servicos_updated_at ON servicos;
+CREATE TRIGGER trg_servicos_updated_at BEFORE UPDATE ON servicos FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

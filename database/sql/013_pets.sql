@@ -75,30 +75,42 @@ CREATE TABLE IF NOT EXISTS pets (
         )
 );
 
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS raca VARCHAR(100);
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS sexo VARCHAR(10);
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS data_nascimento DATE;
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS peso DECIMAL(5,2);
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS cor VARCHAR(60);
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS porte VARCHAR(15);
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS castrado BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS microchip VARCHAR(50);
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS alergias TEXT;
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS observacoes TEXT;
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS foto TEXT;
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS ativo BOOLEAN NOT NULL DEFAULT TRUE;
+
 /* ==========================================================
    ÍNDICES
 ========================================================== */
 
-CREATE INDEX idx_pets_cliente
+CREATE INDEX IF NOT EXISTS idx_pets_cliente
 ON pets(cliente_id);
 
-CREATE INDEX idx_pets_nome
+CREATE INDEX IF NOT EXISTS idx_pets_nome
 ON pets(nome);
 
-CREATE INDEX idx_pets_especie
+CREATE INDEX IF NOT EXISTS idx_pets_especie
 ON pets(especie);
 
-CREATE INDEX idx_pets_raca
+CREATE INDEX IF NOT EXISTS idx_pets_raca
 ON pets(raca);
 
-CREATE INDEX idx_pets_porte
+CREATE INDEX IF NOT EXISTS idx_pets_porte
 ON pets(porte);
 
 /* ==========================================================
    TRIGGER
 ========================================================== */
 
-CREATE TRIGGER trg_pets_updated_at
-BEFORE UPDATE ON pets
-FOR EACH ROW
+DROP TRIGGER IF EXISTS trg_pets_updated_at ON pets;
+CREATE TRIGGER trg_pets_updated_at BEFORE UPDATE ON pets FOR EACH ROW
 EXECUTE FUNCTION atualizar_updated_at();

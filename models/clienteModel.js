@@ -15,6 +15,7 @@ async function findAll() {
                 cidade,
                 estado,
                 ativo,
+                ativo AS status,
                 created_at,
                 updated_at
             FROM clientes

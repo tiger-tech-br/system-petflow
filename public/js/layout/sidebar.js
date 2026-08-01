@@ -9,7 +9,7 @@
         ["agendamentos", "/admin/pages/agendamentos/agendamentos.html", "fa-calendar-days", "Agendamentos"],
         ["produtos", "/admin/pages/produtos/produtos.html", "fa-box", "Produtos"],
         ["estoque", "/admin/pages/estoque/estoque.html", "fa-boxes-stacked", "Estoque"],
-        ["vendas", "/admin/pages/vendas/vendas.html", "fa-cart-shopping", "Vendas"],
+        ["vendas", "/admin/pages/vendas/vendas.html", "fa-box-open", "Pedidos"],
         ["financeiro", "/admin/pages/financeiro/financeiro.html", "fa-wallet", "Financeiro"],
         ["configuracoes", "/admin/pages/configuracoes/configuracoes.html", "fa-gear", "Configurações"]
     ];
