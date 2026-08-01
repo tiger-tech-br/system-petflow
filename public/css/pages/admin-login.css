@@ -1,0 +1,151 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background:
+        radial-gradient(circle at 18% 18%, rgba(247, 201, 72, .30), transparent 22rem),
+        radial-gradient(circle at 82% 20%, rgba(4, 118, 109, .22), transparent 24rem),
+        linear-gradient(135deg, #f7fbfa 0%, #edf6f4 58%, #fff8df 100%);
+    color: #14242e;
+    font-family: Inter, Arial, sans-serif;
+}
+
+.login-container {
+    width: min(100%, 1080px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
+    align-items: stretch;
+    overflow: hidden;
+    border: 1px solid rgba(220, 230, 234, .92);
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 28px 80px rgba(20, 36, 46, .16);
+}
+
+.login-container::before {
+    content: "PetFlow";
+    display: flex;
+    align-items: flex-end;
+    min-height: 620px;
+    padding: 42px;
+    color: #ffffff;
+    background:
+        linear-gradient(180deg, rgba(16, 33, 43, .06), rgba(16, 33, 43, .68)),
+        url("/images/hero/price-racao-premium.jpg") center / cover;
+    font-size: clamp(42px, 6vw, 72px);
+    font-weight: 900;
+    letter-spacing: 0;
+}
+
+.login-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(28px, 5vw, 46px);
+}
+
+.login-header {
+    margin-bottom: 26px;
+    text-align: left;
+}
+
+.login-header img {
+    width: 82px;
+    height: 82px;
+    object-fit: contain;
+    margin-bottom: 14px;
+    filter: drop-shadow(0 14px 22px rgba(4, 118, 109, .20));
+}
+
+.login-header h1 {
+    margin: 0 0 8px;
+    font-size: clamp(28px, 4vw, 38px);
+    line-height: 1.05;
+}
+
+.login-header p {
+    margin: 0;
+    color: #667584;
+    line-height: 1.6;
+}
+
+.login-form {
+    display: grid;
+    gap: 16px;
+}
+
+.form-group {
+    display: grid;
+    gap: 8px;
+}
+
+.form-group label,
+.form-check label {
+    color: #14242e;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.form-control {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 14px;
+    border: 1px solid #dce6ea;
+    border-radius: 8px;
+    outline: 0;
+    color: #14242e;
+    background: #ffffff;
+    font: inherit;
+}
+
+.form-control:focus {
+    border-color: rgba(4, 118, 109, .58);
+    box-shadow: 0 0 0 4px rgba(4, 118, 109, .11);
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.btn {
+    width: 100%;
+    min-height: 50px;
+    border: 1px solid #04766d;
+    border-radius: 8px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #04766d, #13a594);
+    font: inherit;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.login-message {
+    min-height: 22px;
+    color: #ef5b45;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+@media (max-width: 820px) {
+    .login-container {
+        grid-template-columns: 1fr;
+    }
+
+    .login-container::before {
+        min-height: 210px;
+        align-items: flex-end;
+        padding: 24px;
+    }
+}

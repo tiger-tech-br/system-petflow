@@ -1,21 +1,270 @@
+:root {
+    --pf-ink: #10212b;
+    --pf-muted: #647481;
+    --pf-line: #dbe7ea;
+    --pf-soft: #f3faf9;
+    --pf-panel: #ffffff;
+    --pf-teal: #04766d;
+    --pf-teal-dark: #045a54;
+    --pf-coral: #ff6b4a;
+    --pf-yellow: #f8c846;
+    --pf-blue: #275efe;
+    --pf-shadow: 0 22px 60px rgba(16, 33, 43, .12);
+}
+
+body {
+    background:
+        radial-gradient(circle at top left, rgba(248, 200, 70, .22), transparent 30rem),
+        linear-gradient(180deg, #f8fcfb 0%, #ffffff 36%, #f4f8fb 100%);
+    color: var(--pf-ink);
+    font-family: "Poppins", Arial, sans-serif;
+}
+
+.container {
+    width: min(1180px, calc(100% - 32px));
+    margin-inline: auto;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: rgba(255, 255, 255, .88);
+    border-bottom: 1px solid rgba(219, 231, 234, .82);
+    box-shadow: 0 14px 40px rgba(16, 33, 43, .06);
+    backdrop-filter: blur(18px);
+}
+
+.header .container {
+    min-height: 82px;
+    display: grid;
+    grid-template-columns: minmax(168px, auto) minmax(360px, 420px) minmax(300px, 1fr) minmax(168px, auto);
+    gap: 16px;
+    align-items: center;
+}
+
+.logo {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    font-weight: 800;
+    color: var(--pf-ink);
+    white-space: nowrap;
+}
+
 .logo img {
-    width: 64px;
-    height: 64px;
+    width: 58px;
+    height: 58px;
     object-fit: contain;
+    filter: drop-shadow(0 10px 16px rgba(4, 118, 109, .18));
+}
+
+.logo-text {
+    font-size: 1.35rem;
+    letter-spacing: 0;
+}
+
+.search-form {
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid var(--pf-line);
+    border-radius: 999px;
+    box-shadow: 0 10px 30px rgba(16, 33, 43, .06);
+}
+
+.search-form .form-control {
+    width: 100%;
+    min-width: 0;
+    height: 46px;
+    min-height: 46px;
+    padding: 0 16px 0 18px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    line-height: 46px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search-form .form-control::placeholder {
+    color: #667584;
+    opacity: 1;
+}
+
+.search-button {
+    width: 46px;
+    min-width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    color: #ffffff;
+    background: var(--pf-teal);
+    font-size: 0;
+}
+
+.search-button::before {
+    content: "⌕";
+    font-size: 22px;
+    line-height: 1;
+}
+
+.menu-list,
+.footer-links ul,
+.footer-contact ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.menu-list {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+}
+
+.menu-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 0 13px;
+    border-radius: 999px;
+    color: #425460;
+    font-size: .92rem;
+    font-weight: 700;
+}
+
+.menu-link:hover,
+.menu-link.active {
+    color: var(--pf-teal);
+    background: #e6f6f3;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    min-width: 168px;
+    white-space: nowrap;
+}
+
+.header-actions > .btn {
+    min-width: 88px;
+    flex: 0 0 auto;
+    padding-inline: 18px;
+    box-shadow: 0 14px 28px rgba(4, 118, 109, .18);
+}
+
+.icon-badge {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--pf-line);
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--pf-ink);
+    font-size: 0;
+}
+
+.icon-badge[aria-label="Favoritos"]::before {
+    content: "♡";
+    font-size: 22px;
+}
+
+.icon-badge[aria-label="Carrinho"]::before {
+    content: "🛒";
+    font-size: 18px;
+}
+
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 20px;
+    height: 20px;
+    display: grid;
+    place-items: center;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--pf-coral);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.menu-toggle {
+    display: none;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: 999px;
+    border: 1px solid var(--pf-line);
+    color: var(--pf-ink);
+    background: #ffffff;
+    font-weight: 800;
+    box-shadow: 0 10px 26px rgba(16, 33, 43, .07);
+}
+
+.btn-primary {
+    border-color: var(--pf-teal);
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--pf-teal), #12a594);
+}
+
+.btn-outline {
+    border-color: rgba(4, 118, 109, .25);
+    color: var(--pf-teal);
+    background: #ffffff;
 }
 
 .hero.carousel {
+    position: relative;
     min-height: auto;
+    padding: 0;
+    overflow: hidden;
     background: #ffffff;
 }
 
 .carousel-track {
     display: flex;
-    transition: transform .45s ease;
+    align-items: stretch;
+    transition: transform .55s cubic-bezier(.2, .8, .2, 1);
 }
 
 .carousel-item {
+    position: relative;
     min-width: 100%;
+    overflow: hidden;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .hero-container {
@@ -39,38 +288,65 @@
 
 .hero-image {
     width: 100%;
+    background: #eaf5f2;
+    background-position: center;
+    background-size: cover;
+}
+
+.carousel-item:nth-child(1) .hero-image {
+    background-image: url("/images/hero/price-racao-premium.jpg");
+}
+
+.carousel-item:nth-child(2) .hero-image {
+    background-image: url("/images/hero/price-kit-gatos.jpg");
+}
+
+.carousel-item:nth-child(3) .hero-image {
+    background-image: url("/images/hero/price-banho-tosa.jpg");
+}
+
+.carousel-item:nth-child(4) .hero-image {
+    background-image: url("/images/hero/price-acessorios-fred10.jpg");
 }
 
 .hero-image img {
     display: block;
     width: 100%;
     max-width: none;
-    height: min(64vw, 620px);
-    min-height: 320px;
+    height: min(56vw, 640px);
+    min-height: 380px;
     object-fit: cover;
+    object-position: center;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .carousel-control {
     position: absolute;
     top: 50%;
     z-index: 5;
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     border: 0;
-    border-radius: 50%;
-    background: rgba(15, 23, 42, .72);
+    border-radius: 999px;
+    background: rgba(16, 33, 43, .72);
     color: #ffffff;
-    font-size: 24px;
+    font-size: 26px;
     cursor: pointer;
     transform: translateY(-50%);
+    box-shadow: 0 18px 38px rgba(16, 33, 43, .24);
+}
+
+.carousel-control:hover {
+    background: var(--pf-teal);
 }
 
 .carousel-control.prev {
-    left: 20px;
+    left: 22px;
 }
 
 .carousel-control.next {
-    right: 20px;
+    right: 22px;
 }
 
 .carousel-indicators {
@@ -80,6 +356,10 @@
     z-index: 5;
     display: flex;
     gap: 8px;
+    padding: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .66);
+    backdrop-filter: blur(12px);
     transform: translateX(-50%);
 }
 
@@ -88,24 +368,484 @@
     height: 10px;
     border: 0;
     border-radius: 999px;
-    background: rgba(255, 255, 255, .7);
+    background: rgba(16, 33, 43, .35);
     cursor: pointer;
 }
 
 .carousel-indicator.active {
-    width: 28px;
-    background: #0f766e;
+    width: 30px;
+    background: var(--pf-teal);
 }
 
-@media (max-width: 768px) {
+.section-header {
+    width: min(760px, 100%);
+    margin: 0 auto 34px;
+    text-align: center;
+}
+
+.section-subtitle,
+.hero-subtitle {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    color: var(--pf-teal);
+    background: #e6f6f3;
+    font-size: .78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.section-header h2,
+.hero-title {
+    margin: 12px 0 10px;
+    color: var(--pf-ink);
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    line-height: 1.05;
+    letter-spacing: 0;
+}
+
+.section-header p,
+.hero-description {
+    margin: 0;
+    color: var(--pf-muted);
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.categories,
+.products,
+.services,
+.benefits,
+.testimonials,
+.newsletter {
+    padding: 74px 0;
+}
+
+.categories-grid,
+.products-grid,
+.services-grid,
+.benefits-grid,
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.category-card,
+.product-card,
+.service-card,
+.benefit-card,
+.testimonial-card {
+    overflow: hidden;
+    border: 1px solid rgba(219, 231, 234, .9);
+    border-radius: 8px;
+    background: var(--pf-panel);
+    box-shadow: 0 12px 34px rgba(16, 33, 43, .07);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.category-card:hover,
+.product-card:hover,
+.service-card:hover,
+.benefit-card:hover,
+.testimonial-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--pf-shadow);
+}
+
+.category-card img,
+.service-card img,
+.product-image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: #edf7f5;
+}
+
+.category-card h3,
+.service-card h3,
+.benefit-card h3,
+.product-title {
+    margin: 16px 18px 8px;
+    color: var(--pf-ink);
+    font-size: 1.12rem;
+}
+
+.category-card p,
+.service-card p,
+.benefit-card p,
+.product-description {
+    margin: 0 18px 18px;
+    color: var(--pf-muted);
+    line-height: 1.65;
+}
+
+.product-content {
+    padding: 18px;
+}
+
+.product-content .product-title,
+.product-content .product-description {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.product-category {
+    color: var(--pf-teal);
+    font-size: .78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.product-price {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 14px 0;
+}
+
+.price-current {
+    color: var(--pf-teal-dark);
+    font-size: 1.35rem;
+    font-weight: 900;
+}
+
+.price-old {
+    color: #9aa8b2;
+    text-decoration: line-through;
+}
+
+.product-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.benefits {
+    background: linear-gradient(135deg, #e8f8f5, #fff7df);
+}
+
+.benefit-card {
+    position: relative;
+    padding: 26px;
+    background:
+        linear-gradient(180deg, #ffffff 0%, #fbfefd 100%);
+}
+
+.benefit-icon {
+    width: 52px;
+    height: 52px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 8px;
+    color: var(--pf-teal);
+    background: linear-gradient(135deg, #e6f6f3, #fff7df);
+    box-shadow: inset 0 0 0 1px rgba(4, 118, 109, .12);
+    font-size: 21px;
+}
+
+.benefit-icon i {
+    line-height: 1;
+}
+
+.benefit-card h3,
+.benefit-card p {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.testimonial-card {
+    padding: 22px;
+}
+
+.testimonial-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.testimonial-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    object-fit: cover;
+}
+
+.testimonial-card h3 {
+    margin: 0;
+}
+
+.testimonial-card span,
+.testimonial-card p {
+    color: var(--pf-muted);
+}
+
+.newsletter {
+    position: relative;
+    overflow: hidden;
+    padding: 86px 0;
+    color: #ffffff;
+    background:
+        radial-gradient(circle at 88% 20%, rgba(248, 200, 70, .36), transparent 18rem),
+        linear-gradient(135deg, #10212b 0%, var(--pf-teal-dark) 46%, var(--pf-teal) 100%);
+}
+
+.newsletter::before {
+    content: "";
+    position: absolute;
+    inset: 22px auto auto 4%;
+    width: 180px;
+    height: 180px;
+    border: 1px solid rgba(255, 255, 255, .14);
+    border-radius: 50%;
+}
+
+.newsletter::after {
+    content: "Fred10";
+    position: absolute;
+    right: max(28px, 7vw);
+    bottom: 26px;
+    color: rgba(255, 255, 255, .10);
+    font-size: clamp(48px, 9vw, 128px);
+    font-weight: 900;
+    line-height: 1;
+}
+
+.newsletter-content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
+    gap: clamp(28px, 6vw, 72px);
+    align-items: center;
+}
+
+.newsletter h2,
+.newsletter p {
+    color: #ffffff;
+}
+
+.newsletter .section-subtitle {
+    color: #10212b;
+    background: var(--pf-yellow);
+}
+
+.newsletter h2 {
+    max-width: 680px;
+    margin: 16px 0 14px;
+    font-size: clamp(2rem, 4vw, 4rem);
+    line-height: 1;
+    letter-spacing: 0;
+}
+
+.newsletter p {
+    max-width: 620px;
+    color: rgba(255, 255, 255, .78);
+    font-size: 1.08rem;
+    line-height: 1.8;
+}
+
+.newsletter-text::after {
+    content: "Promoções exclusivas • lançamentos • dicas de cuidado";
+    display: inline-flex;
+    margin-top: 24px;
+    padding: 10px 14px;
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 999px;
+    color: rgba(255, 255, 255, .86);
+    background: rgba(255, 255, 255, .08);
+    font-size: .9rem;
+    font-weight: 800;
+}
+
+.newsletter-form {
+    display: grid;
+    gap: 14px;
+    padding: 22px;
+    border: 1px solid rgba(255, 255, 255, .26);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .14);
+    box-shadow: 0 24px 60px rgba(16, 33, 43, .28);
+    backdrop-filter: blur(18px);
+}
+
+.newsletter-form .form-group {
+    display: grid;
+    gap: 7px;
+}
+
+.newsletter-form label {
+    color: rgba(255, 255, 255, .92);
+    font-size: .86rem;
+    font-weight: 800;
+}
+
+.newsletter-form input {
+    width: 100%;
+    min-height: 50px;
+    padding: 0 16px;
+    border: 1px solid rgba(255, 255, 255, .26);
+    border-radius: 8px;
+    color: var(--pf-ink);
+    background: rgba(255, 255, 255, .96);
+    outline: 0;
+}
+
+.newsletter-form input:focus {
+    border-color: var(--pf-yellow);
+    box-shadow: 0 0 0 4px rgba(248, 200, 70, .20);
+}
+
+.newsletter-form .btn {
+    width: 100%;
+    min-height: 52px;
+    margin-top: 2px;
+    border-color: var(--pf-yellow);
+    color: #10212b;
+    background: linear-gradient(135deg, var(--pf-yellow), #ffe18a);
+    box-shadow: 0 18px 34px rgba(248, 200, 70, .22);
+}
+
+.footer {
+    padding: 54px 0 22px;
+    background: #10212b;
+    color: rgba(255, 255, 255, .78);
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 1.5fr repeat(3, 1fr);
+    gap: 28px;
+}
+
+.footer h3,
+.footer h4,
+.footer a {
+    color: #ffffff;
+}
+
+.footer-bottom {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, .12);
+}
+
+@media (max-width: 1060px) {
+    .header .container {
+        grid-template-columns: minmax(160px, auto) 1fr minmax(150px, auto);
+    }
+
+    .search-form {
+        grid-column: 1 / -1;
+        order: 2;
+    }
+}
+
+@media (max-width: 820px) {
+    .header .container {
+        min-height: auto;
+        padding: 12px 0;
+    }
+
+    .menu {
+        grid-column: 1 / -1;
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .menu-list {
+        justify-content: flex-start;
+        min-width: max-content;
+    }
+
+    .header-actions .btn {
+        display: inline-flex;
+    }
+
     .hero-image img {
         height: 420px;
-        object-position: center;
+        min-height: 420px;
+    }
+
+    .categories-grid,
+    .products-grid,
+    .services-grid,
+    .benefits-grid,
+    .testimonials-grid,
+    .newsletter-content,
+    .footer-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .container {
+        width: min(100% - 22px, 1180px);
+    }
+
+    .header .container {
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+    }
+
+    .logo-text {
+        font-size: 1.08rem;
+    }
+
+    .logo img {
+        width: 48px;
+        height: 48px;
+    }
+
+    .header-actions {
+        gap: 6px;
+    }
+
+    .icon-badge {
+        width: 38px;
+        height: 38px;
     }
 
     .carousel-control {
         width: 38px;
         height: 38px;
         font-size: 20px;
+    }
+
+    .carousel-control.prev {
+        left: 10px;
+    }
+
+    .carousel-control.next {
+        right: 10px;
+    }
+
+    .hero-image img {
+        height: 380px;
+        min-height: 380px;
+    }
+
+    .categories,
+    .products,
+    .services,
+    .benefits,
+    .testimonials,
+    .newsletter {
+        padding: 52px 0;
+    }
+
+    .newsletter-form,
+    .product-actions {
+        flex-direction: column;
+        border-radius: 8px;
+    }
+
+    .newsletter-text::after {
+        align-items: flex-start;
+        border-radius: 8px;
+        line-height: 1.5;
     }
 }
