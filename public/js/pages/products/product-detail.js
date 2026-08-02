@@ -86,8 +86,7 @@ function setupCartButton() {
 }
 
 function productSlug(product) {
-    const base = product.sku || product.nome || product.id;
-    return slugify(base);
+    return slugify(product.sku || product.nome || product.id);
 }
 
 function getProductId(product) {

@@ -9,13 +9,13 @@ const CATEGORY_CONFIG = {
         title: "Produtos para cães",
         description: "Rações, petiscos, acessórios e cuidados selecionados para cachorros.",
         image: "/images/categories/dogs.jpg",
-        keywords: ["cao", "caes", "cachorro", "canis", "bifinho", "coleira"]
+        keywords: ["cao", "caes", "cachorro", "canis", "bifinho", "coleira", "adultos"]
     },
     gatos: {
         title: "Produtos para gatos",
         description: "Itens escolhidos para gatos, com foco em alimentação, conforto e rotina.",
         image: "/images/categories/cats.jpg",
-        keywords: ["gato", "gatos", "felis"]
+        keywords: ["gato", "gatos", "felis", "castrados"]
     },
     aves: {
         title: "Produtos para aves",
@@ -33,17 +33,20 @@ const CATEGORY_CONFIG = {
         title: "Produtos para roedores",
         description: "Produtos para hamster, porquinho-da-índia, coelhos e pequenos pets.",
         image: "/images/categories/rodents.jpg",
-        keywords: ["roedor", "roedores", "hamster", "coelho", "porquinho"]
+        keywords: ["roedor", "roedores", "hamster", "coelho", "porquinho"],
+        fallbackCategories: ["Petiscos", "Acessórios", "Higiene"]
     },
     acessorios: {
         title: "Acessórios para pets",
         description: "Coleiras, brinquedos, camas, transporte e acessórios para a rotina do pet.",
         image: "/images/categories/accessories.jpg",
-        keywords: ["acessorio", "acessorios", "coleira", "brinquedo", "cama", "mordedor"]
+        keywords: ["acessorio", "acessorios", "coleira", "brinquedo", "cama", "mordedor"],
+        fallbackCategories: ["Acessórios"]
     }
 };
 
 let allProducts = [];
+let publicFavorites = new Set(JSON.parse(localStorage.getItem("petflow_public_favorites") || "[]"));
 let currentSlug = "caes";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -115,10 +118,17 @@ function renderCategoryHeader(config) {
 }
 
 function filterByPetCategory(products, config) {
-    return products.filter(product => {
+    const matches = products.filter(product => {
         const haystack = productHaystack(product);
         return config.keywords.some(keyword => haystack.includes(keyword));
     });
+
+    if (matches.length || !config.fallbackCategories?.length) {
+        return matches;
+    }
+
+    const allowed = config.fallbackCategories.map(normalize);
+    return products.filter(product => allowed.includes(normalize(product.categoria)));
 }
 
 function filterBySearch(products, query) {
@@ -154,6 +164,7 @@ function renderProducts(products, config, query = "") {
         const id = String(product.id || product.sku || product.nome);
         const href = `/produtos/${productSlug(product)}`;
         const inCart = Boolean(readCart()[id]);
+        const favorite = publicFavorites.has(id);
 
         return `
             <article class="product-card" data-product-id="${escapeHtml(id)}">
@@ -166,10 +177,16 @@ function renderProducts(products, config, query = "") {
                     <p class="product-description">${escapeHtml(product.descricao || "Produto selecionado para o seu pet.")}</p>
                     <div class="product-footer">
                         <strong class="product-price">${currency(product.preco)}</strong>
-                        <button class="cart-action ${inCart ? "is-active" : ""}" type="button" data-add-cart="${escapeHtml(id)}">
-                            <i class="fa-solid ${inCart ? "fa-check" : "fa-plus"}"></i>
-                            <span>${inCart ? "Na sacola" : "Adicionar à sacola"}</span>
-                        </button>
+                        <div class="product-actions">
+                            <button class="cart-action ${inCart ? "is-active" : ""}" type="button" data-add-cart="${escapeHtml(id)}">
+                                <i class="fa-solid ${inCart ? "fa-check" : "fa-plus"}"></i>
+                                <span>${inCart ? "Na sacola" : "Adicionar à sacola"}</span>
+                            </button>
+                            <button class="cart-action favorite ${favorite ? "is-active" : ""}" type="button" data-favorite-product="${escapeHtml(id)}" aria-label="Favoritar ${escapeHtml(product.nome)}">
+                                <i class="fa-${favorite ? "solid" : "regular"} fa-heart"></i>
+                                <span>${favorite ? "Favorito" : "Favoritar"}</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </article>
@@ -206,6 +223,21 @@ function bindCartButtons() {
 
             button.classList.add("is-active");
             button.innerHTML = `<i class="fa-solid fa-check"></i><span>Na sacola</span>`;
+        });
+    });
+
+    document.querySelectorAll("[data-favorite-product]").forEach(button => {
+        button.addEventListener("click", () => {
+            const id = button.dataset.favoriteProduct;
+
+            if (publicFavorites.has(id)) {
+                publicFavorites.delete(id);
+            } else {
+                publicFavorites.add(id);
+            }
+
+            localStorage.setItem("petflow_public_favorites", JSON.stringify([...publicFavorites]));
+            applyFilters();
         });
     });
 }

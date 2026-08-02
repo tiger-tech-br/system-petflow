@@ -730,7 +730,8 @@ body {
     text-align: center;
 }
 
-.checkout-overlay {
+.checkout-overlay,
+.favorites-overlay {
     position: fixed;
     inset: 0;
     z-index: 120;
@@ -739,11 +740,13 @@ body {
     background: rgba(16, 33, 43, .46);
 }
 
-.checkout-overlay[hidden] {
+.checkout-overlay[hidden],
+.favorites-overlay[hidden] {
     display: none;
 }
 
-.checkout-panel {
+.checkout-panel,
+.favorites-panel {
     width: min(520px, 100%);
     height: 100vh;
     overflow-y: auto;
@@ -778,12 +781,14 @@ body {
 }
 
 .checkout-items,
+.favorites-items,
 .checkout-form {
     display: grid;
     gap: 12px;
 }
 
-.checkout-item {
+.checkout-item,
+.favorite-item {
     display: grid;
     grid-template-columns: 64px minmax(0, 1fr) 72px 42px;
     align-items: center;
@@ -794,7 +799,8 @@ body {
     background: #f8fcfb;
 }
 
-.checkout-item img {
+.checkout-item img,
+.favorite-item img {
     width: 64px;
     height: 64px;
     border-radius: 8px;
@@ -802,25 +808,36 @@ body {
 }
 
 .checkout-item strong,
-.checkout-item span {
+.checkout-item span,
+.favorite-item strong,
+.favorite-item span {
     display: block;
 }
 
-.checkout-item strong {
+.checkout-item strong,
+.favorite-item strong {
     color: var(--pf-ink);
     font-size: .92rem;
 }
 
-.checkout-item span {
+.checkout-item span,
+.favorite-item span {
     margin-top: 4px;
     color: var(--pf-teal);
     font-weight: 900;
 }
 
-.checkout-item .icon-badge {
+.checkout-item .icon-badge,
+.favorite-item .icon-badge {
     width: 40px;
     height: 40px;
     color: var(--pf-coral);
+}
+
+.favorite-item .cart-action {
+    min-height: 40px;
+    padding: 0 10px;
+    white-space: nowrap;
 }
 
 .checkout-form label {
@@ -932,26 +949,35 @@ body {
     line-height: 1.45;
 }
 
-body.checkout-open {
+body.checkout-open,
+body.favorites-open {
     overflow: hidden;
 }
 
 @media (max-width: 720px) {
-    .checkout-panel {
+    .checkout-panel,
+    .favorites-panel {
         padding: 16px;
     }
 
-    .checkout-item {
+    .checkout-item,
+    .favorite-item {
         grid-template-columns: 56px minmax(0, 1fr) 62px;
     }
 
-    .checkout-item img {
+    .checkout-item img,
+    .favorite-item img {
         width: 56px;
         height: 56px;
     }
 
-    .checkout-item .icon-badge {
+    .checkout-item .icon-badge,
+    .favorite-item .icon-badge {
         grid-column: 3;
+    }
+
+    .favorite-item .cart-action {
+        grid-column: 2 / 4;
     }
 
     .checkout-grid {

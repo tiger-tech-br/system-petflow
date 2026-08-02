@@ -2,6 +2,10 @@
 
 const db = require("../database/connection");
 const VendaService = require("../services/vendaService");
+const {
+    sendOptionalEmail,
+    orderReceivedTemplate
+} = require("../services/emailService");
 
 async function criarPedido(request, response, next) {
     try {
@@ -21,6 +25,7 @@ async function criarPedido(request, response, next) {
         const empresaIdResult = await db.query("SELECT get_petflow_empresa_id() AS id");
         const empresaId = empresaIdResult.rows[0].id;
         const cliente = await getCliente(request.customer.id);
+        const itensDetalhados = await getItensDetalhados(itens);
 
         const pedido = await VendaService.finalizarVenda(
             empresaId,
@@ -39,6 +44,20 @@ async function criarPedido(request, response, next) {
                 valor_unitario: Number(item.valor_unitario || item.valorUnitario || 0)
             }))
         );
+
+        const emailTemplate = orderReceivedTemplate({
+            name: cliente.nome,
+            orderId: pedido.venda.id,
+            total: pedido.venda.valor_total,
+            items: itensDetalhados
+        });
+
+        sendOptionalEmail({
+            to: cliente.email,
+            subject: emailTemplate.subject,
+            html: emailTemplate.html,
+            text: emailTemplate.text
+        });
 
         return response.status(201).json({
             success: true,
@@ -80,6 +99,38 @@ async function getCliente(id) {
     }
 
     return rows[0];
+}
+
+async function getItensDetalhados(itens) {
+    const ids = itens
+        .map(item => item.produto_id || item.produtoId)
+        .filter(Boolean);
+
+    if (!ids.length) {
+        return [];
+    }
+
+    const { rows } = await db.query(
+        `
+            SELECT
+                id,
+                nome
+            FROM produtos
+            WHERE id = ANY($1::uuid[])
+        `,
+        [ids]
+    );
+
+    return itens.map(item => {
+        const produtoId = item.produto_id || item.produtoId;
+        const produto = rows.find(row => row.id === produtoId);
+
+        return {
+            nome: produto?.nome || "Produto",
+            quantidade: Number(item.quantidade || 1),
+            valor_unitario: Number(item.valor_unitario || item.valorUnitario || 0)
+        };
+    });
 }
 
 function montarObservacoes(cliente, observacoes) {

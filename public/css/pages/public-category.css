@@ -267,6 +267,12 @@ a {
     font-weight: 900;
 }
 
+.product-actions {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+}
+
 .cart-action {
     min-height: 40px;
     display: inline-flex;
@@ -284,8 +290,14 @@ a {
     cursor: pointer;
 }
 
+.cart-action.favorite {
+    color: var(--teal);
+    background: #e8f7f4;
+}
+
 .cart-action.is-active {
     background: #10212b;
+    color: #ffffff;
 }
 
 .empty-card {

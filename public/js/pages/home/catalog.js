@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadPublicServices();
     setupPublicSearch();
     setupCartCheckout();
+    setupFavoritesPanel();
     setupCustomerHeader();
 });
 
@@ -317,6 +318,7 @@ function persistPublicState() {
     localStorage.setItem("petflow_public_cart", JSON.stringify(publicCart));
     localStorage.setItem("petflow_public_favorites", JSON.stringify([...publicFavorites]));
     updateHeaderCounters();
+    renderFavoritesItems();
 }
 
 function updateHeaderCounters() {
@@ -327,10 +329,139 @@ function updateHeaderCounters() {
         link.classList.toggle("has-count", cartCount > 0);
     });
 
-    document.querySelectorAll("[aria-label='Favoritos']").forEach(link => {
+    document.querySelectorAll("[aria-label='Favoritos'], .menu-action-link[aria-label='Abrir favoritos']").forEach(link => {
         link.dataset.count = String(publicFavorites.size);
         link.classList.toggle("has-count", publicFavorites.size > 0);
     });
+}
+
+function setupFavoritesPanel() {
+    injectFavoritesPanel();
+
+    document.querySelectorAll("[aria-label='Favoritos'], .menu-action-link[aria-label='Abrir favoritos']").forEach(link => {
+        link.addEventListener("click", event => {
+            event.preventDefault();
+            openFavoritesPanel();
+        });
+    });
+
+    document.addEventListener("click", event => {
+        if (event.target.closest("[data-favorites-close]")) {
+            closeFavoritesPanel();
+        }
+
+        if (event.target.classList.contains("favorites-overlay")) {
+            closeFavoritesPanel();
+        }
+
+        const remove = event.target.closest("[data-favorite-remove]");
+        if (remove) {
+            publicFavorites.delete(remove.dataset.favoriteRemove);
+            persistPublicState();
+            renderProducts(currentVisibleProducts());
+        }
+
+        const addCart = event.target.closest("[data-favorite-add-cart]");
+        if (addCart) {
+            publicCart[addCart.dataset.favoriteAddCart] = 1;
+            persistPublicState();
+            renderProducts(currentVisibleProducts());
+        }
+    });
+}
+
+function injectFavoritesPanel() {
+    if (document.querySelector(".favorites-overlay")) {
+        return;
+    }
+
+    document.body.insertAdjacentHTML("beforeend", `
+        <div class="favorites-overlay" hidden>
+            <aside class="favorites-panel" role="dialog" aria-modal="true" aria-labelledby="favoritesTitle">
+                <header class="checkout-header">
+                    <div>
+                        <span>Favoritos</span>
+                        <h2 id="favoritesTitle">Produtos salvos</h2>
+                    </div>
+                    <button class="icon-badge" type="button" data-favorites-close aria-label="Fechar favoritos">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </header>
+                <div class="favorites-items" id="favoritesItems"></div>
+            </aside>
+        </div>
+    `);
+}
+
+function openFavoritesPanel() {
+    const overlay = document.querySelector(".favorites-overlay");
+
+    if (!overlay) {
+        return;
+    }
+
+    renderFavoritesItems();
+    overlay.hidden = false;
+    document.body.classList.add("favorites-open");
+}
+
+function closeFavoritesPanel() {
+    const overlay = document.querySelector(".favorites-overlay");
+
+    if (overlay) {
+        overlay.hidden = true;
+    }
+
+    document.body.classList.remove("favorites-open");
+}
+
+function renderFavoritesItems() {
+    const list = document.getElementById("favoritesItems");
+
+    if (!list) {
+        return;
+    }
+
+    const items = getFavoriteProducts();
+
+    if (!items.length) {
+        list.innerHTML = `
+            <div class="public-empty">
+                <strong>Nenhum favorito ainda.</strong>
+                <p>Toque no coração dos produtos para salvar o que gostou.</p>
+                <a class="btn btn-secondary" href="#products" data-favorites-close>Ver produtos</a>
+            </div>
+        `;
+        return;
+    }
+
+    list.innerHTML = items.map(product => {
+        const id = String(product.id || product.sku || product.nome);
+        const inCart = Boolean(publicCart[id]);
+
+        return `
+            <article class="favorite-item">
+                <img src="${escapeHtml(product.foto || "/images/products/petflow-prime-racao.jpg")}" alt="${escapeHtml(product.nome)}">
+                <div>
+                    <strong>${escapeHtml(product.nome)}</strong>
+                    <span>${currency(product.preco)}</span>
+                </div>
+                <button class="cart-action add ${inCart ? "is-active" : ""}" type="button" data-favorite-add-cart="${escapeHtml(id)}">
+                    <i class="fa-solid ${inCart ? "fa-check" : "fa-plus"}"></i>
+                    <span>${inCart ? "Na sacola" : "Adicionar à sacola"}</span>
+                </button>
+                <button class="icon-badge" type="button" data-favorite-remove="${escapeHtml(id)}" aria-label="Remover dos favoritos">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </article>
+        `;
+    }).join("");
+}
+
+function getFavoriteProducts() {
+    return [...publicFavorites]
+        .map(id => publicProducts.find(product => String(product.id || product.sku || product.nome) === String(id)))
+        .filter(Boolean);
 }
 
 function setupCartCheckout() {

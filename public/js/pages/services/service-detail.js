@@ -74,7 +74,6 @@ function renderService(service) {
 }
 
 async function loadCustomerPets() {
-    const notice = document.getElementById("serviceLoginNotice");
     const form = document.getElementById("serviceRequestForm");
     const loginLink = document.getElementById("serviceLoginLink");
     const token = getToken();
@@ -259,10 +258,10 @@ function setStatus(element, message) {
 }
 
 function escapeHtml(value) {
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }

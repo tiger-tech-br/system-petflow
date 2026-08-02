@@ -7,6 +7,8 @@ const db = require("../database/connection");
 const { JWT_SECRET, JWT_EXPIRES_IN, APP_URL } = require("../config/env");
 const {
     sendEmail,
+    sendOptionalEmail,
+    welcomeTemplate,
     passwordResetTemplate
 } = require("../services/emailService");
 
@@ -127,6 +129,14 @@ async function register(request, response, next) {
         );
 
         const profile = await getProfileById(clienteId);
+        const template = welcomeTemplate({ name: profile.nome });
+
+        sendOptionalEmail({
+            to: profile.email,
+            subject: template.subject,
+            html: template.html,
+            text: template.text
+        });
 
         return response.status(201).json({
             success: true,
