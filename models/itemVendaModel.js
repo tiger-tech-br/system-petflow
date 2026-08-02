@@ -1,6 +1,14 @@
 "use strict";
 
+/* ==================================================
+   DEPENDÊNCIAS
+================================================== */
+
 const db = require("../database/connection");
+
+/* ==================================================
+   MODEL
+================================================== */
 
 class ItemVendaModel {
 
@@ -12,27 +20,21 @@ class ItemVendaModel {
 
         const query = `
             SELECT
-
                 iv.*,
-
                 p.nome AS produto
-
             FROM itens_venda iv
-
+            INNER JOIN vendas v
+                ON v.id = iv.venda_id
             INNER JOIN produtos p
                 ON p.id = iv.produto_id
-
             WHERE iv.venda_id = $1
-              AND iv.empresa_id = $2
-
-            ORDER BY iv.id ASC;
+              AND v.empresa_id = $2
+            ORDER BY iv.created_at ASC;
         `;
 
         const { rows } = await db.query(query, [
-
             vendaId,
             empresaId
-
         ]);
 
         return rows;
@@ -46,21 +48,19 @@ class ItemVendaModel {
     static async buscarPorId(id, empresaId) {
 
         const query = `
-            SELECT *
-
-            FROM itens_venda
-
-            WHERE id = $1
-              AND empresa_id = $2
-
+            SELECT
+                iv.*
+            FROM itens_venda iv
+            INNER JOIN vendas v
+                ON v.id = iv.venda_id
+            WHERE iv.id = $1
+              AND v.empresa_id = $2
             LIMIT 1;
         `;
 
         const { rows } = await db.query(query, [
-
             id,
             empresaId
-
         ]);
 
         return rows[0];
@@ -75,39 +75,48 @@ class ItemVendaModel {
 
         const query = `
             INSERT INTO itens_venda (
-
                 venda_id,
-                empresa_id,
                 produto_id,
                 quantidade,
-                valor_unitario,
+                preco_unitario,
+                desconto,
                 subtotal
-
             )
-
             VALUES (
-
                 $1,
                 $2,
                 $3,
                 $4,
                 $5,
                 $6
-
             )
-
             RETURNING *;
         `;
 
+        const quantidade = Number(dados.quantidade ?? 0);
+
+        const precoUnitario = Number(
+            dados.precoUnitario ??
+            dados.preco_unitario ??
+            dados.valorUnitario ??
+            dados.valor_unitario ??
+            0
+        );
+
+        const desconto = Number(dados.desconto ?? 0);
+
+        const subtotal = Number(
+            dados.subtotal ??
+            (quantidade * precoUnitario - desconto)
+        );
+
         const values = [
-
-            dados.vendaId || dados.venda_id,
-            dados.empresaId || dados.empresa_id,
-            dados.produtoId || dados.produto_id,
-            dados.quantidade,
-            dados.valorUnitario || dados.valor_unitario,
-            dados.subtotal
-
+            dados.vendaId ?? dados.venda_id,
+            dados.produtoId ?? dados.produto_id,
+            quantidade,
+            precoUnitario,
+            desconto,
+            subtotal
         ];
 
         const { rows } = await client.query(query, values);
@@ -123,30 +132,46 @@ class ItemVendaModel {
     static async atualizar(id, empresaId, dados, client = db) {
 
         const query = `
-            UPDATE itens_venda
+            UPDATE itens_venda AS iv
             SET
-
                 produto_id = $1,
                 quantidade = $2,
-                valor_unitario = $3,
-                subtotal = $4,
+                preco_unitario = $3,
+                desconto = $4,
+                subtotal = $5,
                 updated_at = CURRENT_TIMESTAMP
-
-            WHERE id = $5
-              AND empresa_id = $6
-
-            RETURNING *;
+            FROM vendas AS v
+            WHERE iv.id = $6
+              AND v.id = iv.venda_id
+              AND v.empresa_id = $7
+            RETURNING iv.*;
         `;
 
-        const values = [
+        const quantidade = Number(dados.quantidade ?? 0);
 
-            dados.produtoId || dados.produto_id,
-            dados.quantidade,
-            dados.valorUnitario || dados.valor_unitario,
-            dados.subtotal,
+        const precoUnitario = Number(
+            dados.precoUnitario ??
+            dados.preco_unitario ??
+            dados.valorUnitario ??
+            dados.valor_unitario ??
+            0
+        );
+
+        const desconto = Number(dados.desconto ?? 0);
+
+        const subtotal = Number(
+            dados.subtotal ??
+            (quantidade * precoUnitario - desconto)
+        );
+
+        const values = [
+            dados.produtoId ?? dados.produto_id,
+            quantidade,
+            precoUnitario,
+            desconto,
+            subtotal,
             id,
             empresaId
-
         ];
 
         const { rows } = await client.query(query, values);
@@ -162,19 +187,17 @@ class ItemVendaModel {
     static async excluir(id, empresaId, client = db) {
 
         const query = `
-            DELETE FROM itens_venda
-
-            WHERE id = $1
-              AND empresa_id = $2
-
-            RETURNING *;
+            DELETE FROM itens_venda AS iv
+            USING vendas AS v
+            WHERE iv.id = $1
+              AND v.id = iv.venda_id
+              AND v.empresa_id = $2
+            RETURNING iv.*;
         `;
 
         const { rows } = await client.query(query, [
-
             id,
             empresaId
-
         ]);
 
         return rows[0];
