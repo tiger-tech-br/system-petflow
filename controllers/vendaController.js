@@ -5,7 +5,51 @@
 ================================================== */
 
 const VendaModel = require("../models/vendaModel");
-const VendaService = require("../services/vendaService");
+
+/* ==================================================
+   CONSTANTES
+================================================== */
+
+const STATUS_PERMITIDOS = Object.freeze([
+    "PENDENTE",
+    "AGUARDANDO_PAGAMENTO",
+    "PAGAMENTO_APROVADO",
+    "EM_SEPARACAO",
+    "SAIU_PARA_ENTREGA",
+    "ENTREGUE",
+    "FINALIZADA",
+    "CANCELADA"
+]);
+
+/* ==================================================
+   FUNÇÕES AUXILIARES
+================================================== */
+
+function obterEmpresaId(req) {
+
+    return req.usuario?.empresaId ??
+        req.user?.empresaId ??
+        null;
+
+}
+
+function validarEmpresa(req, res) {
+
+    const empresaId = obterEmpresaId(req);
+
+    if (!empresaId) {
+
+        res.status(403).json({
+            erro: "Empresa do usuário não identificada."
+        });
+
+        return null;
+
+    }
+
+    return empresaId;
+
+}
 
 /* ==================================================
    CONTROLLER
@@ -14,29 +58,33 @@ const VendaService = require("../services/vendaService");
 class VendaController {
 
     /* ==========================
-       LISTAR VENDAS
+       LISTAR PEDIDOS
     ========================== */
 
     static async listar(req, res, next) {
 
         try {
 
-            const empresaId = req.usuario.empresaId;
+            const empresaId = validarEmpresa(req, res);
 
-            const vendas = await VendaModel.listar(empresaId);
+            if (!empresaId) {
+                return;
+            }
 
-            return res.status(200).json(vendas);
+            const pedidos = await VendaModel.listar(empresaId);
+
+            return res.status(200).json(pedidos);
 
         } catch (error) {
 
-            next(error);
+            return next(error);
 
         }
 
     }
 
     /* ==========================
-       BUSCAR VENDA POR ID
+       BUSCAR PEDIDO POR ID
     ========================== */
 
     static async buscarPorId(req, res, next) {
@@ -44,221 +92,119 @@ class VendaController {
         try {
 
             const { id } = req.params;
+            const empresaId = validarEmpresa(req, res);
 
-            const empresaId = req.usuario.empresaId;
+            if (!empresaId) {
+                return;
+            }
 
-            const venda = await VendaModel.buscarPorId(
-
+            const pedido = await VendaModel.buscarPorId(
                 id,
-
                 empresaId
-
             );
 
-            if (!venda) {
+            if (!pedido) {
 
                 return res.status(404).json({
-
-                    erro: "Venda não encontrada."
-
+                    erro: "Pedido não encontrado."
                 });
 
             }
 
-            return res.status(200).json(venda);
+            return res.status(200).json(pedido);
 
         } catch (error) {
 
-            next(error);
+            return next(error);
 
         }
 
     }
 
     /* ==========================
-       FINALIZAR VENDA
+       ATUALIZAR STATUS
     ========================== */
 
-    static async criar(req, res, next) {
+    static async atualizarStatus(req, res, next) {
 
         try {
 
-            const empresaId = req.usuario.empresaId;
+            const { id } = req.params;
+            const empresaId = validarEmpresa(req, res);
 
-            const {
+            if (!empresaId) {
+                return;
+            }
 
-                clienteId,
-                usuarioId,
-                formaPagamento,
-                status,
-                desconto = 0,
-                acrescimo = 0,
-                observacoes,
-                itens
+            const status = typeof req.body?.status === "string"
+                ? req.body.status.trim().toUpperCase()
+                : "";
 
-            } = req.body;
-
-            if (!Array.isArray(itens) || itens.length === 0) {
+            if (!status) {
 
                 return res.status(400).json({
-
-                    erro: "Informe ao menos um item."
-
+                    erro: "Informe o status do pedido."
                 });
 
             }
 
-            const resultado = await VendaService.finalizarVenda(
+            if (!STATUS_PERMITIDOS.includes(status)) {
 
-                empresaId,
+                return res.status(400).json({
+                    erro: "Status do pedido inválido.",
+                    statusPermitidos: STATUS_PERMITIDOS
+                });
 
-                {
+            }
 
-                    cliente_id: clienteId,
-
-                    usuario_id: usuarioId,
-
-                    forma_pagamento: formaPagamento,
-
-                    status,
-
-                    desconto,
-
-                    acrescimo,
-
-                    observacoes,
-
-                    data_venda: new Date()
-
-                },
-
-                itens
-
-            );
-
-            return res.status(201).json(resultado);
-
-        } catch (error) {
-
-            next(error);
-
-        }
-
-    }
-
-    /* ==========================
-       ATUALIZAR VENDA
-    ========================== */
-
-    static async atualizar(req, res, next) {
-
-        try {
-
-            const { id } = req.params;
-
-            const empresaId = req.usuario.empresaId;
-
-            const venda = await VendaModel.atualizar(
-
+            const pedido = await VendaModel.atualizarStatus(
                 id,
-
                 empresaId,
-
-                req.body
-
+                status
             );
 
-            if (!venda) {
+            if (!pedido) {
 
                 return res.status(404).json({
-
-                    erro: "Venda não encontrada."
-
+                    erro: "Pedido não encontrado."
                 });
 
             }
 
             return res.status(200).json({
-
-                mensagem: "Venda atualizada com sucesso.",
-
-                venda
-
+                mensagem: "Status do pedido atualizado com sucesso.",
+                pedido
             });
 
         } catch (error) {
 
-            next(error);
+            return next(error);
 
         }
 
     }
 
     /* ==========================
-       EXCLUIR VENDA
-    ========================== */
-
-    static async excluir(req, res, next) {
-
-        try {
-
-            const { id } = req.params;
-
-            const empresaId = req.usuario.empresaId;
-
-            const venda = await VendaModel.excluir(
-
-                id,
-
-                empresaId
-
-            );
-
-            if (!venda) {
-
-                return res.status(404).json({
-
-                    erro: "Venda não encontrada."
-
-                });
-
-            }
-
-            return res.status(200).json({
-
-                mensagem: "Venda removida com sucesso."
-
-            });
-
-        } catch (error) {
-
-            next(error);
-
-        }
-
-    }
-
-    /* ==========================
-       TOTAL DE VENDAS
+       ESTATÍSTICAS DOS PEDIDOS
     ========================== */
 
     static async totalVendas(req, res, next) {
 
         try {
 
-            const empresaId = req.usuario.empresaId;
+            const empresaId = validarEmpresa(req, res);
 
-            const total = await VendaModel.totalVendas(
+            if (!empresaId) {
+                return;
+            }
 
-                empresaId
-
-            );
+            const total = await VendaModel.totalVendas(empresaId);
 
             return res.status(200).json(total);
 
         } catch (error) {
 
-            next(error);
+            return next(error);
 
         }
 
