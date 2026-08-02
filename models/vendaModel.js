@@ -55,10 +55,8 @@ class VendaModel {
         `;
 
         const { rows } = await db.query(query, [
-
             id,
             empresaId
-
         ]);
 
         return rows[0];
@@ -73,42 +71,54 @@ class VendaModel {
 
         const query = `
             INSERT INTO vendas (
-
                 empresa_id,
                 cliente_id,
+                usuario_id,
+                data_venda,
                 valor_total,
                 desconto,
                 acrescimo,
+                valor_final,
                 forma_pagamento,
-                status
-
+                status,
+                observacoes
             )
-
             VALUES (
-
                 $1,
                 $2,
                 $3,
                 $4,
                 $5,
                 $6,
-                $7
-
+                $7,
+                $8,
+                $9,
+                $10,
+                $11
             )
-
             RETURNING *;
         `;
 
+        const valorTotal = Number(
+            dados.valorTotal ?? dados.valor_total ?? 0
+        );
+
+        const desconto = Number(dados.desconto ?? 0);
+        const acrescimo = Number(dados.acrescimo ?? 0);
+        const valorFinal = valorTotal - desconto + acrescimo;
+
         const values = [
-
-            dados.empresaId || dados.empresa_id,
-            dados.clienteId || dados.cliente_id,
-            dados.valorTotal || dados.valor_total || 0,
-            dados.desconto,
-            dados.acrescimo,
-            dados.formaPagamento || dados.forma_pagamento,
-            dados.status || "PENDENTE"
-
+            dados.empresaId ?? dados.empresa_id,
+            dados.clienteId ?? dados.cliente_id ?? null,
+            dados.usuarioId ?? dados.usuario_id ?? null,
+            dados.dataVenda ?? dados.data_venda ?? new Date(),
+            valorTotal,
+            desconto,
+            acrescimo,
+            valorFinal,
+            dados.formaPagamento ?? dados.forma_pagamento ?? "PIX",
+            dados.status ?? "PENDENTE",
+            dados.observacoes?.trim() || null
         ];
 
         const { rows } = await client.query(query, values);
@@ -126,32 +136,39 @@ class VendaModel {
         const query = `
             UPDATE vendas
             SET
-
                 cliente_id = $1,
                 valor_total = $2,
                 desconto = $3,
                 acrescimo = $4,
-                forma_pagamento = $5,
-                status = $6,
+                valor_final = $5,
+                forma_pagamento = $6,
+                status = $7,
+                observacoes = $8,
                 updated_at = CURRENT_TIMESTAMP
-
-            WHERE id = $7
-              AND empresa_id = $8
-
+            WHERE id = $9
+              AND empresa_id = $10
             RETURNING *;
         `;
 
-        const values = [
+        const valorTotal = Number(
+            dados.valorTotal ?? dados.valor_total ?? 0
+        );
 
-            dados.clienteId || dados.cliente_id,
-            dados.valorTotal || dados.valor_total || 0,
-            dados.desconto,
-            dados.acrescimo,
-            dados.formaPagamento || dados.forma_pagamento,
-            dados.status,
+        const desconto = Number(dados.desconto ?? 0);
+        const acrescimo = Number(dados.acrescimo ?? 0);
+        const valorFinal = valorTotal - desconto + acrescimo;
+
+        const values = [
+            dados.clienteId ?? dados.cliente_id ?? null,
+            valorTotal,
+            desconto,
+            acrescimo,
+            valorFinal,
+            dados.formaPagamento ?? dados.forma_pagamento ?? "PIX",
+            dados.status ?? "PENDENTE",
+            dados.observacoes?.trim() || null,
             id,
             empresaId
-
         ];
 
         const { rows } = await client.query(query, values);
@@ -169,20 +186,16 @@ class VendaModel {
         const query = `
             UPDATE vendas
             SET
-
                 valor_total = $1,
+                valor_final = $1 - desconto + acrescimo,
                 updated_at = CURRENT_TIMESTAMP
-
             WHERE id = $2
-
             RETURNING *;
         `;
 
         const { rows } = await client.query(query, [
-
             valorTotal,
             id
-
         ]);
 
         return rows[0];
@@ -199,15 +212,12 @@ class VendaModel {
             DELETE FROM vendas
             WHERE id = $1
               AND empresa_id = $2
-
             RETURNING *;
         `;
 
         const { rows } = await client.query(query, [
-
             id,
             empresaId
-
         ]);
 
         return rows[0];
@@ -222,20 +232,14 @@ class VendaModel {
 
         const query = `
             SELECT
-
                 COUNT(*) AS quantidade,
-
                 COALESCE(SUM(valor_total), 0) AS total
-
             FROM vendas
-
             WHERE empresa_id = $1;
         `;
 
         const { rows } = await db.query(query, [
-
             empresaId
-
         ]);
 
         return rows[0];
