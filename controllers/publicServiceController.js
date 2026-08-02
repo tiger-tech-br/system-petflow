@@ -17,7 +17,7 @@ async function pets(request, response, next) {
                     observacoes
                 FROM pets
                 WHERE cliente_id = $1
-                AND COALESCE(ativo, status, TRUE) = TRUE
+                AND ativo = TRUE
                 ORDER BY nome ASC
             `,
             [request.customer.id]
@@ -43,11 +43,9 @@ async function criarPet(request, response, next) {
             });
         }
 
-        const empresaId = await getEmpresaId();
         const { rows } = await db.query(
             `
                 INSERT INTO pets (
-                    empresa_id,
                     cliente_id,
                     nome,
                     especie,
@@ -56,13 +54,20 @@ async function criarPet(request, response, next) {
                     porte,
                     peso,
                     observacoes,
-                    ativo,
-                    status
+                    ativo
                 )
-                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,TRUE,TRUE)
-                RETURNING id, nome, especie, raca, sexo, porte, peso, observacoes
+                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,TRUE)
+                RETURNING
+                    id,
+                    nome,
+                    especie,
+                    raca,
+                    sexo,
+                    porte,
+                    peso,
+                    observacoes
             `,
-            petParams(data, empresaId, request.customer.id)
+            petParams(data, request.customer.id)
         );
 
         return response.status(201).json({
@@ -100,8 +105,16 @@ async function atualizarPet(request, response, next) {
                     updated_at = NOW()
                 WHERE id = $8
                 AND cliente_id = $9
-                AND COALESCE(ativo, status, TRUE) = TRUE
-                RETURNING id, nome, especie, raca, sexo, porte, peso, observacoes
+                AND ativo = TRUE
+                RETURNING
+                    id,
+                    nome,
+                    especie,
+                    raca,
+                    sexo,
+                    porte,
+                    peso,
+                    observacoes
             `,
             [
                 data.nome.trim(),
@@ -140,7 +153,6 @@ async function removerPet(request, response, next) {
                 UPDATE pets
                 SET
                     ativo = FALSE,
-                    status = FALSE,
                     updated_at = NOW()
                 WHERE id = $1
                 AND cliente_id = $2
@@ -182,8 +194,17 @@ async function solicitarAgendamento(request, response, next) {
             });
         }
 
-        const empresaId = await getEmpresaId();
-        const pet = await findCustomerPet(data.petId, request.customer.id);
+        if (!isValidServiceTime(data.hora)) {
+            return response.status(400).json({
+                success: false,
+                message: "Escolha um horário entre 08:00 e 18:00."
+            });
+        }
+
+        const pet = await findCustomerPet(
+            data.petId,
+            request.customer.id
+        );
 
         if (!pet) {
             return response.status(404).json({
@@ -204,28 +225,26 @@ async function solicitarAgendamento(request, response, next) {
         const { rows } = await db.query(
             `
                 INSERT INTO agendamentos (
-                    empresa_id,
                     cliente_id,
                     pet_id,
                     servico_id,
-                    servico,
                     data_agendamento,
                     horario,
-                    data,
-                    hora,
                     valor,
                     observacoes,
                     status
                 )
-                VALUES ($1,$2,$3,$4,$5,$6,$7,$6,$7,$8,$9,'AGENDADO')
-                RETURNING id, status, data_agendamento, horario
+                VALUES ($1,$2,$3,$4,$5,$6,$7,'AGENDADO')
+                RETURNING
+                    id,
+                    status,
+                    data_agendamento,
+                    horario
             `,
             [
-                empresaId,
                 request.customer.id,
                 pet.id,
                 servico.id,
-                servico.nome,
                 data.data,
                 data.hora,
                 servico.preco || 0,
@@ -235,17 +254,13 @@ async function solicitarAgendamento(request, response, next) {
 
         return response.status(201).json({
             success: true,
-            message: "Solicitação enviada com sucesso. A equipe PetFlow confirmará o horário.",
+            message:
+                "Solicitação enviada com sucesso. A equipe PetFlow confirmará o horário.",
             data: rows[0]
         });
     } catch (error) {
         next(error);
     }
-}
-
-async function getEmpresaId() {
-    const { rows } = await db.query("SELECT get_petflow_empresa_id() AS id");
-    return rows[0].id;
 }
 
 async function findCustomerPet(id, customerId) {
@@ -255,7 +270,7 @@ async function findCustomerPet(id, customerId) {
             FROM pets
             WHERE id = $1
             AND cliente_id = $2
-            AND COALESCE(ativo, status, TRUE) = TRUE
+            AND ativo = TRUE
             LIMIT 1
         `,
         [id, customerId]
@@ -279,9 +294,8 @@ async function findService(id) {
     return rows[0] || null;
 }
 
-function petParams(data, empresaId, clienteId) {
+function petParams(data, clienteId) {
     return [
-        empresaId,
         clienteId,
         data.nome.trim(),
         data.especie.trim(),
@@ -302,11 +316,15 @@ function clean(value) {
 }
 
 function normalizeEnum(value) {
-    return value ? String(value).trim().toUpperCase() : null;
+    return value
+        ? String(value).trim().toUpperCase()
+        : null;
 }
 
 function normalizeDecimal(value) {
-    return value === "" || value == null ? null : Number(value);
+    return value === "" || value == null
+        ? null
+        : Number(value);
 }
 
 function isFutureDate(value) {
@@ -315,7 +333,29 @@ function isFutureDate(value) {
 
     today.setHours(0, 0, 0, 0);
 
-    return !Number.isNaN(selected.getTime()) && selected >= today;
+    return (
+        !Number.isNaN(selected.getTime()) &&
+        selected >= today
+    );
+}
+
+function isValidServiceTime(value) {
+    if (!/^\d{2}:\d{2}$/.test(String(value || ""))) {
+        return false;
+    }
+
+    const [hours, minutes] = value
+        .split(":")
+        .map(Number);
+
+    const totalMinutes = (hours * 60) + minutes;
+
+    return (
+        minutes >= 0 &&
+        minutes <= 59 &&
+        totalMinutes >= 8 * 60 &&
+        totalMinutes <= 18 * 60
+    );
 }
 
 module.exports = {
