@@ -161,36 +161,72 @@ function renderOrders(list, orders) {
                 <span>Quando comprar pela sacola, seus pedidos aparecerão aqui.</span>
             </div>
         `;
+
         return;
     }
 
     list.innerHTML = orders.map(order => {
-        const items = Array.isArray(order.itens) ? order.itens : [];
+        const items = Array.isArray(order.itens)
+            ? order.itens
+            : [];
 
         return `
             <article class="order-card">
                 <header>
                     <div>
-                        <span>Pedido #${escapeHtml(shortId(order.id))}</span>
-                        <strong>${escapeHtml(formatStatus(order.status))}</strong>
+                        <span>
+                            Pedido #${escapeHtml(shortId(order.id))}
+                        </span>
+
+                        <strong>
+                            ${escapeHtml(formatStatus(order.status))}
+                        </strong>
                     </div>
-                    <b>${currency(order.valor_final || order.valor_total)}</b>
+
+                    <b>
+                        ${currency(
+                            order.valor_final ??
+                            order.valor_total
+                        )}
+                    </b>
                 </header>
+
                 <dl>
                     <div>
                         <dt>Data</dt>
-                        <dd>${formatDate(order.created_at)}</dd>
+
+                        <dd>
+                            ${formatDate(order.data_venda)}
+                        </dd>
                     </div>
+
                     <div>
                         <dt>Pagamento</dt>
-                        <dd>${escapeHtml(order.forma_pagamento || "Não informado")}</dd>
+
+                        <dd>
+                            ${escapeHtml(
+                                order.forma_pagamento ||
+                                "Não informado"
+                            )}
+                        </dd>
                     </div>
                 </dl>
+
                 <ul>
                     ${items.map(item => `
                         <li>
-                            <span>${escapeHtml(item.produto || "Produto")}</span>
-                            <strong>${Number(item.quantidade || 0)} x ${currency(item.valor_unitario)}</strong>
+                            <span>
+                                ${escapeHtml(
+                                    item.produto ||
+                                    "Produto"
+                                )}
+                            </span>
+
+                            <strong>
+                                ${Number(item.quantidade || 0)}
+                                x
+                                ${currency(item.preco_unitario)}
+                            </strong>
                         </li>
                     `).join("")}
                 </ul>
