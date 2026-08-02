@@ -678,11 +678,66 @@ async function submitPublicOrder(event) {
         form.reset();
 
         if (status) {
-            status.textContent = "Pedido enviado com sucesso. A PetFlow vai acompanhar pelo painel.";
+            status.textContent = "Pedido recebido. Abrindo pagamento seguro...";
         }
+
+        await startPublicPayment(
+            payload.payment?.vendaId ||
+            payload.data?.id,
+            token,
+            status
+        );
     } catch (error) {
         if (status) {
             status.textContent = error.message || "Não foi possível enviar o pedido.";
+        }
+    }
+}
+
+async function startPublicPayment(vendaId, token, status) {
+    if (!vendaId) {
+        if (status) {
+            status.textContent =
+                "Pedido criado, mas não foi possível iniciar o pagamento.";
+        }
+        return;
+    }
+
+    try {
+        const response = await fetch(`${PUBLIC_API}/pagamentos`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                vendaId
+            })
+        });
+
+        const payload = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                payload.message ||
+                "Não foi possível iniciar o pagamento."
+            );
+        }
+
+        if (payload.payment?.checkoutUrl) {
+            window.location.href = payload.payment.checkoutUrl;
+            return;
+        }
+
+        if (status) {
+            status.textContent =
+                "Pedido criado. Acesse seus pedidos para acompanhar o pagamento.";
+        }
+    } catch (error) {
+        if (status) {
+            status.textContent =
+                error.message ||
+                "Pedido criado, mas o pagamento não foi iniciado.";
         }
     }
 }

@@ -56,6 +56,8 @@ const financeiroRoutes = require("./routes/financeiroRoutes");
 
 const publicCatalogRoutes = require("./routes/publicCatalogRoutes");
 
+const publicPaymentRoutes = require("./routes/publicPaymentRoutes");
+
 /* ==========================
    DASHBOARD
 ========================== */
@@ -78,7 +80,17 @@ securityMiddleware(app);
    MIDDLEWARES NATIVOS
 ================================================== */
 
-app.use(express.json());
+app.use(express.json({
+    verify: (request, response, buffer, encoding) => {
+        const isPagSeguroWebhook =
+            request.originalUrl?.split("?")[0] ===
+            "/api/public/pagamentos/webhook";
+
+        if (isPagSeguroWebhook) {
+            request.rawBody = buffer.toString(encoding || "utf8");
+        }
+    }
+}));
 
 app.use(express.urlencoded({
 
@@ -175,6 +187,8 @@ app.get("/api", (request, response) => {
 ================================================== */
 
 app.use("/api/auth", authRoutes);
+
+app.use("/api/public/pagamentos", publicPaymentRoutes);
 
 app.use("/api/public", publicCatalogRoutes);
 

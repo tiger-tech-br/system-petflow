@@ -239,6 +239,12 @@ async function criarPedido(request, response, next) {
             data: {
                 ...pedido.venda,
                 itens: pedido.itens
+            },
+
+            payment: {
+                status: "AGUARDANDO_PAGAMENTO",
+                endpoint: "/api/public/pagamentos",
+                vendaId: pedido.venda.id
             }
         });
 

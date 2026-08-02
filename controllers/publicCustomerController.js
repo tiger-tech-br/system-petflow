@@ -694,6 +694,10 @@ async function orders(request, response, next) {
                     v.id,
                     v.status,
                     v.forma_pagamento,
+                    v.pagseguro_checkout_id,
+                    v.pagseguro_checkout_url,
+                    v.pagseguro_status,
+                    v.pagamento_atualizado_em,
                     v.valor_total,
                     v.valor_final,
                     v.data_venda,
@@ -908,4 +912,3 @@ module.exports = {
     remove,
     orders
 };
-

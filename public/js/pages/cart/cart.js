@@ -192,7 +192,7 @@ async function submitOrder(event) {
     }
 
     const data = Object.fromEntries(new FormData(event.target).entries());
-    setStatus(status, "Enviando pedido...");
+    setStatus(status, "Finalizando pedido...");
 
     try {
         const response = await fetch(`${CART_API}/pedidos`, {
@@ -214,16 +214,71 @@ async function submitOrder(event) {
         const payload = await response.json();
 
         if (!response.ok) {
-            throw new Error(payload.message || "Não foi possível enviar o pedido.");
+            throw new Error(payload.message || "Não foi possível finalizar o pedido.");
         }
 
         cart = {};
         persistCart();
         renderCart();
         event.target.reset();
-        setStatus(status, "Pedido enviado com sucesso. A PetFlow vai acompanhar pelo painel.");
+        setStatus(status, "Pedido recebido. Abrindo checkout seguro do PagBank...");
+
+        await startPayment(
+            payload.payment?.vendaId ||
+            payload.data?.id,
+            token,
+            status
+        );
     } catch (error) {
-        setStatus(status, error.message || "Não foi possível enviar o pedido.");
+        setStatus(status, error.message || "Não foi possível finalizar o pedido.");
+    }
+}
+
+async function startPayment(vendaId, token, status) {
+    if (!vendaId) {
+        setStatus(
+            status,
+            "Pedido criado, mas não foi possível abrir o checkout do PagBank."
+        );
+        return;
+    }
+
+    try {
+        const response = await fetch(`${CART_API}/pagamentos`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                vendaId
+            })
+        });
+
+        const payload = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                payload.message ||
+                "Não foi possível abrir o checkout do PagBank."
+            );
+        }
+
+        if (payload.payment?.checkoutUrl) {
+            window.location.href = payload.payment.checkoutUrl;
+            return;
+        }
+
+        setStatus(
+            status,
+            "Pedido criado. Acesse seus pedidos para acompanhar o pagamento."
+        );
+    } catch (error) {
+        setStatus(
+            status,
+            error.message ||
+            "Pedido criado, mas o checkout do PagBank não foi aberto."
+        );
     }
 }
 

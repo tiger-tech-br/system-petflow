@@ -88,6 +88,10 @@ module.exports = {
 
     EMAIL_TEST_TO: process.env.EMAIL_TEST_TO || "suporte@tigertech.dev.br",
 
-    APP_URL: process.env.APP_URL || `http://localhost:${process.env.PORT || 4500}`
+    APP_URL: process.env.APP_URL || `http://localhost:${process.env.PORT || 4500}`,
+
+    PAGSEGURO_BASE_URL: process.env.PAGSEGURO_BASE_URL,
+
+    PAGSEGURO_TOKEN: process.env.PAGSEGURO_TOKEN
 
 };

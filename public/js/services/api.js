@@ -57,7 +57,10 @@ async function request(endpoint, options = {}) {
 
                 const error = await response.json();
 
-                errorMessage = error.message || errorMessage;
+                errorMessage =
+                    error.message ||
+                    error.erro ||
+                    errorMessage;
 
             } catch {
 
@@ -122,6 +125,22 @@ async function apiPut(endpoint, data) {
     return request(endpoint, {
 
         method: "PUT",
+
+        body: JSON.stringify(data)
+
+    });
+
+}
+
+/* ==================================================
+   PATCH
+================================================== */
+
+async function apiPatch(endpoint, data) {
+
+    return request(endpoint, {
+
+        method: "PATCH",
 
         body: JSON.stringify(data)
 
