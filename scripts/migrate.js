@@ -3,18 +3,13 @@
 const fs = require("fs/promises");
 const path = require("path");
 const { Pool } = require("pg");
+const { buildDbOptions } = require("../config/dbOptions");
 
 require("dotenv").config();
 
 const SQL_DIR = path.join(__dirname, "..", "database", "sql");
 
-const pool = new Pool({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD
-});
+const pool = new Pool(buildDbOptions());
 
 async function run() {
     const files = (await fs.readdir(SQL_DIR))

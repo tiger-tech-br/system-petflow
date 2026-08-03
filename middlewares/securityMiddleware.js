@@ -46,9 +46,25 @@ const limiter = rateLimit({
    CORS
 ================================================== */
 
+const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    process.env.APP_URL
+]
+    .filter(Boolean)
+    .flatMap(origin => origin.split(","))
+    .map(origin => origin.trim())
+    .filter(Boolean);
+
 const corsOptions = {
 
-    origin: process.env.FRONTEND_URL,
+    origin(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+            return;
+        }
+
+        callback(new Error("Origem não permitida pelo CORS."));
+    },
 
     credentials: true,
 

@@ -53,6 +53,8 @@ $$;
 SELECT get_petflow_empresa_id();
 
 ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS empresa_id UUID;
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS token_recuperacao VARCHAR(255);
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS token_expiracao TIMESTAMPTZ;
 ALTER TABLE clientes ADD COLUMN IF NOT EXISTS empresa_id UUID;
 ALTER TABLE categorias ADD COLUMN IF NOT EXISTS empresa_id UUID;
 ALTER TABLE pets ADD COLUMN IF NOT EXISTS empresa_id UUID;

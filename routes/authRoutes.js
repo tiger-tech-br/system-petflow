@@ -72,6 +72,40 @@ router.post(
 
 );
 
+router.post(
+
+    "/forgot-password",
+
+    body("email")
+        .trim()
+        .isEmail()
+        .withMessage("Informe um e-mail válido."),
+
+    validationMiddleware,
+
+    authController.forgotPassword
+
+);
+
+router.post(
+
+    "/reset-password",
+
+    body("token")
+        .trim()
+        .notEmpty()
+        .withMessage("Token obrigatório."),
+
+    body("senha")
+        .isLength({ min: 6 })
+        .withMessage("A senha deve ter no mínimo 6 caracteres."),
+
+    validationMiddleware,
+
+    authController.resetPassword
+
+);
+
 /* ==================================================
    PERFIL
 ================================================== */

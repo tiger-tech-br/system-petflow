@@ -50,5 +50,31 @@ async function handleLogin(event) {
 
 function handleForgotPassword(event) {
     event.preventDefault();
-    alert("Recuperação de senha administrativa em preparação. Por enquanto, solicite a redefinição ao responsável pela loja.");
+
+    const email = document.getElementById("email")?.value?.trim();
+
+    if (!email) {
+        alert("Informe seu e-mail no campo de login para receber a recuperação de senha.");
+        return;
+    }
+
+    fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email })
+    })
+        .then(async response => {
+            const payload = await response.json();
+
+            if (!response.ok) {
+                throw new Error(payload.message || "Não foi possível enviar a recuperação.");
+            }
+
+            alert(payload.message || "Verifique seu e-mail.");
+        })
+        .catch(error => {
+            alert(error.message || "Não foi possível enviar a recuperação.");
+        });
 }

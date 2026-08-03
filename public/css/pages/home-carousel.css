@@ -799,6 +799,10 @@ body {
     background: #f8fcfb;
 }
 
+.favorite-item {
+    grid-template-columns: 64px minmax(0, 1fr) minmax(92px, auto) 42px;
+}
+
 .checkout-item img,
 .favorite-item img {
     width: 64px;
@@ -834,10 +838,27 @@ body {
     color: var(--pf-coral);
 }
 
+.favorite-item .icon-badge {
+    color: #ffffff;
+    border-color: rgba(220, 38, 38, .18);
+    background: #dc2626;
+}
+
+.favorite-item .icon-badge i {
+    color: #ffffff;
+}
+
 .favorite-item .cart-action {
     min-height: 40px;
-    padding: 0 10px;
+    padding: 0 12px;
     white-space: nowrap;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--pf-teal), #11a796);
+}
+
+.favorite-item .cart-action i,
+.favorite-item .cart-action span {
+    color: #ffffff;
 }
 
 .checkout-form label {
@@ -1173,6 +1194,29 @@ body.favorites-open {
     box-shadow: 0 0 0 4px rgba(248, 200, 70, .20);
 }
 
+.newsletter-consent {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    color: rgba(255, 255, 255, .90);
+    font-size: .82rem;
+    line-height: 1.45;
+}
+
+.newsletter-consent input {
+    width: 18px;
+    min-height: 18px;
+    margin: 2px 0 0;
+    accent-color: var(--pf-yellow);
+}
+
+.newsletter-consent a {
+    color: #ffffff;
+    font-weight: 900;
+    text-decoration: underline;
+}
+
 .newsletter-form .btn {
     width: 100%;
     min-height: 52px;
@@ -1181,6 +1225,15 @@ body.favorites-open {
     color: #10212b;
     background: linear-gradient(135deg, var(--pf-yellow), #ffe18a);
     box-shadow: 0 18px 34px rgba(248, 200, 70, .22);
+}
+
+.newsletter-status {
+    min-height: 20px;
+    margin: 0;
+    color: #ffffff;
+    font-size: .9rem;
+    font-weight: 800;
+    line-height: 1.45;
 }
 
 .footer {

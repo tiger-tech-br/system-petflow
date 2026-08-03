@@ -2,7 +2,8 @@
 
 const {
     RESEND_API_KEY,
-    EMAIL_FROM
+    EMAIL_FROM,
+    APP_URL
 } = require("../config/env");
 
 async function sendEmail({ to, subject, html, text }) {
@@ -164,6 +165,23 @@ function orderCanceledTemplate({ name, orderId }) {
     };
 }
 
+function newsletterConfirmationTemplate({ name, email, token }) {
+    const safeName = escapeHtml(firstName(name) || "cliente");
+    const unsubscribeUrl = `${APP_URL}/newsletter/cancelar?email=${encodeURIComponent(String(email || ""))}&token=${encodeURIComponent(String(token || ""))}`;
+
+    return {
+        subject: "Inscrição confirmada na newsletter PetFlow",
+        text: `Olá, ${safeName}. Sua inscrição na newsletter da PetFlow foi confirmada. Para cancelar: ${unsubscribeUrl}`,
+        html: baseEmail(`
+            <h1>Inscrição confirmada</h1>
+            <p>Olá, ${safeName}.</p>
+            <p>Você entrou para a lista da PetFlow. Vamos enviar novidades, promoções e dicas úteis para cuidar melhor do seu pet.</p>
+            <p style="font-size:13px"><a href="${escapeHtml(unsubscribeUrl)}">Cancelar inscrição na newsletter</a></p>
+            <p style="color:#647481;font-size:13px">Se você não fez esta inscrição, ignore este e-mail.</p>
+        `)
+    };
+}
+
 function baseEmail(content) {
     return `
         <div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;padding:24px;color:#10212b;line-height:1.55">
@@ -207,5 +225,6 @@ module.exports = {
     paymentApprovedTemplate,
     orderOutForDeliveryTemplate,
     orderDeliveredTemplate,
-    orderCanceledTemplate
+    orderCanceledTemplate,
+    newsletterConfirmationTemplate
 };

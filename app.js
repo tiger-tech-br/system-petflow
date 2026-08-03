@@ -152,6 +152,24 @@ app.get("/sacola", (request, response) => {
 
 });
 
+app.get("/politica-de-privacidade", (request, response) => {
+
+    response.sendFile(path.join(__dirname, "views", "legal", "privacy.html"));
+
+});
+
+app.get("/termos-de-uso", (request, response) => {
+
+    response.sendFile(path.join(__dirname, "views", "legal", "terms.html"));
+
+});
+
+app.get("/newsletter/cancelar", (request, response) => {
+
+    response.sendFile(path.join(__dirname, "views", "newsletter", "unsubscribe.html"));
+
+});
+
 app.get("/categorias/:slug", (request, response) => {
 
     response.sendFile(path.join(__dirname, "views", "categories", "detail.html"));

@@ -33,7 +33,7 @@ async function findByEmail(email) {
 
             FROM usuarios
 
-            WHERE email = $1
+            WHERE LOWER(email) = LOWER($1)
 
             LIMIT 1
         `,
@@ -110,6 +110,51 @@ async function updateLastLogin(id) {
 
 }
 
+async function setPasswordResetToken(id, token, expiresAt) {
+    await db.query(
+        `
+            UPDATE usuarios
+            SET
+                token_recuperacao = $1,
+                token_expiracao = $2,
+                updated_at = NOW()
+            WHERE id = $3
+        `,
+        [token, expiresAt, id]
+    );
+}
+
+async function findByPasswordResetToken(token) {
+    const result = await db.query(
+        `
+            SELECT id
+            FROM usuarios
+            WHERE token_recuperacao = $1
+              AND token_expiracao > NOW()
+              AND ativo = TRUE
+            LIMIT 1
+        `,
+        [token]
+    );
+
+    return result.rows[0] || null;
+}
+
+async function updatePassword(id, senhaHash) {
+    await db.query(
+        `
+            UPDATE usuarios
+            SET
+                senha_hash = $1,
+                token_recuperacao = NULL,
+                token_expiracao = NULL,
+                updated_at = NOW()
+            WHERE id = $2
+        `,
+        [senhaHash, id]
+    );
+}
+
 /* ==================================================
    EXPORTAÇÃO
 ================================================== */
@@ -120,6 +165,12 @@ module.exports = {
 
     findById,
 
-    updateLastLogin
+    updateLastLogin,
+
+    setPasswordResetToken,
+
+    findByPasswordResetToken,
+
+    updatePassword
 
 };

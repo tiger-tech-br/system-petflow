@@ -14,16 +14,6 @@ const requiredVariables = [
 
     "PORT",
 
-    "DB_HOST",
-
-    "DB_PORT",
-
-    "DB_NAME",
-
-    "DB_USER",
-
-    "DB_PASSWORD",
-
     "JWT_SECRET",
 
     "JWT_EXPIRES_IN",
@@ -54,6 +44,21 @@ requiredVariables.forEach(variable => {
 
 });
 
+if (
+    !process.env.DATABASE_URL &&
+    (
+        !process.env.DB_HOST ||
+        !process.env.DB_PORT ||
+        !process.env.DB_NAME ||
+        !process.env.DB_USER ||
+        !process.env.DB_PASSWORD
+    )
+) {
+    throw new Error(
+        "Configure DATABASE_URL ou DB_HOST, DB_PORT, DB_NAME, DB_USER e DB_PASSWORD."
+    );
+}
+
 /* ==================================================
    EXPORTAÇÃO
 ================================================== */
@@ -71,6 +76,10 @@ module.exports = {
     DB_USER: process.env.DB_USER,
 
     DB_PASSWORD: process.env.DB_PASSWORD,
+
+    DATABASE_URL: process.env.DATABASE_URL,
+
+    DB_SSL: process.env.DB_SSL,
 
     JWT_SECRET: process.env.JWT_SECRET,
 

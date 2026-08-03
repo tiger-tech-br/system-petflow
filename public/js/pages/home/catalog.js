@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupCartCheckout();
     setupFavoritesPanel();
     setupCustomerHeader();
+    setupNewsletterForm();
 });
 
 const PUBLIC_API = window.location.hostname === "localhost"
@@ -187,6 +188,53 @@ function setupPublicSearch() {
             renderProducts(publicProducts.slice(0, 6));
         }
     });
+}
+
+function setupNewsletterForm() {
+    const form = document.getElementById("newsletterForm");
+
+    if (!form) {
+        return;
+    }
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const status = document.getElementById("newsletterStatus");
+        const button = form.querySelector("button[type='submit']");
+        const data = Object.fromEntries(new FormData(form).entries());
+
+        setNewsletterStatus(status, "Enviando inscrição...");
+        if (button) button.disabled = true;
+
+        try {
+            const response = await fetch(`${PUBLIC_API}/newsletter`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+            const payload = await response.json();
+
+            if (!response.ok) {
+                throw new Error(payload.message || "Não foi possível realizar a inscrição.");
+            }
+
+            form.reset();
+            setNewsletterStatus(status, payload.message || "Inscrição realizada com sucesso.");
+        } catch (error) {
+            setNewsletterStatus(status, error.message || "Não foi possível realizar a inscrição.");
+        } finally {
+            if (button) button.disabled = false;
+        }
+    });
+}
+
+function setNewsletterStatus(element, message) {
+    if (element) {
+        element.textContent = message || "";
+    }
 }
 
 function filterProducts(term) {
@@ -448,7 +496,7 @@ function renderFavoritesItems() {
                 </div>
                 <button class="cart-action add ${inCart ? "is-active" : ""}" type="button" data-favorite-add-cart="${escapeHtml(id)}">
                     <i class="fa-solid ${inCart ? "fa-check" : "fa-plus"}"></i>
-                    <span>${inCart ? "Na sacola" : "Adicionar à sacola"}</span>
+                    <span>${inCart ? "Na sacola" : "Sacola"}</span>
                 </button>
                 <button class="icon-badge" type="button" data-favorite-remove="${escapeHtml(id)}" aria-label="Remover dos favoritos">
                     <i class="fa-solid fa-trash"></i>

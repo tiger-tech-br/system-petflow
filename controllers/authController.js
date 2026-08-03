@@ -1,13 +1,19 @@
 "use strict";
 
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 
 const authModel = require("../models/authModel");
 const {
     JWT_SECRET,
-    JWT_EXPIRES_IN
+    JWT_EXPIRES_IN,
+    APP_URL
 } = require("../config/env");
+const {
+    sendEmail,
+    passwordResetTemplate
+} = require("../services/emailService");
 
 async function login(request, response, next) {
     try {
@@ -19,7 +25,7 @@ async function login(request, response, next) {
         if (!usuario || !usuario.status) {
             return response.status(401).json({
                 success: false,
-                message: "E-mail ou senha invalidos."
+                message: "E-mail ou senha inválidos."
             });
         }
 
@@ -31,7 +37,7 @@ async function login(request, response, next) {
         if (!senhaValida) {
             return response.status(401).json({
                 success: false,
-                message: "E-mail ou senha invalidos."
+                message: "E-mail ou senha inválidos."
             });
         }
 
@@ -90,8 +96,93 @@ async function logout(request, response, next) {
     }
 }
 
+async function forgotPassword(request, response, next) {
+    try {
+        const { email } = request.body;
+
+        if (!email) {
+            return response.status(400).json({
+                success: false,
+                message: "Informe seu e-mail."
+            });
+        }
+
+        const usuario = await authModel.findByEmail(email);
+
+        if (!usuario || !usuario.status) {
+            return response.status(200).json({
+                success: true,
+                message: "Se o e-mail estiver cadastrado, enviaremos as instruções de recuperação."
+            });
+        }
+
+        const token = crypto.randomBytes(32).toString("hex");
+        const expiresAt = new Date(Date.now() + 1000 * 60 * 30);
+
+        await authModel.setPasswordResetToken(
+            usuario.id,
+            token,
+            expiresAt
+        );
+
+        const template = passwordResetTemplate({
+            name: usuario.nome,
+            resetUrl: `${APP_URL}/redefinir-senha?tipo=admin&token=${token}`
+        });
+
+        await sendEmail({
+            to: usuario.email,
+            subject: template.subject,
+            html: template.html,
+            text: template.text
+        });
+
+        return response.status(200).json({
+            success: true,
+            message: "Enviamos as instruções de recuperação para seu e-mail."
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function resetPassword(request, response, next) {
+    try {
+        const { token, senha } = request.body;
+
+        if (!token || !senha || String(senha).length < 6) {
+            return response.status(400).json({
+                success: false,
+                message: "Informe o token e uma senha com no mínimo 6 caracteres."
+            });
+        }
+
+        const usuario = await authModel.findByPasswordResetToken(token);
+
+        if (!usuario) {
+            return response.status(400).json({
+                success: false,
+                message: "Link inválido ou expirado."
+            });
+        }
+
+        const senhaHash = await bcrypt.hash(senha, 10);
+
+        await authModel.updatePassword(usuario.id, senhaHash);
+
+        return response.status(200).json({
+            success: true,
+            message: "Senha redefinida com sucesso."
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     login,
     me,
-    logout
+    logout,
+    forgotPassword,
+    resetPassword
 };

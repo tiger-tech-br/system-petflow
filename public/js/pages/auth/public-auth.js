@@ -463,8 +463,14 @@ function setupPublicResetPassword() {
 
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token") || "";
+    const isAdminReset = params.get("tipo") === "admin";
     const status = document.getElementById("resetStatus");
     const tokenInput = document.getElementById("resetToken");
+
+    if (isAdminReset) {
+        setText(document.querySelector(".login-eyebrow"), "Área administrativa");
+        setText(document.getElementById("resetTitle"), "Crie uma nova senha administrativa");
+    }
 
     if (tokenInput) {
         tokenInput.value = token;
@@ -488,19 +494,42 @@ function setupPublicResetPassword() {
         setStatus(status, "Salvando nova senha...");
 
         try {
-            await request("/clientes/redefinir-senha", "POST", {
+            await requestPasswordReset(params.get("tipo"), {
                 token,
                 senha
             });
 
             setStatus(status, "Senha redefinida com sucesso. Você já pode entrar.");
             setTimeout(() => {
-                window.location.href = "/login";
+                window.location.href = isAdminReset
+                    ? "/admin/index.html"
+                    : "/login";
             }, 1500);
         } catch (error) {
             setStatus(status, error.message || "Não foi possível redefinir a senha.");
         }
     });
+}
+
+async function requestPasswordReset(type, body) {
+    if (type !== "admin") {
+        return request("/clientes/redefinir-senha", "POST", body);
+    }
+
+    const response = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+    });
+    const payload = await response.json();
+
+    if (!response.ok) {
+        throw new Error(payload.message || `Erro ${response.status}`);
+    }
+
+    return payload;
 }
 
 async function request(endpoint, method = "GET", body) {
@@ -539,6 +568,12 @@ function fillForm(form, data) {
 function setField(form, name, value) {
     if (form?.elements[name]) {
         form.elements[name].value = value || "";
+    }
+}
+
+function setText(element, message) {
+    if (element) {
+        element.textContent = message || "";
     }
 }
 
