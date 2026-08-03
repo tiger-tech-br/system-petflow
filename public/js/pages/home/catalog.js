@@ -536,7 +536,7 @@ function injectCheckoutModal() {
                         <span>Total</span>
                         <strong id="checkoutTotal">R$ 0,00</strong>
                     </div>
-                    <button class="btn btn-primary" type="submit">Enviar pedido</button>
+                    <button class="btn btn-primary" type="submit">Finalizar pedido</button>
                     <p class="checkout-status" id="checkoutStatus" role="status"></p>
                 </form>
             </aside>

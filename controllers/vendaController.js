@@ -5,6 +5,7 @@
 ================================================== */
 
 const VendaModel = require("../models/vendaModel");
+const VendaService = require("../services/vendaService");
 
 /* ==================================================
    CONSTANTES
@@ -157,9 +158,9 @@ class VendaController {
 
             }
 
-            const pedido = await VendaModel.atualizarStatus(
-                id,
+            const pedido = await VendaService.atualizarStatusPedido(
                 empresaId,
+                id,
                 status
             );
 

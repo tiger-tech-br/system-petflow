@@ -20,6 +20,7 @@
 
         setupAdminNavigation();
         bindPageText();
+        setupAdminLogout();
         buildInsights();
         buildPipeline();
         buildForm();
@@ -110,6 +111,15 @@
             if (window.innerWidth > 1024) {
                 closeSidebar();
             }
+        });
+    }
+
+    function setupAdminLogout() {
+        document.querySelectorAll('a[href="/admin/index.html"]').forEach(link => {
+            link.addEventListener("click", () => {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+            });
         });
     }
 

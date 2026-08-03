@@ -228,13 +228,14 @@ async function solicitarAgendamento(request, response, next) {
                     cliente_id,
                     pet_id,
                     servico_id,
+                    servico,
                     data_agendamento,
                     horario,
                     valor,
                     observacoes,
                     status
                 )
-                VALUES ($1,$2,$3,$4,$5,$6,$7,'AGENDADO')
+                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'AGENDADO')
                 RETURNING
                     id,
                     status,
@@ -245,6 +246,7 @@ async function solicitarAgendamento(request, response, next) {
                 request.customer.id,
                 pet.id,
                 servico.id,
+                servico.nome,
                 data.data,
                 data.hora,
                 servico.preco || 0,

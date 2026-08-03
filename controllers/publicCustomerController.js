@@ -701,6 +701,13 @@ async function orders(request, response, next) {
                     v.valor_total,
                     v.valor_final,
                     v.data_venda,
+                    v.observacoes,
+                    c.endereco,
+                    c.numero,
+                    c.complemento,
+                    c.bairro,
+                    c.cidade,
+                    c.estado,
                     COALESCE(
                         JSON_AGG(
                             JSON_BUILD_OBJECT(
@@ -722,6 +729,9 @@ async function orders(request, response, next) {
                         '[]'::JSON
                     ) AS itens
                 FROM vendas v
+                LEFT JOIN clientes c
+                    ON c.id = v.cliente_id
+                   AND c.empresa_id = v.empresa_id
                 LEFT JOIN itens_venda iv
                     ON iv.venda_id = v.id
                    AND iv.empresa_id = v.empresa_id
@@ -730,7 +740,9 @@ async function orders(request, response, next) {
                    AND p.empresa_id = v.empresa_id
                 WHERE v.cliente_id = $1
                   AND v.empresa_id = $2
-                GROUP BY v.id
+                GROUP BY
+                    v.id,
+                    c.id
                 ORDER BY v.data_venda DESC
                 LIMIT 50
             `,

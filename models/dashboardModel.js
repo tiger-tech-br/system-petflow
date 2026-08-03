@@ -2,6 +2,14 @@
 
 const db = require("../database/connection");
 
+const STATUS_VENDAS_CONFIRMADAS = [
+    "PAGAMENTO_APROVADO",
+    "EM_SEPARACAO",
+    "SAIU_PARA_ENTREGA",
+    "ENTREGUE",
+    "FINALIZADA"
+];
+
 class DashboardModel {
 
     /* ==============================================
@@ -55,6 +63,8 @@ class DashboardModel {
 
                     AND DATE(data_venda)=CURRENT_DATE
 
+                    AND status = ANY($2)
+
                 ) AS vendas_hoje,
 
                 (
@@ -66,6 +76,8 @@ class DashboardModel {
 
                     AND DATE(data_venda)=CURRENT_DATE
 
+                    AND status = ANY($2)
+
                 ) AS total_pedidos,
 
                 (
@@ -76,6 +88,8 @@ class DashboardModel {
                     WHERE empresa_id=$1
 
                     AND DATE_TRUNC('month',data_venda)=DATE_TRUNC('month',CURRENT_DATE)
+
+                    AND status = ANY($2)
 
                 ) AS vendas_mes,
 
@@ -146,7 +160,10 @@ class DashboardModel {
 
         `;
 
-        const { rows } = await db.query(query, [empresaId]);
+        const { rows } = await db.query(query, [
+            empresaId,
+            STATUS_VENDAS_CONFIRMADAS
+        ]);
 
         return rows[0];
 
@@ -178,6 +195,8 @@ class DashboardModel {
 
             WHERE v.empresa_id=$1
 
+            AND v.status = ANY($3)
+
             ORDER BY v.data_venda DESC
 
             LIMIT $2;
@@ -188,7 +207,9 @@ class DashboardModel {
 
             empresaId,
 
-            limite
+            limite,
+
+            STATUS_VENDAS_CONFIRMADAS
 
         ]);
 
@@ -349,6 +370,7 @@ class DashboardModel {
             INNER JOIN produtos p
                 ON p.id = iv.produto_id
             WHERE v.empresa_id = $1
+              AND v.status = ANY($3)
             GROUP BY p.id, p.nome
             ORDER BY quantidade DESC
             LIMIT $2;
@@ -356,7 +378,8 @@ class DashboardModel {
 
         const { rows } = await db.query(query, [
             empresaId,
-            limite
+            limite,
+            STATUS_VENDAS_CONFIRMADAS
         ]);
 
         return rows;

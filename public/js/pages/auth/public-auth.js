@@ -1,7 +1,7 @@
 "use strict";
 
 const CUSTOMER_API = window.location.hostname === "localhost"
-    ?"http://localhost:4500/api/public"
+    ? "http://localhost:4500/api/public"
     : "/api/public";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -19,9 +19,19 @@ function setupTabs() {
     document.querySelectorAll("[data-auth-tab]").forEach(button => {
         button.addEventListener("click", () => {
             const tab = button.dataset.authTab;
-            document.querySelectorAll("[data-auth-tab]").forEach(item => item.classList.toggle("active", item === button));
-            document.querySelectorAll(".auth-panel").forEach(panel => panel.classList.remove("active"));
-            document.getElementById(tab === "login" ?"publicLoginForm" : "publicRegisterForm")?.classList.add("active");
+            const formId = tab === "login"
+                ? "publicLoginForm"
+                : "publicRegisterForm";
+
+            document
+                .querySelectorAll("[data-auth-tab]")
+                .forEach(item => item.classList.toggle("active", item === button));
+
+            document
+                .querySelectorAll(".auth-panel")
+                .forEach(panel => panel.classList.remove("active"));
+
+            document.getElementById(formId)?.classList.add("active");
         });
     });
 }
@@ -35,7 +45,12 @@ function setupPublicLogin() {
         setStatus(status, "Entrando...");
 
         try {
-            const payload = await request("/clientes/login", "POST", Object.fromEntries(new FormData(form).entries()));
+            const payload = await request(
+                "/clientes/login",
+                "POST",
+                Object.fromEntries(new FormData(form).entries())
+            );
+
             saveCustomer(payload.data);
             window.location.href = "/";
         } catch (error) {
@@ -53,7 +68,12 @@ function setupPublicRegister() {
         setStatus(status, "Criando cadastro...");
 
         try {
-            const payload = await request("/clientes/cadastro", "POST", Object.fromEntries(new FormData(form).entries()));
+            const payload = await request(
+                "/clientes/cadastro",
+                "POST",
+                Object.fromEntries(new FormData(form).entries())
+            );
+
             saveCustomer(payload.data);
             window.location.href = "/";
         } catch (error) {
@@ -93,7 +113,12 @@ async function setupPublicAccount() {
         setStatus(status, "Salvando...");
 
         try {
-            const payload = await request("/clientes/me", "PUT", Object.fromEntries(new FormData(form).entries()));
+            const payload = await request(
+                "/clientes/me",
+                "PUT",
+                Object.fromEntries(new FormData(form).entries())
+            );
+
             localStorage.setItem("petflow_customer_user", JSON.stringify(payload.data));
             setStatus(status, "Dados atualizados com sucesso.");
         } catch (error) {
@@ -108,7 +133,9 @@ async function setupPublicAccount() {
     });
 
     document.getElementById("publicDeleteAccount")?.addEventListener("click", async () => {
-        const confirmed = window.confirm("Tem certeza que deseja excluir seu cadastro? Você perderá o acesso à área do cliente.");
+        const confirmed = window.confirm(
+            "Tem certeza que deseja excluir seu cadastro? Você perderá o acesso à área do cliente."
+        );
 
         if (!confirmed) {
             return;
@@ -143,6 +170,16 @@ async function setupPublicOrders() {
 
     const status = document.getElementById("ordersStatus");
 
+    list.addEventListener("click", event => {
+        const button = event.target.closest("[data-continue-payment]");
+
+        if (!button) {
+            return;
+        }
+
+        window.location.href = button.dataset.continuePayment;
+    });
+
     try {
         const payload = await request("/clientes/pedidos", "GET");
         renderOrders(list, Array.isArray(payload.data) ? payload.data : []);
@@ -174,88 +211,165 @@ function renderOrders(list, orders) {
             <article class="order-card">
                 <header>
                     <div>
-                        <span>
-                            Pedido #${escapeHtml(shortId(order.id))}
-                        </span>
-
-                        <strong>
-                            ${escapeHtml(formatStatus(order.status))}
-                        </strong>
+                        <span>Pedido #${escapeHtml(shortId(order.id))}</span>
+                        <strong>${escapeHtml(formatStatus(order.status))}</strong>
                     </div>
 
-                    <b>
-                        ${currency(
-                            order.valor_final ??
-                            order.valor_total
-                        )}
-                    </b>
+                    <b>${currency(order.valor_final ?? order.valor_total)}</b>
                 </header>
 
                 <dl>
                     <div>
                         <dt>Data</dt>
-
-                        <dd>
-                            ${formatDate(order.data_venda)}
-                        </dd>
+                        <dd>${formatDate(order.data_venda)}</dd>
                     </div>
 
                     <div>
                         <dt>Pagamento</dt>
+                        <dd>${escapeHtml(formatPaymentMethod(order.forma_pagamento))}</dd>
+                    </div>
 
-                        <dd>
-                            ${escapeHtml(
-                                order.forma_pagamento ||
-                                "Não informado"
-                            )}
-                        </dd>
+                    <div>
+                        <dt>Entrega</dt>
+                        <dd>${escapeHtml(formatOrderAddress(order))}</dd>
                     </div>
                 </dl>
 
                 <ul>
                     ${items.map(item => `
                         <li>
-                            <span>
-                                ${escapeHtml(
-                                    item.produto ||
-                                    "Produto"
-                                )}
-                            </span>
-
-                            <strong>
-                                ${Number(item.quantidade || 0)}
-                                x
-                                ${currency(item.preco_unitario)}
-                            </strong>
+                            <span>${escapeHtml(item.produto || "Produto")}</span>
+                            <strong>${Number(item.quantidade || 0)} x ${currency(item.preco_unitario)}</strong>
                         </li>
                     `).join("")}
                 </ul>
+
+                ${renderOrderNotes(order)}
+                ${renderOrderTimeline(order.status)}
+                ${renderContinuePayment(order)}
             </article>
         `;
     }).join("");
+}
+
+function renderOrderNotes(order) {
+    if (!order.observacoes) {
+        return "";
+    }
+
+    return `
+        <div class="order-note">
+            <span>Observações</span>
+            <p>${escapeHtml(order.observacoes)}</p>
+        </div>
+    `;
+}
+
+function renderContinuePayment(order) {
+    if (
+        order.status !== "AGUARDANDO_PAGAMENTO" ||
+        !order.pagseguro_checkout_url
+    ) {
+        return "";
+    }
+
+    return `
+        <div class="order-actions">
+            <button
+                class="btn order-pay-button"
+                type="button"
+                data-continue-payment="${escapeHtml(order.pagseguro_checkout_url)}"
+            >
+                <i class="fa-solid fa-lock"></i>
+                Continuar pagamento
+            </button>
+            <span>Você será direcionado para o ambiente seguro do PagBank.</span>
+        </div>
+    `;
+}
+
+function renderOrderTimeline(status) {
+    const steps = [
+        {
+            status: "AGUARDANDO_PAGAMENTO",
+            label: "Pedido criado"
+        },
+        {
+            status: "PAGAMENTO_APROVADO",
+            label: "Pagamento aprovado"
+        },
+        {
+            status: "EM_SEPARACAO",
+            label: "Em separação"
+        },
+        {
+            status: "SAIU_PARA_ENTREGA",
+            label: "Saiu para entrega"
+        },
+        {
+            status: "ENTREGUE",
+            label: "Entregue"
+        }
+    ];
+
+    const currentIndex = Math.max(
+        0,
+        steps.findIndex(step => step.status === status)
+    );
+
+    return `
+        <ol class="order-timeline" aria-label="Andamento do pedido">
+            ${steps.map((step, index) => `
+                <li class="${index <= currentIndex ? "is-done" : ""}">
+                    <span>${index <= currentIndex ? "✓" : ""}</span>
+                    ${escapeHtml(step.label)}
+                </li>
+            `).join("")}
+        </ol>
+    `;
 }
 
 function formatStatus(status) {
     const labels = {
         PENDENTE: "Pendente",
         APROVADO: "Aprovado",
-        EM_SEPARACAO: "Em separação",
-        EM_ENTREGA: "Em entrega",
-        CONCLUIDO: "Concluído",
-        CANCELADO: "Cancelado"
-    };
-
-    Object.assign(labels, {
         AGUARDANDO_PAGAMENTO: "Aguardando pagamento",
         PAGAMENTO_APROVADO: "Pagamento aprovado",
         EM_SEPARACAO: "Em separação",
+        EM_ENTREGA: "Em entrega",
         SAIU_PARA_ENTREGA: "Saiu para entrega",
         ENTREGUE: "Entregue",
         FINALIZADA: "Finalizado",
-        CONCLUIDO: "Concluído"
-    });
+        CONCLUIDO: "Concluído",
+        CANCELADO: "Cancelado",
+        CANCELADA: "Cancelada"
+    };
 
     return labels[status] || status || "Pendente";
+}
+
+function formatPaymentMethod(value) {
+    const labels = {
+        PIX: "PIX",
+        CARTAO_CREDITO: "Cartão de crédito",
+        CARTAO_DEBITO: "Cartão de débito",
+        CREDIT_CARD: "Cartão de crédito",
+        DEBIT_CARD: "Cartão de débito",
+        BOLETO: "Boleto"
+    };
+
+    return labels[value] || value || "Não informado";
+}
+
+function formatOrderAddress(order) {
+    return [
+        order.endereco,
+        order.numero,
+        order.complemento,
+        order.bairro,
+        order.cidade,
+        order.estado
+    ].filter(Boolean).join(", ") || "Endereço não informado";
 }
 
 function shortId(id) {
@@ -312,25 +426,32 @@ function setupCepLookup() {
 }
 
 function setupForgotPassword() {
-    document.querySelector("[data-public-forgot-password]")?.addEventListener("click", async event => {
-        event.preventDefault();
-        const status = document.getElementById("loginStatus");
-        const email = document.getElementById("loginEmail")?.value?.trim();
+    document
+        .querySelector("[data-public-forgot-password]")
+        ?.addEventListener("click", async event => {
+            event.preventDefault();
+            const status = document.getElementById("loginStatus");
+            const email = document.getElementById("loginEmail")?.value?.trim();
 
-        if (!email) {
-            setStatus(status, "Informe seu e-mail para receber o link de recuperação.");
-            return;
-        }
+            if (!email) {
+                setStatus(status, "Informe seu e-mail para receber o link de recuperação.");
+                return;
+            }
 
-        setStatus(status, "Enviando e-mail de recuperação...");
+            setStatus(status, "Enviando e-mail de recuperação...");
 
-        try {
-            const payload = await request("/clientes/esqueci-senha", "POST", { email });
-            setStatus(status, payload.message || "Verifique seu e-mail.");
-        } catch (error) {
-            setStatus(status, error.message || "Não foi possível enviar o e-mail.");
-        }
-    });
+            try {
+                const payload = await request(
+                    "/clientes/esqueci-senha",
+                    "POST",
+                    { email }
+                );
+
+                setStatus(status, payload.message || "Verifique seu e-mail.");
+            } catch (error) {
+                setStatus(status, error.message || "Não foi possível enviar o e-mail.");
+            }
+        });
 }
 
 function setupPublicResetPassword() {
@@ -367,7 +488,11 @@ function setupPublicResetPassword() {
         setStatus(status, "Salvando nova senha...");
 
         try {
-            await request("/clientes/redefinir-senha", "POST", { token, senha });
+            await request("/clientes/redefinir-senha", "POST", {
+                token,
+                senha
+            });
+
             setStatus(status, "Senha redefinida com sucesso. Você já pode entrar.");
             setTimeout(() => {
                 window.location.href = "/login";
@@ -384,9 +509,9 @@ async function request(endpoint, method = "GET", body) {
         method,
         headers: {
             "Content-Type": "application/json",
-            ...(token ?{ Authorization: `Bearer ${token}` } : {})
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
         },
-        ...(body ?{ body: JSON.stringify(body) } : {})
+        ...(body ? { body: JSON.stringify(body) } : {})
     });
 
     const payload = await response.json();

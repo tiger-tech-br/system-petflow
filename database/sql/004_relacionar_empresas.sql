@@ -97,50 +97,78 @@ ALTER TABLE itens_compra ALTER COLUMN empresa_id SET DEFAULT get_petflow_empresa
 ALTER TABLE itens_venda ALTER COLUMN empresa_id SET DEFAULT get_petflow_empresa_id();
 ALTER TABLE agendamentos ALTER COLUMN empresa_id SET DEFAULT get_petflow_empresa_id();
 
-ALTER TABLE usuarios
-ADD CONSTRAINT fk_usuarios_empresa
-FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_usuarios_empresa') THEN
+        ALTER TABLE usuarios
+        ADD CONSTRAINT fk_usuarios_empresa
+        FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    END IF;
 
-ALTER TABLE clientes
-ADD CONSTRAINT fk_clientes_empresa
-FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_clientes_empresa') THEN
+        ALTER TABLE clientes
+        ADD CONSTRAINT fk_clientes_empresa
+        FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    END IF;
 
-ALTER TABLE categorias
-ADD CONSTRAINT fk_categorias_empresa
-FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_categorias_empresa') THEN
+        ALTER TABLE categorias
+        ADD CONSTRAINT fk_categorias_empresa
+        FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    END IF;
 
-ALTER TABLE pets
-ADD CONSTRAINT fk_pets_empresa
-FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_pets_empresa') THEN
+        ALTER TABLE pets
+        ADD CONSTRAINT fk_pets_empresa
+        FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    END IF;
 
-ALTER TABLE produtos
-ADD CONSTRAINT fk_produtos_empresa
-FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_produtos_empresa') THEN
+        ALTER TABLE produtos
+        ADD CONSTRAINT fk_produtos_empresa
+        FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    END IF;
 
-ALTER TABLE servicos
-ADD CONSTRAINT fk_servicos_empresa
-FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_servicos_empresa') THEN
+        ALTER TABLE servicos
+        ADD CONSTRAINT fk_servicos_empresa
+        FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    END IF;
 
-ALTER TABLE fornecedores
-ADD CONSTRAINT fk_fornecedores_empresa
-FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_fornecedores_empresa') THEN
+        ALTER TABLE fornecedores
+        ADD CONSTRAINT fk_fornecedores_empresa
+        FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    END IF;
 
-ALTER TABLE compras
-ADD CONSTRAINT fk_compras_empresa
-FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_compras_empresa') THEN
+        ALTER TABLE compras
+        ADD CONSTRAINT fk_compras_empresa
+        FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    END IF;
 
-ALTER TABLE vendas
-ADD CONSTRAINT fk_vendas_empresa
-FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_vendas_empresa') THEN
+        ALTER TABLE vendas
+        ADD CONSTRAINT fk_vendas_empresa
+        FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    END IF;
 
-ALTER TABLE itens_compra
-ADD CONSTRAINT fk_itens_compra_empresa
-FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_itens_compra_empresa') THEN
+        ALTER TABLE itens_compra
+        ADD CONSTRAINT fk_itens_compra_empresa
+        FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    END IF;
 
-ALTER TABLE itens_venda
-ADD CONSTRAINT fk_itens_venda_empresa
-FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_itens_venda_empresa') THEN
+        ALTER TABLE itens_venda
+        ADD CONSTRAINT fk_itens_venda_empresa
+        FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    END IF;
 
-ALTER TABLE agendamentos
-ADD CONSTRAINT fk_agendamentos_empresa
-FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_agendamentos_empresa') THEN
+        ALTER TABLE agendamentos
+        ADD CONSTRAINT fk_agendamentos_empresa
+        FOREIGN KEY (empresa_id) REFERENCES empresas(id);
+    END IF;
+END;
+$$;

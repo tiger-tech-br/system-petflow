@@ -1,6 +1,7 @@
 "use strict";
 
 const VendaModel = require("../models/vendaModel");
+const VendaService = require("../services/vendaService");
 const pagseguroService = require("../services/pagseguroService");
 
 async function criarPagamento(request, response, next) {
@@ -123,16 +124,24 @@ async function consultarPagamento(request, response, next) {
             checkout.status
         );
 
-        const vendaAtualizada =
-            await VendaModel.atualizarPagamentoPorReferencia(
+        const dadosPagamento = {
+            pagseguroStatus: checkout.status,
+            pagseguroOrderId: checkout.orderId,
+            pagseguroChargeId: checkout.chargeId,
+            pagseguroResponse: checkout.raw
+        };
+
+        const vendaAtualizada = status === "PAGAMENTO_APROVADO"
+            ? await VendaService.confirmarPagamento(
+                customer.empresaId,
                 pedido.pagseguro_checkout_id,
-                {
-                    status,
-                    pagseguroStatus: checkout.status,
-                    pagseguroOrderId: checkout.orderId,
-                    pagseguroChargeId: checkout.chargeId,
-                    pagseguroResponse: checkout.raw
-                }
+                dadosPagamento
+            )
+            : await VendaService.atualizarStatusPagamento(
+                customer.empresaId,
+                pedido.pagseguro_checkout_id,
+                status,
+                dadosPagamento
             );
 
         return response.status(200).json({
@@ -171,16 +180,27 @@ async function receberWebhook(request, response, next) {
             });
         }
 
-        await VendaModel.atualizarPagamentoPorReferencia(
-            event.referenceId,
-            {
-                status: event.vendaStatus,
-                pagseguroStatus: event.pagseguroStatus,
-                pagseguroOrderId: event.orderId,
-                pagseguroChargeId: event.chargeId,
-                pagseguroResponse: event.raw
-            }
-        );
+        const dadosPagamento = {
+            pagseguroStatus: event.pagseguroStatus,
+            pagseguroOrderId: event.orderId,
+            pagseguroChargeId: event.chargeId,
+            pagseguroResponse: event.raw
+        };
+
+        if (event.vendaStatus === "PAGAMENTO_APROVADO") {
+            await VendaService.confirmarPagamento(
+                null,
+                event.referenceId,
+                dadosPagamento
+            );
+        } else {
+            await VendaService.atualizarStatusPagamento(
+                null,
+                event.referenceId,
+                event.vendaStatus,
+                dadosPagamento
+            );
+        }
 
         return response.status(200).json({
             success: true,

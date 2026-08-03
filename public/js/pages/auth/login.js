@@ -50,5 +50,5 @@ async function handleLogin(event) {
 
 function handleForgotPassword(event) {
     event.preventDefault();
-    alert("Recuperacao de senha administrativa em preparacao. Por enquanto, solicite a redefinicao ao responsavel pela loja.");
+    alert("Recuperação de senha administrativa em preparação. Por enquanto, solicite a redefinição ao responsável pela loja.");
 }

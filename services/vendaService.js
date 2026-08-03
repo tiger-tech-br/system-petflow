@@ -15,6 +15,14 @@ const MovimentacaoEstoqueService = require(
 
 const FinanceiroService = require("./financeiroService");
 
+const {
+    sendOptionalEmail,
+    paymentApprovedTemplate,
+    orderOutForDeliveryTemplate,
+    orderDeliveredTemplate,
+    orderCanceledTemplate
+} = require("./emailService");
+
 /* ==================================================
    FORMAS DE PAGAMENTO ACEITAS
 ================================================== */
@@ -234,13 +242,6 @@ const VendaService = {
 
                 itensCriados.push(novoItem);
 
-                await MovimentacaoEstoqueService.saida(
-                    empresaId,
-                    produtoId,
-                    quantidade,
-                    client
-                );
-
                 valorTotalBruto += subtotal;
 
             }
@@ -274,27 +275,6 @@ const VendaService = {
                     client
                 );
 
-            /* ==========================================
-               GERA CONTA A RECEBER
-            ========================================== */
-
-            await FinanceiroService.gerarContaReceber(
-                empresaId,
-                {
-                    id: vendaAtualizada.id,
-
-                    valor_total:
-                        vendaAtualizada.valor_final,
-
-                    data_venda:
-                        vendaAtualizada.data_venda,
-
-                    observacoes:
-                        vendaAtualizada.observacoes
-                },
-                client
-            );
-
             await client.query("COMMIT");
 
             return {
@@ -320,8 +300,312 @@ const VendaService = {
 
         }
 
+    },
+
+    /* ==============================================
+       CONFIRMAR PAGAMENTO
+    ============================================== */
+
+    async confirmarPagamento(empresaId, referencia, dadosPagamento = {}) {
+
+        const client = await db.connect();
+
+        try {
+
+            await client.query("BEGIN");
+
+            const venda = await buscarVendaPagamento(
+                referencia,
+                empresaId,
+                client
+            );
+
+            if (!venda) {
+                await client.query("COMMIT");
+                return null;
+            }
+
+            let shouldNotifyPayment = false;
+
+            if (venda.status === "PAGAMENTO_APROVADO") {
+                await VendaModel.atualizarPagamentoPorReferencia(
+                    referencia,
+                    {
+                        status: "PAGAMENTO_APROVADO",
+                        ...dadosPagamento
+                    },
+                    client
+                );
+
+                await client.query("COMMIT");
+                return venda;
+            }
+
+            shouldNotifyPayment = true;
+
+            const itens = await listarItensVenda(
+                venda.id,
+                venda.empresa_id,
+                client
+            );
+
+            for (const item of itens) {
+                await MovimentacaoEstoqueService.saida(
+                    venda.empresa_id,
+                    item.produto_id,
+                    item.quantidade,
+                    client
+                );
+            }
+
+            const vendaAtualizada =
+                await VendaModel.atualizarPagamentoPorReferencia(
+                    referencia,
+                    {
+                        status: "PAGAMENTO_APROVADO",
+                        ...dadosPagamento
+                    },
+                    client
+                );
+
+            await gerarFinanceiroSeNaoExistir(
+                venda.empresa_id,
+                vendaAtualizada || venda,
+                client
+            );
+
+            await client.query("COMMIT");
+
+            if (shouldNotifyPayment) {
+                await enviarEmailStatusPedido(
+                    vendaAtualizada || venda,
+                    "PAGAMENTO_APROVADO"
+                );
+            }
+
+            return vendaAtualizada || venda;
+
+        } catch (error) {
+
+            await client.query("ROLLBACK");
+            throw error;
+
+        } finally {
+
+            client.release();
+
+        }
+
+    },
+
+    /* ==============================================
+       ATUALIZAR STATUS DO PEDIDO
+    ============================================== */
+
+    async atualizarStatusPedido(empresaId, vendaId, status) {
+
+        if (status === "PAGAMENTO_APROVADO") {
+            return this.confirmarPagamento(
+                empresaId,
+                vendaId
+            );
+        }
+
+        const vendaAtual = await VendaModel.buscarPorId(
+            vendaId,
+            empresaId
+        );
+
+        if (!vendaAtual) {
+            return null;
+        }
+
+        if (vendaAtual.status === status) {
+            return vendaAtual;
+        }
+
+        const vendaAtualizada = await VendaModel.atualizarStatus(
+            vendaId,
+            empresaId,
+            status
+        );
+
+        await enviarEmailStatusPedido(
+            vendaAtualizada,
+            status
+        );
+
+        return vendaAtualizada;
+
+    },
+
+    /* ==============================================
+       ATUALIZAR STATUS DO PAGAMENTO
+    ============================================== */
+
+    async atualizarStatusPagamento(
+        empresaId,
+        referencia,
+        status,
+        dadosPagamento = {}
+    ) {
+
+        const vendaAtual = await buscarVendaPagamento(
+            referencia,
+            empresaId,
+            db
+        );
+
+        if (!vendaAtual) {
+            return null;
+        }
+
+        const vendaAtualizada =
+            await VendaModel.atualizarPagamentoPorReferencia(
+                referencia,
+                {
+                    status,
+                    ...dadosPagamento
+                }
+            );
+
+        if (vendaAtual.status !== status) {
+            await enviarEmailStatusPedido(
+                vendaAtualizada || vendaAtual,
+                status
+            );
+        }
+
+        return vendaAtualizada || vendaAtual;
+
     }
 
 };
+
+async function buscarVendaPagamento(referencia, empresaId, client) {
+
+    const { rows } = await client.query(
+        `
+            SELECT *
+            FROM vendas
+            WHERE
+                (
+                    id::TEXT = $1
+                    OR pagseguro_checkout_id = $1
+                    OR pagseguro_order_id = $1
+                    OR pagseguro_charge_id = $1
+                )
+                AND (
+                    $2::uuid IS NULL
+                    OR empresa_id = $2
+                )
+            LIMIT 1
+            FOR UPDATE;
+        `,
+        [
+            String(referencia || ""),
+            empresaId || null
+        ]
+    );
+
+    return rows[0] || null;
+
+}
+
+async function listarItensVenda(vendaId, empresaId, client) {
+
+    const { rows } = await client.query(
+        `
+            SELECT
+                iv.produto_id,
+                iv.quantidade
+            FROM itens_venda iv
+            INNER JOIN vendas v
+                ON v.id = iv.venda_id
+            WHERE iv.venda_id = $1
+              AND v.empresa_id = $2;
+        `,
+        [
+            vendaId,
+            empresaId
+        ]
+    );
+
+    return rows;
+
+}
+
+async function gerarFinanceiroSeNaoExistir(empresaId, venda, client) {
+
+    const { rows } = await client.query(
+        `
+            SELECT id
+            FROM financeiro
+            WHERE empresa_id = $1
+              AND origem = 'VENDA'
+              AND referencia_id = $2
+            LIMIT 1;
+        `,
+        [
+            empresaId,
+            venda.id
+        ]
+    );
+
+    if (rows[0]) {
+        return rows[0];
+    }
+
+    return FinanceiroService.gerarContaReceber(
+        empresaId,
+        {
+            id: venda.id,
+            valor_total: venda.valor_final,
+            data_venda: venda.data_venda,
+            observacoes: venda.observacoes
+        },
+        client
+    );
+
+}
+
+async function enviarEmailStatusPedido(venda, status) {
+
+    const templateFactory = {
+        PAGAMENTO_APROVADO: paymentApprovedTemplate,
+        SAIU_PARA_ENTREGA: orderOutForDeliveryTemplate,
+        ENTREGUE: orderDeliveredTemplate,
+        CANCELADA: orderCanceledTemplate
+    }[status];
+
+    if (!templateFactory || !venda?.id || !venda?.empresa_id) {
+        return null;
+    }
+
+    const pedido = await VendaModel.buscarPorId(
+        venda.id,
+        venda.empresa_id
+    );
+
+    const cliente = pedido?.cliente;
+
+    if (!cliente?.email) {
+        return null;
+    }
+
+    const template = templateFactory({
+        name: cliente.nome,
+        orderId: pedido.id,
+        total: pedido.valor_final ?? pedido.valor_total
+    });
+
+    return sendOptionalEmail({
+        to: cliente.email,
+        subject: template.subject,
+        html: template.html,
+        text: template.text
+    });
+
+}
 
 module.exports = VendaService;

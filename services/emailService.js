@@ -68,7 +68,7 @@ function passwordResetTemplate({ name, resetUrl }) {
             <p>Olá, ${safeName}.</p>
             <p>Recebemos uma solicitação para redefinir sua senha na PetFlow.</p>
             <p>
-                <a href="${resetUrl}" style="display:inline-block;background:#04766d;color:#fff;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700">
+                <a href="${escapeHtml(resetUrl)}" style="display:inline-block;background:#04766d;color:#fff;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700">
                     Criar nova senha
                 </a>
             </p>
@@ -99,6 +99,67 @@ function orderReceivedTemplate({ name, orderId, total, items = [] }) {
                 ${itemList}
             </ul>
             <p style="font-size:18px"><strong>Total: ${currency(total)}</strong></p>
+        `)
+    };
+}
+
+function paymentApprovedTemplate({ name, orderId, total }) {
+    const safeName = escapeHtml(firstName(name) || "cliente");
+    const orderLabel = shortId(orderId);
+
+    return {
+        subject: `Pagamento aprovado #${orderLabel} - PetFlow`,
+        text: `Olá, ${safeName}. O pagamento do pedido #${orderLabel} foi aprovado no valor de ${currency(total)}.`,
+        html: baseEmail(`
+            <h1>Pagamento aprovado</h1>
+            <p>Olá, ${safeName}.</p>
+            <p>O pagamento do pedido <strong>#${orderLabel}</strong> foi aprovado. Agora vamos separar tudo com cuidado para a entrega.</p>
+            <p style="font-size:18px"><strong>Total: ${currency(total)}</strong></p>
+        `)
+    };
+}
+
+function orderOutForDeliveryTemplate({ name, orderId }) {
+    const safeName = escapeHtml(firstName(name) || "cliente");
+    const orderLabel = shortId(orderId);
+
+    return {
+        subject: `Pedido saiu para entrega #${orderLabel} - PetFlow`,
+        text: `Olá, ${safeName}. Seu pedido #${orderLabel} saiu para entrega.`,
+        html: baseEmail(`
+            <h1>Pedido saiu para entrega</h1>
+            <p>Olá, ${safeName}.</p>
+            <p>Seu pedido <strong>#${orderLabel}</strong> saiu para entrega e está a caminho.</p>
+        `)
+    };
+}
+
+function orderDeliveredTemplate({ name, orderId }) {
+    const safeName = escapeHtml(firstName(name) || "cliente");
+    const orderLabel = shortId(orderId);
+
+    return {
+        subject: `Pedido entregue #${orderLabel} - PetFlow`,
+        text: `Olá, ${safeName}. Seu pedido #${orderLabel} foi entregue.`,
+        html: baseEmail(`
+            <h1>Pedido entregue</h1>
+            <p>Olá, ${safeName}.</p>
+            <p>Seu pedido <strong>#${orderLabel}</strong> foi entregue. Obrigado por comprar com a PetFlow.</p>
+        `)
+    };
+}
+
+function orderCanceledTemplate({ name, orderId }) {
+    const safeName = escapeHtml(firstName(name) || "cliente");
+    const orderLabel = shortId(orderId);
+
+    return {
+        subject: `Pedido cancelado #${orderLabel} - PetFlow`,
+        text: `Olá, ${safeName}. Seu pedido #${orderLabel} foi cancelado.`,
+        html: baseEmail(`
+            <h1>Pedido cancelado</h1>
+            <p>Olá, ${safeName}.</p>
+            <p>Seu pedido <strong>#${orderLabel}</strong> foi cancelado. Se tiver dúvidas, entre em contato com a PetFlow.</p>
         `)
     };
 }
@@ -142,5 +203,9 @@ module.exports = {
     sendOptionalEmail,
     welcomeTemplate,
     passwordResetTemplate,
-    orderReceivedTemplate
+    orderReceivedTemplate,
+    paymentApprovedTemplate,
+    orderOutForDeliveryTemplate,
+    orderDeliveredTemplate,
+    orderCanceledTemplate
 };

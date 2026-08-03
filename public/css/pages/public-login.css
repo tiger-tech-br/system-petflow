@@ -523,6 +523,90 @@ a {
     color: var(--ink);
 }
 
+.order-note {
+    display: grid;
+    gap: 6px;
+    padding: 12px;
+    border: 1px solid var(--soft-line);
+    border-radius: 8px;
+    background: #fbfefd;
+}
+
+.order-note span,
+.order-actions span {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.order-note p {
+    margin: 0;
+    color: var(--ink);
+    line-height: 1.5;
+}
+
+.order-timeline {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.order-timeline li {
+    display: grid;
+    justify-items: center;
+    gap: 7px;
+    padding: 10px 6px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--muted);
+    background: var(--surface);
+    font-size: 12px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.order-timeline li span {
+    width: 22px;
+    height: 22px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 999px;
+    border: 1px solid #cbdde1;
+    color: transparent;
+    background: #ffffff;
+    font-size: 12px;
+    line-height: 1;
+}
+
+.order-timeline li.is-done {
+    border-color: rgba(4, 118, 109, .22);
+    color: var(--teal);
+    background: #eaf8f5;
+}
+
+.order-timeline li.is-done span {
+    border-color: var(--teal);
+    color: #ffffff;
+    background: var(--teal);
+}
+
+.order-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--soft-line);
+}
+
+.order-pay-button {
+    width: auto;
+    min-width: 180px;
+}
+
 /* Compact login view */
 body {
     padding: 22px 16px;
@@ -691,8 +775,19 @@ body {
 
     .order-card header,
     .order-card dl,
-    .order-card li {
+    .order-card li,
+    .order-actions {
         flex-direction: column;
         gap: 7px;
+    }
+
+    .order-timeline {
+        grid-template-columns: 1fr;
+    }
+
+    .order-timeline li {
+        justify-items: start;
+        grid-template-columns: 22px minmax(0, 1fr);
+        text-align: left;
     }
 }

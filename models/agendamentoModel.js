@@ -23,11 +23,11 @@ async function findAll(empresaId) {
 
                 p.nome AS pet,
 
-                a.servico,
+                COALESCE(a.servico, s.nome) AS servico,
 
-                a.data,
+                COALESCE(a.data, a.data_agendamento) AS data,
 
-                a.hora,
+                COALESCE(a.hora, a.horario) AS hora,
 
                 a.status
 
@@ -41,9 +41,15 @@ async function findAll(empresaId) {
 
                 ON p.id = a.pet_id
 
+            LEFT JOIN servicos s
+
+                ON s.id = a.servico_id
+
             WHERE a.empresa_id = $1
 
-            ORDER BY a.data ASC, a.hora ASC
+            ORDER BY
+                COALESCE(a.data, a.data_agendamento) ASC,
+                COALESCE(a.hora, a.horario) ASC
         `,
 
         [empresaId]
@@ -63,13 +69,21 @@ async function findById(id, empresaId) {
     const result = await db.query(
 
         `
-            SELECT *
+            SELECT
+                a.*,
+                COALESCE(a.servico, s.nome) AS servico,
+                COALESCE(a.data, a.data_agendamento) AS data,
+                COALESCE(a.hora, a.horario) AS hora
 
-            FROM agendamentos
+            FROM agendamentos a
 
-            WHERE id = $1
+            LEFT JOIN servicos s
 
-            AND empresa_id = $2
+                ON s.id = a.servico_id
+
+            WHERE a.id = $1
+
+            AND a.empresa_id = $2
 
             LIMIT 1
         `,
