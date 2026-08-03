@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS fornecedores (
 
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
+    nome VARCHAR(150),
+
     razao_social VARCHAR(150) NOT NULL,
 
     nome_fantasia VARCHAR(150),
@@ -63,6 +65,7 @@ CREATE TABLE IF NOT EXISTS fornecedores (
         )
 );
 
+ALTER TABLE fornecedores ADD COLUMN IF NOT EXISTS nome VARCHAR(150);
 ALTER TABLE fornecedores ADD COLUMN IF NOT EXISTS razao_social VARCHAR(150);
 ALTER TABLE fornecedores ADD COLUMN IF NOT EXISTS nome_fantasia VARCHAR(150);
 ALTER TABLE fornecedores ADD COLUMN IF NOT EXISTS cnpj VARCHAR(18);
@@ -81,7 +84,14 @@ ALTER TABLE fornecedores ADD COLUMN IF NOT EXISTS estado CHAR(2);
 ALTER TABLE fornecedores ADD COLUMN IF NOT EXISTS site VARCHAR(255);
 ALTER TABLE fornecedores ADD COLUMN IF NOT EXISTS observacoes TEXT;
 ALTER TABLE fornecedores ADD COLUMN IF NOT EXISTS ativo BOOLEAN NOT NULL DEFAULT TRUE;
-UPDATE fornecedores SET razao_social = COALESCE(razao_social, nome, 'Fornecedor') WHERE razao_social IS NULL;
+UPDATE fornecedores
+SET
+    nome = COALESCE(nome, nome_fantasia, razao_social, 'Fornecedor'),
+    razao_social = COALESCE(razao_social, nome, nome_fantasia, 'Fornecedor')
+WHERE nome IS NULL
+   OR razao_social IS NULL;
+
+ALTER TABLE fornecedores ALTER COLUMN nome SET DEFAULT 'Fornecedor';
 
 /* ==========================================================
    ÍNDICES

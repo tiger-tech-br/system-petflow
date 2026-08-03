@@ -26,3 +26,26 @@ SELECT 'PetFlow'
 WHERE NOT EXISTS (
     SELECT 1 FROM empresas
 );
+
+CREATE OR REPLACE FUNCTION get_petflow_empresa_id()
+RETURNS UUID
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_empresa_id UUID;
+BEGIN
+    SELECT id
+    INTO v_empresa_id
+    FROM empresas
+    ORDER BY created_at ASC
+    LIMIT 1;
+
+    IF v_empresa_id IS NULL THEN
+        INSERT INTO empresas (nome)
+        VALUES ('PetFlow')
+        RETURNING id INTO v_empresa_id;
+    END IF;
+
+    RETURN v_empresa_id;
+END;
+$$;
