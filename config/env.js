@@ -12,8 +12,6 @@ require("dotenv").config();
 
 const requiredVariables = [
 
-    "PORT",
-
     "JWT_SECRET",
 
     "JWT_EXPIRES_IN",
@@ -65,7 +63,7 @@ if (
 
 module.exports = {
 
-    PORT: process.env.PORT,
+    PORT: process.env.PORT || 4500,
 
     DB_HOST: process.env.DB_HOST,
 

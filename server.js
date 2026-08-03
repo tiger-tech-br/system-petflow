@@ -4,6 +4,6 @@ const { PORT } = require("./config/env");
 
 app.listen(PORT, () => {
 
-    console.log(`PetFlow rodando em http://localhost:${PORT}/`);
+    console.log(`PetFlow rodando na porta ${PORT}.`);
 
 });
