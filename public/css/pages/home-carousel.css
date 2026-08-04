@@ -50,8 +50,8 @@ body {
 .header .container {
     min-height: 82px;
     display: grid;
-    grid-template-columns: 156px minmax(340px, 400px) minmax(410px, 1fr) 192px;
-    gap: 14px;
+    grid-template-columns: 150px minmax(260px, 370px) minmax(300px, 1fr) max-content;
+    gap: 12px;
     align-items: center;
 }
 
@@ -184,10 +184,10 @@ body {
     display: inline-flex;
     align-items: center;
     min-height: 42px;
-    padding: 0 10px;
+    padding: 0 9px;
     border-radius: 999px;
     color: #425460;
-    font-size: .88rem;
+    font-size: .86rem;
     font-weight: 700;
 }
 
@@ -210,19 +210,23 @@ body {
     align-items: center;
     justify-content: flex-end;
     gap: 10px;
-    min-width: 168px;
+    min-width: 0;
+    width: max-content;
     white-space: nowrap;
 }
 
 .header-actions > .btn {
-    min-width: 88px;
+    min-width: 78px;
     flex: 0 0 auto;
-    padding-inline: 18px;
+    padding-inline: 16px;
     box-shadow: 0 14px 28px rgba(4, 118, 109, .18);
 }
 
 .header-actions > .btn.is-authenticated {
-    min-width: 112px;
+    max-width: 112px;
+    min-width: 88px;
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: var(--pf-teal);
     border-color: rgba(4, 118, 109, .18);
     background: #e6f6f3;
@@ -230,7 +234,8 @@ body {
 }
 
 .header-actions > .public-logout-link {
-    min-width: 64px;
+    min-width: 58px;
+    padding-inline: 14px;
     color: #425460;
     border-color: rgba(4, 118, 109, .14);
     background: #ffffff;
@@ -240,7 +245,9 @@ body {
 .icon-badge {
     position: relative;
     width: 42px;
+    min-width: 42px;
     height: 42px;
+    flex: 0 0 42px;
     display: grid;
     place-items: center;
     border: 1px solid rgba(4, 118, 109, .14);

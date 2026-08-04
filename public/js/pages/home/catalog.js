@@ -794,6 +794,7 @@ function setupCustomerHeader() {
     const token = getCustomerToken();
     const cached = readCustomerCache();
     const firstName = getFirstName(cached?.nome);
+    const fullName = String(cached?.nome || "Cliente").trim();
 
     document.querySelectorAll("[data-public-logout]").forEach(link => link.remove());
 
@@ -801,6 +802,7 @@ function setupCustomerHeader() {
         if (token) {
             link.href = "/conta";
             link.textContent = firstName;
+            link.title = fullName;
             link.classList.add("is-authenticated");
             link.setAttribute("aria-label", "Abrir minha conta");
             insertLogoutLink(link);
@@ -809,6 +811,7 @@ function setupCustomerHeader() {
 
         link.href = "/login";
         link.textContent = "Entrar";
+        link.removeAttribute("title");
         link.classList.remove("is-authenticated");
         link.setAttribute("aria-label", "Entrar na conta");
     });
@@ -837,7 +840,8 @@ function handleCustomerLogout(event) {
 }
 
 function getFirstName(name) {
-    return String(name || "Cliente").trim().split(/\s+/)[0] || "Cliente";
+    const firstName = String(name || "Cliente").trim().split(/\s+/)[0] || "Cliente";
+    return firstName.length > 12 ? `${firstName.slice(0, 11)}...` : firstName;
 }
 
 async function renderCheckoutCustomer() {

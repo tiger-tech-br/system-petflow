@@ -397,10 +397,13 @@ function currency(value) {
 
 function setupCepLookup() {
     document.querySelectorAll("input[name='cep']").forEach(input => {
-        input.addEventListener("blur", async () => {
+        let lookupTimer = null;
+        let lastLoadedCep = "";
+
+        const lookup = async () => {
             const cep = input.value.replace(/\D/g, "");
 
-            if (cep.length !== 8) {
+            if (cep.length !== 8 || cep === lastLoadedCep) {
                 return;
             }
 
@@ -412,6 +415,7 @@ function setupCepLookup() {
                     return;
                 }
 
+                lastLoadedCep = cep;
                 const form = input.closest("form");
                 setField(form, "endereco", data.logradouro);
                 setField(form, "bairro", data.bairro);
@@ -421,7 +425,19 @@ function setupCepLookup() {
             } catch {
                 // CEP manual continua permitido.
             }
+        };
+
+        input.addEventListener("input", () => {
+            const digits = input.value.replace(/\D/g, "").slice(0, 8);
+            input.value = digits.length > 5
+                ? `${digits.slice(0, 5)}-${digits.slice(5)}`
+                : digits;
+
+            window.clearTimeout(lookupTimer);
+            lookupTimer = window.setTimeout(lookup, 350);
         });
+
+        input.addEventListener("blur", lookup);
     });
 }
 

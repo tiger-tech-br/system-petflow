@@ -92,7 +92,18 @@ function securityMiddleware(app) {
 
     /* Helmet */
 
-    app.use(helmet());
+    app.use(helmet({
+        contentSecurityPolicy: {
+            directives: {
+                "connect-src": [
+                    "'self'",
+                    "https://viacep.com.br",
+                    "https://api.pagseguro.com",
+                    "https://sandbox.api.pagseguro.com"
+                ]
+            }
+        }
+    }));
 
     /* Compressão */
 
