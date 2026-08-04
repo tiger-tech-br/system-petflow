@@ -75,6 +75,8 @@ function buildCheckoutPayload(pedido) {
     const items = Array.isArray(pedido.itens)
         ? pedido.itens
         : [];
+    const appUrl = getAppUrl();
+    const webhookUrl = `${appUrl}/api/public/pagamentos/webhook`;
 
     if (!items.length) {
         const error = new Error("O pedido não possui itens para pagamento.");
@@ -86,22 +88,16 @@ function buildCheckoutPayload(pedido) {
         reference_id: String(pedido.id),
         customer_modifiable: true,
         address_modifiable: false,
-        return_url: `${APP_URL}/meus-pedidos`,
-        redirect_url: `${APP_URL}/meus-pedidos`,
+        return_url: `${appUrl}/meus-pedidos`,
+        redirect_url: `${appUrl}/meus-pedidos`,
+        redirect_waiting_time: 5,
         notification_urls: [
-            `${APP_URL}/api/public/pagamentos/webhook`
+            webhookUrl
         ],
-        payment_methods: [
-            {
-                type: "PIX"
-            },
-            {
-                type: "CREDIT_CARD"
-            },
-            {
-                type: "DEBIT_CARD"
-            }
+        payment_notification_urls: [
+            webhookUrl
         ],
+        payment_methods: buildPaymentMethods(),
         items: items.map(item => ({
             reference_id: String(item.produto_id || item.id || pedido.id),
             name: String(item.produto || "Produto PetFlow").slice(0, 100),
@@ -117,6 +113,31 @@ function buildCheckoutPayload(pedido) {
             address_modifiable: false
         }
     };
+}
+
+function getAppUrl() {
+    return String(APP_URL || "")
+        .trim()
+        .replace(/\/+$/g, "");
+}
+
+function buildPaymentMethods() {
+    const methods = [
+        {
+            type: "PIX"
+        },
+        {
+            type: "CREDIT_CARD"
+        }
+    ];
+
+    if (process.env.PAGSEGURO_ENABLE_DEBIT === "true") {
+        methods.push({
+            type: "DEBIT_CARD"
+        });
+    }
+
+    return methods;
 }
 
 function buildCustomer(cliente) {

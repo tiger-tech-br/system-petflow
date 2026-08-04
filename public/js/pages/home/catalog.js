@@ -40,18 +40,19 @@ async function loadPublicCatalog() {
         if (publicProducts.length) {
             renderProducts(publicProducts.slice(0, 6));
             updateHeaderCounters();
+            return;
         }
-    } catch {
-        publicProducts = [...document.querySelectorAll(".product-card")].map(card => ({
-            id: card.querySelector(".product-title")?.textContent.trim(),
-            nome: card.querySelector(".product-title")?.textContent.trim(),
-            descricao: card.querySelector(".product-description")?.textContent.trim(),
-            categoria: card.querySelector(".product-category")?.textContent.trim(),
-            preco: card.querySelector(".product-price")?.textContent.replace(/[^\d,]/g, "").replace(",", "."),
-            foto: card.querySelector(".product-image")?.getAttribute("src")
-        })).filter(item => item.nome);
 
+        publicProducts = collectStaticProducts();
+        prepareStaticProductCards();
         bindProductActions();
+        syncProductButtons();
+        updateHeaderCounters();
+    } catch {
+        publicProducts = collectStaticProducts();
+        prepareStaticProductCards();
+        bindProductActions();
+        syncProductButtons();
         updateHeaderCounters();
     }
 }
@@ -307,6 +308,11 @@ function renderProducts(products, options = {}) {
 
 function bindProductActions() {
     document.querySelectorAll("[data-action='toggle-cart']").forEach(button => {
+        if (button.dataset.boundAction === "true") {
+            return;
+        }
+
+        button.dataset.boundAction = "true";
         button.addEventListener("click", () => {
             const id = button.closest("[data-product-card]")?.dataset.id;
 
@@ -316,11 +322,16 @@ function bindProductActions() {
 
             toggleCartProduct(id);
             persistPublicState();
-            renderProducts(currentVisibleProducts());
+            syncProductButtons();
         });
     });
 
     document.querySelectorAll("[data-action='toggle-favorite']").forEach(button => {
+        if (button.dataset.boundAction === "true") {
+            return;
+        }
+
+        button.dataset.boundAction = "true";
         button.addEventListener("click", () => {
             const id = button.closest("[data-product-card]")?.dataset.id;
 
@@ -330,9 +341,81 @@ function bindProductActions() {
 
             toggleSet(publicFavorites, id);
             persistPublicState();
-            renderProducts(currentVisibleProducts());
+            syncProductButtons();
         });
     });
+}
+
+function collectStaticProducts() {
+    return [...document.querySelectorAll(".product-card")].map(card => {
+        const name = card.querySelector(".product-title")?.textContent.trim();
+
+        return {
+            id: slugifyStaticProduct(name),
+            nome: name,
+            descricao: card.querySelector(".product-description")?.textContent.trim(),
+            categoria: card.querySelector(".product-category")?.textContent.trim(),
+            preco: card.querySelector(".product-price")?.textContent.replace(/[^\d,]/g, "").replace(",", "."),
+            foto: card.querySelector(".product-image")?.getAttribute("src")
+        };
+    }).filter(item => item.nome);
+}
+
+function prepareStaticProductCards() {
+    document.querySelectorAll(".product-card").forEach(card => {
+        const title = card.querySelector(".product-title")?.textContent.trim();
+        const id = slugifyStaticProduct(title);
+
+        if (!id) {
+            return;
+        }
+
+        card.dataset.productCard = "true";
+        card.dataset.id = id;
+
+        const addButton = card.querySelector(".cart-action.add");
+        const favoriteButton = card.querySelector(".cart-action.favorite");
+
+        if (addButton && !addButton.dataset.action) {
+            addButton.dataset.action = "toggle-cart";
+        }
+
+        if (favoriteButton && !favoriteButton.dataset.action) {
+            favoriteButton.dataset.action = "toggle-favorite";
+        }
+    });
+}
+
+function syncProductButtons() {
+    document.querySelectorAll("[data-product-card]").forEach(card => {
+        const id = card.dataset.id;
+        const inCart = Boolean(publicCart[String(id)]);
+        const favorite = publicFavorites.has(String(id));
+        const cartButton = card.querySelector("[data-action='toggle-cart']");
+        const favoriteButton = card.querySelector("[data-action='toggle-favorite']");
+
+        if (cartButton) {
+            cartButton.classList.toggle("is-active", inCart);
+            cartButton.innerHTML = `
+                <i class="fa-solid ${inCart ? "fa-check" : "fa-plus"}"></i>
+                <span>${inCart ? "Na sacola" : "Adicionar à sacola"}</span>
+            `;
+        }
+
+        if (favoriteButton) {
+            favoriteButton.classList.toggle("is-active", favorite);
+            favoriteButton.innerHTML = `
+                <i class="fa-${favorite ? "solid" : "regular"} fa-heart"></i>
+                <span>${favorite ? "Favorito" : "Favoritar"}</span>
+            `;
+        }
+    });
+}
+
+function slugifyStaticProduct(value) {
+    return normalize(value)
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
 }
 
 function currentVisibleProducts() {
