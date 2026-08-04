@@ -663,7 +663,7 @@ function injectCheckoutModal() {
                 </header>
                 <div class="checkout-items" id="checkoutItems"></div>
                 <form class="checkout-form" id="checkoutForm">
-                    <div class="checkout-customer" id="checkoutCustomer"></div>
+                    <div class="checkout-alert" id="checkoutCustomer"></div>
                     <label>Observações<textarea class="form-control" name="observacoes" placeholder="Ex: entregar à tarde"></textarea></label>
                     <div class="checkout-total">
                         <span>Total</span>
@@ -1129,7 +1129,7 @@ async function renderCheckoutCustomer() {
         container.innerHTML = `
             <div class="checkout-account-card is-warning">
                 <strong>Entre para finalizar</strong>
-                <p>Crie sua conta ou entre para usar seu endereço salvo na PetFlow.</p>
+                <p>É necessário entrar na sua conta antes de finalizar o pedido.</p>
                 <div class="checkout-account-actions">
                     <a class="btn btn-primary" href="/login">Entrar ou cadastrar</a>
                 </div>
@@ -1143,19 +1143,16 @@ async function renderCheckoutCustomer() {
         const addressComplete = hasDeliveryAddress(publicCustomer);
 
         submit.disabled = !addressComplete;
-        const contact = [publicCustomer.telefone, publicCustomer.email].filter(Boolean).join(" - ");
+
+        if (addressComplete) {
+            container.innerHTML = "";
+            return;
+        }
+
         container.innerHTML = `
-            <div class="checkout-account-card ${addressComplete ? "" : "is-warning"}">
-                <div>
-                    <span>Cliente</span>
-                    <strong>${escapeHtml(publicCustomer.nome || "Cliente PetFlow")}</strong>
-                    <p>${escapeHtml(contact)}</p>
-                </div>
-                <div>
-                    <span>Endereço de entrega</span>
-                    <strong>${escapeHtml(formatCustomerAddress(publicCustomer) || "Endereço incompleto")}</strong>
-                    <p>${addressComplete ? "Esse endereço será usado no pedido." : "Atualize seu endereço antes de finalizar."}</p>
-                </div>
+            <div class="checkout-account-card is-warning">
+                <strong>Endereço incompleto</strong>
+                <p>Atualize seu endereço na área do cliente antes de finalizar.</p>
                 <div class="checkout-account-actions">
                     <a class="btn btn-secondary" href="/conta">Editar meus dados</a>
                 </div>
@@ -1207,17 +1204,6 @@ function readCustomerCache() {
 
 function hasDeliveryAddress(customer) {
     return Boolean(customer?.endereco && customer?.numero && customer?.bairro && customer?.cidade && customer?.estado);
-}
-
-function formatCustomerAddress(customer) {
-    return [
-        customer?.endereco,
-        customer?.numero,
-        customer?.complemento,
-        customer?.bairro,
-        customer?.cidade,
-        customer?.estado
-    ].filter(Boolean).join(", ");
 }
 
 function formatNotificationDate(value) {
