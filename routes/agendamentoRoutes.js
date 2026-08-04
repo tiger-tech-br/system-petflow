@@ -92,9 +92,16 @@ const agendamentoValidation = [
 
         .trim()
 
-        .notEmpty()
+        .isIn([
+            "AGENDADO",
+            "CONFIRMADO",
+            "EM_ANDAMENTO",
+            "CONCLUIDO",
+            "CANCELADO",
+            "FALTOU"
+        ])
 
-        .withMessage("Informe o status.")
+        .withMessage("Informe um status válido.")
 
 ];
 

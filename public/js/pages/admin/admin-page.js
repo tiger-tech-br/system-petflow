@@ -8,10 +8,12 @@
     }
 
     const isSalesPage = config.key === "vendas";
+    const isSchedulePage = config.key === "agendamentos";
 
     let records = [];
     let editingId = null;
     let selectedSaleId = null;
+    let scheduleDate = new Date();
 
     document.addEventListener("DOMContentLoaded", () => {
         if (typeof requireAuth === "function") {
@@ -23,6 +25,7 @@
         setupAdminLogout();
         buildInsights();
         buildPipeline();
+        buildScheduleCalendar();
         buildForm();
 
         if (!isSalesPage) {
@@ -210,6 +213,72 @@
         `).join("");
 
         anchor.insertAdjacentElement("afterend", pipeline);
+    }
+
+    function buildScheduleCalendar() {
+        if (
+            !isSchedulePage ||
+            !config.calendar ||
+            document.querySelector(".schedule-calendar")
+        ) {
+            return;
+        }
+
+        const contentGrid = document.querySelector(".content-grid");
+        const anchor = document.querySelector(".admin-insights") ||
+            document.querySelector(".page-header");
+
+        if (!contentGrid || !anchor) {
+            return;
+        }
+
+        const calendar = document.createElement("section");
+        calendar.className = "panel schedule-calendar";
+        calendar.setAttribute("aria-label", "Calendário de agendamentos");
+        calendar.innerHTML = `
+            <div class="panel-header schedule-calendar-header">
+                <div>
+                    <span class="muted">Calendário da loja</span>
+                    <h3 id="scheduleCalendarTitle">Agenda</h3>
+                </div>
+
+                <div class="schedule-calendar-actions">
+                    <button class="btn btn-small" type="button" data-schedule-prev>
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-small" type="button" data-schedule-today>Hoje</button>
+                    <button class="btn btn-small" type="button" data-schedule-next>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="schedule-weekdays">
+                ${["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
+                    .map(day => `<span>${day}</span>`)
+                    .join("")}
+            </div>
+
+            <div class="schedule-calendar-grid" id="scheduleCalendarGrid"></div>
+        `;
+
+        anchor.insertAdjacentElement("afterend", calendar);
+        contentGrid.classList.add("content-grid-wide");
+
+        calendar.querySelector("[data-schedule-prev]")?.addEventListener("click", () => {
+            scheduleDate = new Date(scheduleDate.getFullYear(), scheduleDate.getMonth() - 1, 1);
+            renderScheduleCalendar();
+        });
+
+        calendar.querySelector("[data-schedule-next]")?.addEventListener("click", () => {
+            scheduleDate = new Date(scheduleDate.getFullYear(), scheduleDate.getMonth() + 1, 1);
+            renderScheduleCalendar();
+        });
+
+        calendar.querySelector("[data-schedule-today]")?.addEventListener("click", () => {
+            scheduleDate = new Date();
+            renderScheduleCalendar();
+        });
     }
 
     function buildForm() {
@@ -547,11 +616,15 @@
             }
 
             renderTable();
+            renderScheduleCalendar();
+            updateScheduleInsights();
             updateSalesSummary();
             setStatus(`${records.length} registro(s) carregado(s).`);
         } catch (error) {
             records = [];
             renderTable();
+            renderScheduleCalendar();
+            updateScheduleInsights();
             updateSalesSummary();
             setStatus(error.message || "Não foi possível carregar os dados.");
         }
@@ -1284,6 +1357,90 @@
         return escapeHtml(String(value));
     }
 
+    function renderScheduleCalendar() {
+        if (!isSchedulePage || !config.calendar) {
+            return;
+        }
+
+        const grid = document.getElementById("scheduleCalendarGrid");
+        const title = document.getElementById("scheduleCalendarTitle");
+
+        if (!grid || !title) {
+            return;
+        }
+
+        const year = scheduleDate.getFullYear();
+        const month = scheduleDate.getMonth();
+        const firstDay = new Date(year, month, 1);
+        const start = new Date(year, month, 1 - firstDay.getDay());
+        const todayKey = formatDateKey(new Date());
+
+        title.textContent = new Intl.DateTimeFormat("pt-BR", {
+            month: "long",
+            year: "numeric"
+        }).format(firstDay);
+
+        const days = Array.from({ length: 42 }, (_, index) => {
+            const date = new Date(start);
+            date.setDate(start.getDate() + index);
+            return date;
+        });
+
+        grid.innerHTML = days.map(date => {
+            const key = formatDateKey(date);
+            const dayRecords = records
+                .filter(record => formatDateKey(getRecordValue(record, "data")) === key)
+                .sort((a, b) => String(a.hora || "").localeCompare(String(b.hora || "")));
+
+            return `
+                <article class="schedule-day ${date.getMonth() === month ? "" : "is-muted"} ${key === todayKey ? "is-today" : ""}">
+                    <header>
+                        <span>${date.getDate()}</span>
+                        <small>${dayRecords.length ? `${dayRecords.length} agenda(s)` : ""}</small>
+                    </header>
+
+                    <div class="schedule-day-items">
+                        ${dayRecords.slice(0, 4).map(record => `
+                            <button
+                                class="schedule-event"
+                                type="button"
+                                data-action="edit"
+                                data-id="${escapeHtml(record.id)}"
+                                data-status="${escapeHtml(record.status || "AGENDADO")}">
+                                <strong>${escapeHtml(formatTime(record.hora))} - ${escapeHtml(record.pet || "Pet")}</strong>
+                                <span>${escapeHtml(record.servico || "Serviço")} • ${escapeHtml(record.cliente || "Cliente")}</span>
+                                <em>${escapeHtml(formatStatusLabel(record.status))}</em>
+                            </button>
+                        `).join("")}
+                        ${dayRecords.length > 4 ? `<small class="schedule-more">+${dayRecords.length - 4} outro(s)</small>` : ""}
+                    </div>
+                </article>
+            `;
+        }).join("");
+    }
+
+    function updateScheduleInsights() {
+        if (!isSchedulePage) {
+            return;
+        }
+
+        document.querySelectorAll("[data-insight-key], [data-insight-index]").forEach(card => {
+            const status = config.insights?.[Number(card.dataset.insightIndex)]?.status;
+
+            if (!status) {
+                return;
+            }
+
+            const value = card.querySelector("[data-insight-value]");
+
+            if (value) {
+                value.textContent = String(
+                    records.filter(record => record.status === status).length
+                );
+            }
+        });
+    }
+
     function updateSalesSummary() {
         if (!isSalesPage) {
             return;
@@ -1376,6 +1533,10 @@
             return "";
         }
 
+        if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}/.test(value)) {
+            return value.slice(0, 10);
+        }
+
         const date = value instanceof Date ? value : new Date(value);
 
         if (Number.isNaN(date.getTime())) {
@@ -1387,6 +1548,10 @@
             String(date.getMonth() + 1).padStart(2, "0"),
             String(date.getDate()).padStart(2, "0")
         ].join("-");
+    }
+
+    function formatTime(value) {
+        return String(value || "").slice(0, 5) || "--:--";
     }
 
     function setText(id, value) {
@@ -1411,10 +1576,12 @@
             ENTREGUE: "Entregue",
             FINALIZADA: "Finalizado",
             CANCELADA: "Cancelado",
-            AGENDADO: "Agendado",
+            AGENDADO: "Solicitado",
             CONFIRMADO: "Confirmado",
+            EM_ANDAMENTO: "Em atendimento",
             CONCLUIDO: "Concluído",
             CANCELADO: "Cancelado",
+            FALTOU: "Não compareceu",
             PAGO: "Pago",
             ATRASADO: "Atrasado"
         };
