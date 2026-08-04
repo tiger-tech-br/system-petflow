@@ -210,7 +210,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 6px;
+    gap: 10px;
     min-width: 0;
     width: max-content;
     white-space: nowrap;
@@ -227,7 +227,7 @@ body {
 
 .customer-notification-panel {
     position: absolute;
-    top: calc(100% + 12px);
+    top: calc(100% + 14px);
     right: 0;
     z-index: 80;
     width: min(360px, 86vw);
@@ -310,7 +310,7 @@ body {
 }
 
 .customer-notification-item p {
-    margin: 4px 0;
+    margin: 6px 0;
     color: var(--pf-muted);
     font-size: .84rem;
     line-height: 1.45;
@@ -329,16 +329,16 @@ body {
 }
 
 .header-actions > .btn {
-    min-width: 72px;
+    min-width: 68px;
     flex: 0 0 auto;
-    min-height: 42px;
-    padding-inline: 14px;
+    min-height: 40px;
+    padding-inline: 13px;
     box-shadow: 0 14px 28px rgba(4, 118, 109, .18);
 }
 
 .header-actions > .btn.is-authenticated {
-    max-width: 92px;
-    min-width: 76px;
+    max-width: 88px;
+    min-width: 74px;
     overflow: hidden;
     text-overflow: ellipsis;
     color: var(--pf-teal);
@@ -358,10 +358,10 @@ body {
 
 .icon-badge {
     position: relative;
-    width: 40px;
-    min-width: 40px;
-    height: 40px;
-    flex: 0 0 40px;
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
     display: grid;
     place-items: center;
     border: 1px solid rgba(4, 118, 109, .14);
@@ -392,7 +392,7 @@ body {
 
 .icon-badge i {
     color: #10212b;
-    font-size: 17px;
+    font-size: 16px;
     line-height: 1;
 }
 
@@ -1577,19 +1577,19 @@ body.favorites-open {
 
     .header-actions {
         min-width: 0;
-        gap: 7px;
+        gap: 8px;
     }
 
     .icon-badge,
     .menu-toggle {
-        width: 40px;
-        height: 40px;
+        width: 38px;
+        height: 38px;
         border-radius: 10px;
         box-shadow: 0 8px 18px rgba(16, 33, 43, .07);
     }
 
     .icon-badge i {
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .menu-toggle::before {

@@ -46,14 +46,14 @@ async function sendOptionalEmail(options) {
 
 function welcomeTemplate({ name }) {
     const safeName = escapeHtml(firstName(name) || "cliente");
+    const message = `${safeName}, seu cadastro foi criado com sucesso. Agora você pode comprar, favoritar produtos e acompanhar seus pedidos.`;
 
     return {
         subject: "Cadastro criado na PetFlow",
-        text: `Olá, ${safeName}. Seu cadastro na PetFlow foi criado com sucesso.`,
+        text: message,
         html: baseEmail(`
-            <h1>Cadastro criado com sucesso</h1>
-            <p>Olá, ${safeName}.</p>
-            <p>Seu cadastro na PetFlow foi criado. Agora você já pode comprar pela loja, acompanhar seus pedidos e manter seus dados atualizados.</p>
+            <h1>Bem-vindo à PetFlow</h1>
+            <p>${message}</p>
         `)
     };
 }
