@@ -47,11 +47,6 @@ const DATABASE_URL =
     process.env.POSTGRES_URL ||
     process.env.DATABASE_PUBLIC_URL;
 
-const APP_PORT =
-    process.env.PORT && process.env.PORT !== process.env.DB_PORT
-        ? process.env.PORT
-        : 4500;
-
 if (
     !DATABASE_URL &&
     (
@@ -73,7 +68,7 @@ if (
 
 module.exports = {
 
-    PORT: APP_PORT,
+    PORT: process.env.PORT || 4500,
 
     DB_HOST: process.env.DB_HOST,
 

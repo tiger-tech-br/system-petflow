@@ -4,7 +4,9 @@
    API
 ================================================== */
 
-const API_URL = "http://localhost:4000/api";
+const API_URL = window.location.hostname === "localhost"
+    ? "http://localhost:4500/api"
+    : "/api";
 
 /* ==================================================
    STORAGE
