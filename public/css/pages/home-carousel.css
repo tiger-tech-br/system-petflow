@@ -48,10 +48,11 @@ body {
 }
 
 .header .container {
+    width: min(1280px, calc(100% - 32px));
     min-height: 82px;
     display: grid;
-    grid-template-columns: 150px minmax(260px, 370px) minmax(300px, 1fr) max-content;
-    gap: 12px;
+    grid-template-columns: 142px minmax(220px, 330px) minmax(0, 1fr) max-content;
+    gap: 10px;
     align-items: center;
 }
 
@@ -60,21 +61,21 @@ body {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    gap: 10px;
+    gap: 8px;
     font-weight: 800;
     color: var(--pf-ink);
     white-space: nowrap;
 }
 
 .logo img {
-    width: 58px;
-    height: 58px;
+    width: 54px;
+    height: 54px;
     object-fit: contain;
     filter: drop-shadow(0 10px 16px rgba(4, 118, 109, .18));
 }
 
 .logo-text {
-    font-size: 1.35rem;
+    font-size: 1.28rem;
     letter-spacing: 0;
 }
 
@@ -101,7 +102,7 @@ body {
     min-width: 0;
     height: 46px;
     min-height: 46px;
-    padding: 0 16px 0 18px;
+    padding: 0 14px 0 17px;
     border: 0;
     outline: 0;
     background: transparent;
@@ -117,8 +118,8 @@ body {
 }
 
 .search-button {
-    width: 54px;
-    min-width: 54px;
+    width: 52px;
+    min-width: 52px;
     height: 48px;
     display: inline-flex;
     align-items: center;
@@ -161,8 +162,8 @@ body {
 .menu-list {
     width: 100%;
     display: flex;
-    justify-content: space-between;
-    gap: 0;
+    justify-content: flex-start;
+    gap: 3px;
     min-width: 0;
 }
 
@@ -183,11 +184,11 @@ body {
 .menu-link {
     display: inline-flex;
     align-items: center;
-    min-height: 42px;
-    padding: 0 9px;
+    min-height: 40px;
+    padding: 0 8px;
     border-radius: 999px;
     color: #425460;
-    font-size: .86rem;
+    font-size: .84rem;
     font-weight: 700;
 }
 
@@ -209,22 +210,23 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 6px;
     min-width: 0;
     width: max-content;
     white-space: nowrap;
 }
 
 .header-actions > .btn {
-    min-width: 78px;
+    min-width: 72px;
     flex: 0 0 auto;
-    padding-inline: 16px;
+    min-height: 42px;
+    padding-inline: 14px;
     box-shadow: 0 14px 28px rgba(4, 118, 109, .18);
 }
 
 .header-actions > .btn.is-authenticated {
-    max-width: 112px;
-    min-width: 88px;
+    max-width: 92px;
+    min-width: 76px;
     overflow: hidden;
     text-overflow: ellipsis;
     color: var(--pf-teal);
@@ -234,8 +236,8 @@ body {
 }
 
 .header-actions > .public-logout-link {
-    min-width: 58px;
-    padding-inline: 14px;
+    min-width: 52px;
+    padding-inline: 12px;
     color: #425460;
     border-color: rgba(4, 118, 109, .14);
     background: #ffffff;
@@ -244,10 +246,10 @@ body {
 
 .icon-badge {
     position: relative;
-    width: 42px;
-    min-width: 42px;
-    height: 42px;
-    flex: 0 0 42px;
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
     display: grid;
     place-items: center;
     border: 1px solid rgba(4, 118, 109, .14);
@@ -278,7 +280,7 @@ body {
 
 .icon-badge i {
     color: #10212b;
-    font-size: 18px;
+    font-size: 17px;
     line-height: 1;
 }
 
