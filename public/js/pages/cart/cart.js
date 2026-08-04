@@ -154,8 +154,7 @@ async function renderCustomer() {
             </div>
         `;
     } catch {
-        localStorage.removeItem("petflow_customer_token");
-        localStorage.removeItem("petflow_customer_user");
+        clearCartSession();
         submit.disabled = true;
         container.innerHTML = `
             <div class="customer-card-inner is-warning">
@@ -165,6 +164,15 @@ async function renderCustomer() {
             </div>
         `;
     }
+}
+
+function clearCartSession() {
+    localStorage.removeItem("petflow_customer_token");
+    localStorage.removeItem("petflow_customer_user");
+    localStorage.removeItem("petflow_public_favorites");
+    localStorage.removeItem("petflow_public_cart");
+    cart = {};
+    persistCart();
 }
 
 async function submitOrder(event) {

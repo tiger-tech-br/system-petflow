@@ -794,8 +794,7 @@ async function submitPublicOrder(event) {
 
         if (!response.ok) {
             if (response.status === 401) {
-                localStorage.removeItem("petflow_customer_token");
-                localStorage.removeItem("petflow_customer_user");
+                clearCustomerSession();
                 setupCustomerHeader();
             }
 
@@ -929,11 +928,23 @@ function insertLogoutLink(accountLink) {
 
 function handleCustomerLogout(event) {
     event.preventDefault();
+    clearCustomerSession();
+    setupCustomerHeader();
+    syncProductButtons();
+    renderFavoritesItems();
+    renderCheckoutItems();
+    renderCheckoutCustomer();
+}
+
+function clearCustomerSession() {
     localStorage.removeItem("petflow_customer_token");
     localStorage.removeItem("petflow_customer_user");
+    localStorage.removeItem("petflow_public_favorites");
+    localStorage.removeItem("petflow_public_cart");
     publicCustomer = null;
-    setupCustomerHeader();
-    renderCheckoutCustomer();
+    publicFavorites = new Set();
+    publicCart = {};
+    updateHeaderCounters();
 }
 
 function getFirstName(name) {
@@ -989,8 +1000,7 @@ async function renderCheckoutCustomer() {
             </div>
         `;
     } catch {
-        localStorage.removeItem("petflow_customer_token");
-        localStorage.removeItem("petflow_customer_user");
+        clearCustomerSession();
         submit.disabled = true;
         container.innerHTML = `
             <div class="checkout-account-card is-warning">

@@ -103,7 +103,7 @@ async function setupPublicAccount() {
         fillForm(form, payload.data);
         localStorage.setItem("petflow_customer_user", JSON.stringify(payload.data));
     } catch {
-        localStorage.removeItem("petflow_customer_token");
+        clearPublicSession();
         window.location.href = "/login";
         return;
     }
@@ -127,8 +127,7 @@ async function setupPublicAccount() {
     });
 
     document.getElementById("publicLogout")?.addEventListener("click", () => {
-        localStorage.removeItem("petflow_customer_token");
-        localStorage.removeItem("petflow_customer_user");
+        clearPublicSession();
         window.location.href = "/";
     });
 
@@ -145,13 +144,19 @@ async function setupPublicAccount() {
 
         try {
             await request("/clientes/me", "DELETE");
-            localStorage.removeItem("petflow_customer_token");
-            localStorage.removeItem("petflow_customer_user");
+            clearPublicSession();
             window.location.href = "/";
         } catch (error) {
             setStatus(status, error.message || "Não foi possível excluir o cadastro.");
         }
     });
+}
+
+function clearPublicSession() {
+    localStorage.removeItem("petflow_customer_token");
+    localStorage.removeItem("petflow_customer_user");
+    localStorage.removeItem("petflow_public_favorites");
+    localStorage.removeItem("petflow_public_cart");
 }
 
 async function setupPublicOrders() {
