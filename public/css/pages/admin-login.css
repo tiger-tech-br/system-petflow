@@ -110,6 +110,34 @@ body {
     box-shadow: 0 0 0 4px rgba(4, 118, 109, .11);
 }
 
+.password-control {
+    position: relative;
+}
+
+.password-control .form-control {
+    padding-right: 44px;
+}
+
+.password-toggle {
+    width: 36px;
+    height: 36px;
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    display: inline-grid;
+    place-items: center;
+    border: 0;
+    border-radius: 8px;
+    color: #04766d;
+    background: transparent;
+    cursor: pointer;
+    transform: translateY(-50%);
+}
+
+.password-toggle:hover {
+    background: #e7f7f4;
+}
+
 .form-check {
     display: flex;
     align-items: center;

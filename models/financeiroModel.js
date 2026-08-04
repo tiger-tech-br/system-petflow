@@ -142,16 +142,19 @@ class FinanceiroModel {
             SET
 
                 descricao = $1,
-                valor = $2,
-                valor_pago = $3,
-                data_vencimento = $4,
-                data_pagamento = $5,
-                status = $6,
-                observacoes = $7,
+                tipo = $2,
+                origem = $3,
+                referencia_id = $4,
+                valor = $5,
+                valor_pago = $6,
+                data_vencimento = $7,
+                data_pagamento = $8,
+                status = $9,
+                observacoes = $10,
                 updated_at = CURRENT_TIMESTAMP
 
-            WHERE id = $8
-              AND empresa_id = $9
+            WHERE id = $11
+              AND empresa_id = $12
 
             RETURNING *;
         `;
@@ -159,12 +162,15 @@ class FinanceiroModel {
         const values = [
 
             dados.descricao,
+            dados.tipo,
+            dados.origem || null,
+            dados.referencia_id || null,
             dados.valor,
-            dados.valor_pago,
+            dados.valor_pago || 0,
             dados.data_vencimento,
-            dados.data_pagamento,
-            dados.status,
-            dados.observacoes,
+            dados.data_pagamento || null,
+            dados.status || "PENDENTE",
+            dados.observacoes || null,
             id,
             empresaId
 

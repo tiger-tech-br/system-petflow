@@ -143,7 +143,7 @@ class DashboardModel {
 
                     WHERE empresa_id=$1
 
-                    AND DATE(data_agendamento)=CURRENT_DATE
+                    AND DATE(COALESCE(data, data_agendamento))=CURRENT_DATE
 
                 ) AS agendamentos_hoje,
 
@@ -313,8 +313,8 @@ class DashboardModel {
                 c.nome AS cliente,
                 p.nome AS pet,
                 a.servico,
-                a.data,
-                a.hora,
+                COALESCE(a.data, a.data_agendamento) AS data,
+                COALESCE(a.hora, a.horario) AS hora,
                 a.status
             FROM agendamentos a
             LEFT JOIN clientes c
@@ -322,8 +322,8 @@ class DashboardModel {
             LEFT JOIN pets p
                 ON p.id = a.pet_id
             WHERE a.empresa_id = $1
-              AND DATE(a.data) = CURRENT_DATE
-            ORDER BY a.hora ASC;
+              AND DATE(COALESCE(a.data, a.data_agendamento)) = CURRENT_DATE
+            ORDER BY COALESCE(a.hora, a.horario) ASC;
         `;
 
         const { rows } = await db.query(query, [empresaId]);
