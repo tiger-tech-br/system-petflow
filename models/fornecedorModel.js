@@ -7,6 +7,7 @@ async function listar(empresaId) {
         SELECT *
         FROM fornecedores
         WHERE empresa_id = $1
+        AND ativo = TRUE
         ORDER BY nome ASC
     `;
 
@@ -34,18 +35,22 @@ async function criar(dados) {
         INSERT INTO fornecedores (
             empresa_id,
             nome,
+            razao_social,
+            nome_fantasia,
             cnpj,
             telefone,
             email,
             endereco
         )
-        VALUES ($1, $2, $3, $4, $5, $6)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING *
     `;
 
     const valores = [
         dados.empresa_id,
         dados.nome,
+        dados.razao_social || dados.nome,
+        dados.nome_fantasia || dados.nome,
         dados.cnpj,
         dados.telefone,
         dados.email,
@@ -62,18 +67,22 @@ async function atualizar(id, empresaId, dados) {
         UPDATE fornecedores
         SET
             nome = $1,
-            cnpj = $2,
-            telefone = $3,
-            email = $4,
-            endereco = $5,
+            razao_social = $2,
+            nome_fantasia = $3,
+            cnpj = $4,
+            telefone = $5,
+            email = $6,
+            endereco = $7,
             updated_at = CURRENT_TIMESTAMP
-        WHERE id = $6
-        AND empresa_id = $7
+        WHERE id = $8
+        AND empresa_id = $9
         RETURNING *
     `;
 
     const valores = [
         dados.nome,
+        dados.razao_social || dados.nome,
+        dados.nome_fantasia || dados.nome,
         dados.cnpj,
         dados.telefone,
         dados.email,
@@ -88,6 +97,34 @@ async function atualizar(id, empresaId, dados) {
 }
 
 async function excluir(id, empresaId) {
+    const compras = await db.query(
+        `
+            SELECT id
+            FROM compras
+            WHERE fornecedor_id = $1
+            AND empresa_id = $2
+            LIMIT 1
+        `,
+        [id, empresaId]
+    );
+
+    if (compras.rows[0]) {
+        const { rows } = await db.query(
+            `
+                UPDATE fornecedores
+                SET
+                    ativo = FALSE,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = $1
+                AND empresa_id = $2
+                RETURNING *
+            `,
+            [id, empresaId]
+        );
+
+        return rows[0];
+    }
+
     const query = `
         DELETE FROM fornecedores
         WHERE id = $1
