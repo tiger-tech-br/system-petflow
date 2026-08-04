@@ -802,22 +802,24 @@ async function submitPublicOrder(event) {
             throw new Error(payload.message || "Não foi possível enviar o pedido.");
         }
 
-        publicCart = {};
-        persistPublicState();
-        renderProducts(currentVisibleProducts());
-        renderCheckoutItems();
-        form.reset();
-
         if (status) {
             status.textContent = "Pedido recebido. Abrindo pagamento seguro...";
         }
 
-        await startPublicPayment(
+        const paymentStarted = await startPublicPayment(
             payload.payment?.vendaId ||
             payload.data?.id,
             token,
             status
         );
+
+        if (paymentStarted) {
+            publicCart = {};
+            persistPublicState();
+            renderProducts(currentVisibleProducts());
+            renderCheckoutItems();
+            form.reset();
+        }
     } catch (error) {
         if (status) {
             status.textContent = error.message || "Não foi possível enviar o pedido.";
@@ -831,7 +833,7 @@ async function startPublicPayment(vendaId, token, status) {
             status.textContent =
                 "Pedido criado, mas não foi possível iniciar o pagamento.";
         }
-        return;
+        return false;
     }
 
     try {
@@ -857,20 +859,32 @@ async function startPublicPayment(vendaId, token, status) {
 
         if (payload.payment?.checkoutUrl) {
             window.location.href = payload.payment.checkoutUrl;
-            return;
+            return true;
         }
 
         if (status) {
             status.textContent =
                 "Pedido criado. Acesse seus pedidos para acompanhar o pagamento.";
         }
+        return false;
     } catch (error) {
         if (status) {
             status.textContent =
-                error.message ||
+                friendlyPaymentError(error.message) ||
                 "Pedido criado, mas o pagamento não foi iniciado.";
         }
+        return false;
     }
+}
+
+function friendlyPaymentError(message) {
+    const text = String(message || "");
+
+    if (text.toLowerCase().includes("allowlist")) {
+        return "O PagBank bloqueou este checkout porque a conta ainda precisa de liberação para usar a API em produção. O pedido foi criado, mas o pagamento não foi aberto.";
+    }
+
+    return text;
 }
 
 function setupCustomerHeader() {

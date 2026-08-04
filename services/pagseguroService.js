@@ -310,17 +310,29 @@ function onlyDigits(value) {
 
 function buildPagSeguroError(error) {
     const payload = error.response?.data;
-    const message =
+    const rawMessage =
         payload?.message ||
         payload?.error_messages?.[0]?.description ||
         payload?.errors?.[0]?.description ||
         "Não foi possível iniciar o pagamento no PagBank.";
 
-    const customError = new Error(message);
+    const customError = new Error(
+        friendlyPagSeguroMessage(rawMessage)
+    );
     customError.status = error.response?.status || 502;
     customError.details = payload;
 
     return customError;
+}
+
+function friendlyPagSeguroMessage(message) {
+    const text = String(message || "");
+
+    if (text.toLowerCase().includes("allowlist")) {
+        return "O PagBank bloqueou o checkout porque essa conta ainda precisa de liberação para usar a API em produção. Entre em contato com o suporte do PagBank e solicite a liberação do Checkout/API.";
+    }
+
+    return text;
 }
 
 module.exports = {
