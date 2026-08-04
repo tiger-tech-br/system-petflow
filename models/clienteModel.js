@@ -2,7 +2,7 @@
 
 const db = require("../database/connection");
 
-async function findAll() {
+async function findAll(empresaId) {
     const result = await db.query(
         `
             SELECT
@@ -15,26 +15,32 @@ async function findAll() {
                 cidade,
                 estado,
                 ativo,
-                ativo AS status,
+                CASE
+                    WHEN ativo = TRUE THEN 'ativo'
+                    ELSE 'inativo'
+                END AS status,
                 created_at,
                 updated_at
             FROM clientes
+            WHERE ($1::uuid IS NULL OR empresa_id = $1)
             ORDER BY nome ASC
-        `
+        `,
+        [empresaId || null]
     );
 
     return result.rows;
 }
 
-async function findById(id) {
+async function findById(id, empresaId) {
     const result = await db.query(
         `
             SELECT *
             FROM clientes
             WHERE id = $1
+              AND ($2::uuid IS NULL OR empresa_id = $2)
             LIMIT 1
         `,
-        [id]
+        [id, empresaId || null]
     );
 
     return result.rows[0] || null;
@@ -44,6 +50,7 @@ async function create(cliente) {
     const result = await db.query(
         `
             INSERT INTO clientes (
+                empresa_id,
                 nome,
                 cpf,
                 data_nascimento,
@@ -61,11 +68,13 @@ async function create(cliente) {
                 ativo
             )
             VALUES (
-                $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,TRUE
+                COALESCE($1, get_petflow_empresa_id()),
+                $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,TRUE
             )
             RETURNING *
         `,
         [
+            cliente.empresaId || cliente.empresa_id || null,
             cliente.nome,
             cliente.cpf,
             cliente.dataNascimento || cliente.data_nascimento || null,
