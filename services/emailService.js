@@ -79,6 +79,38 @@ function passwordResetTemplate({ name, resetUrl }) {
     };
 }
 
+function appointmentReminderTemplate({ name, petName, serviceName, date, time }) {
+    const safeName = escapeHtml(firstName(name) || "cliente");
+    const safePet = escapeHtml(petName || "seu pet");
+    const safeService = escapeHtml(serviceName || "atendimento");
+    const when = `${formatDate(date)} às ${formatTime(time)}`;
+
+    return {
+        subject: `Lembrete de agendamento - ${safePet}`,
+        text: `Olá, ${safeName}. Lembrete: ${safeService} do ${safePet} está agendado para ${when}.`,
+        html: baseEmail(`
+            <h1>Lembrete de agendamento</h1>
+            <p>Olá, ${safeName}.</p>
+            <p>Passando para lembrar que <strong>${safeService}</strong> do <strong>${safePet}</strong> está agendado para <strong>${escapeHtml(when)}</strong>.</p>
+            <p>Se precisar remarcar, entre em contato com a PetFlow.</p>
+        `)
+    };
+}
+
+function birthdayGreetingTemplate({ name }) {
+    const safeName = escapeHtml(firstName(name) || "cliente");
+
+    return {
+        subject: "Feliz aniversário - PetFlow",
+        text: `Olá, ${safeName}. A PetFlow deseja um feliz aniversário!`,
+        html: baseEmail(`
+            <h1>Feliz aniversário!</h1>
+            <p>Olá, ${safeName}.</p>
+            <p>A equipe PetFlow deseja um dia muito especial, com carinho, saúde e bons momentos.</p>
+        `)
+    };
+}
+
 function orderReceivedTemplate({ name, orderId, total, items = [] }) {
     const safeName = escapeHtml(firstName(name) || "cliente");
     const orderLabel = shortId(orderId);
@@ -207,6 +239,23 @@ function currency(value) {
     });
 }
 
+function formatDate(value) {
+    if (!value) {
+        return "data combinada";
+    }
+
+    return new Date(value).toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        timeZone: "UTC"
+    });
+}
+
+function formatTime(value) {
+    return String(value || "").slice(0, 5) || "horário combinado";
+}
+
 function escapeHtml(value) {
     return String(value ?? "")
         .replace(/&/g, "&amp;")
@@ -221,6 +270,8 @@ module.exports = {
     sendOptionalEmail,
     welcomeTemplate,
     passwordResetTemplate,
+    appointmentReminderTemplate,
+    birthdayGreetingTemplate,
     orderReceivedTemplate,
     paymentApprovedTemplate,
     orderOutForDeliveryTemplate,

@@ -582,7 +582,9 @@ function saveCustomer(data) {
 function fillForm(form, data) {
     Object.entries(data || {}).forEach(([key, value]) => {
         if (form.elements[key]) {
-            form.elements[key].value = value || "";
+            form.elements[key].value = form.elements[key].type === "date" && value
+                ? String(value).slice(0, 10)
+                : value || "";
         }
     });
 }

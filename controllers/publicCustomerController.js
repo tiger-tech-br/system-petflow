@@ -88,9 +88,10 @@ async function register(request, response, next) {
                         bairro = $7,
                         cidade = $8,
                         estado = $9,
+                        data_nascimento = $10,
                         updated_at = NOW()
-                    WHERE id = $10
-                      AND empresa_id = $11
+                    WHERE id = $11
+                      AND empresa_id = $12
                 `,
                 [
                     data.nome,
@@ -102,6 +103,7 @@ async function register(request, response, next) {
                     data.bairro || null,
                     data.cidade || null,
                     data.estado || null,
+                    data.data_nascimento || data.dataNascimento || null,
                     clienteId,
                     empresaId
                 ]
@@ -124,6 +126,7 @@ async function register(request, response, next) {
                         bairro,
                         cidade,
                         estado,
+                        data_nascimento,
                         ativo
                     )
                     VALUES (
@@ -139,6 +142,7 @@ async function register(request, response, next) {
                         $9,
                         $10,
                         $11,
+                        $12,
                         TRUE
                     )
                     RETURNING id
@@ -154,7 +158,8 @@ async function register(request, response, next) {
                     data.complemento || null,
                     data.bairro || null,
                     data.cidade || null,
-                    data.estado || null
+                    data.estado || null,
+                    data.data_nascimento || data.dataNascimento || null
                 ]
             );
 
@@ -190,6 +195,13 @@ async function register(request, response, next) {
             clienteId,
             empresaId
         );
+
+        await createCustomerNotification({
+            clienteId,
+            titulo: "Bem-vindo à PetFlow",
+            mensagem: `${firstName(profile.nome)}, seu cadastro foi criado com sucesso. Agora você pode comprar, favoritar produtos e acompanhar seus pedidos.`,
+            tipo: "SISTEMA"
+        });
 
         const template = welcomeTemplate({
             name: profile.nome
@@ -572,9 +584,10 @@ async function update(request, response, next) {
                     bairro = $7,
                     cidade = $8,
                     estado = $9,
+                    data_nascimento = $10,
                     updated_at = NOW()
-                WHERE id = $10
-                  AND empresa_id = $11
+                WHERE id = $11
+                  AND empresa_id = $12
             `,
             [
                 data.nome,
@@ -586,6 +599,7 @@ async function update(request, response, next) {
                 data.bairro || null,
                 data.cidade || null,
                 data.estado || null,
+                data.data_nascimento || data.dataNascimento || null,
                 customer.id,
                 customer.empresaId
             ]
@@ -819,6 +833,114 @@ async function orders(request, response, next) {
 
 }
 
+async function notifications(request, response, next) {
+
+    try {
+
+        const customer = getAuthenticatedCustomer(
+            request,
+            response
+        );
+
+        if (!customer) {
+
+            return;
+
+        }
+
+        const { rows } = await db.query(
+            `
+                SELECT
+                    id,
+                    titulo,
+                    mensagem,
+                    tipo,
+                    lida,
+                    enviada_em
+                FROM notificacoes
+                WHERE cliente_id = $1
+                  AND EXISTS (
+                      SELECT 1
+                      FROM clientes c
+                      WHERE c.id = notificacoes.cliente_id
+                        AND c.empresa_id = $2
+                  )
+                ORDER BY enviada_em DESC
+                LIMIT 20
+            `,
+            [
+                customer.id,
+                customer.empresaId
+            ]
+        );
+
+        return response.status(200).json({
+            success: true,
+            data: rows
+        });
+
+    } catch (error) {
+
+        return next(error);
+
+    }
+
+}
+
+async function markNotificationRead(request, response, next) {
+
+    try {
+
+        const customer = getAuthenticatedCustomer(
+            request,
+            response
+        );
+
+        if (!customer) {
+
+            return;
+
+        }
+
+        await db.query(
+            `
+                UPDATE notificacoes
+                SET
+                    lida = TRUE,
+                    data_leitura = COALESCE(data_leitura, NOW()),
+                    updated_at = NOW()
+                WHERE cliente_id = $1
+                  AND EXISTS (
+                      SELECT 1
+                      FROM clientes c
+                      WHERE c.id = notificacoes.cliente_id
+                        AND c.empresa_id = $3
+                  )
+                  AND (
+                      $2::uuid IS NULL
+                      OR id = $2
+                  )
+            `,
+            [
+                customer.id,
+                request.params.id || null,
+                customer.empresaId
+            ]
+        );
+
+        return response.status(200).json({
+            success: true,
+            message: "Notificação marcada como lida."
+        });
+
+    } catch (error) {
+
+        return next(error);
+
+    }
+
+}
+
 async function getProfileById(id, empresaId) {
 
     const { rows } = await db.query(
@@ -836,7 +958,8 @@ async function getProfileById(id, empresaId) {
                 complemento,
                 bairro,
                 cidade,
-                estado
+                estado,
+                data_nascimento
             FROM clientes
             WHERE id = $1
               AND empresa_id = $2
@@ -866,7 +989,8 @@ function buildAuthPayload(cliente) {
         complemento: cliente.complemento,
         bairro: cliente.bairro,
         cidade: cliente.cidade,
-        estado: cliente.estado
+        estado: cliente.estado,
+        data_nascimento: cliente.data_nascimento
     };
 
     const token = jwt.sign(
@@ -964,6 +1088,34 @@ function hasText(value) {
 
 }
 
+async function createCustomerNotification({ clienteId, titulo, mensagem, tipo }) {
+
+    await db.query(
+        `
+            INSERT INTO notificacoes (
+                cliente_id,
+                titulo,
+                mensagem,
+                tipo
+            )
+            VALUES ($1, $2, $3, $4)
+        `,
+        [
+            clienteId,
+            titulo,
+            mensagem,
+            tipo || "SISTEMA"
+        ]
+    );
+
+}
+
+function firstName(name) {
+
+    return String(name || "Cliente").trim().split(/\s+/)[0] || "Cliente";
+
+}
+
 /* ==================================================
    EXPORTAÇÃO
 ================================================== */
@@ -976,5 +1128,7 @@ module.exports = {
     me,
     update,
     remove,
-    orders
+    orders,
+    notifications,
+    markNotificationRead
 };
