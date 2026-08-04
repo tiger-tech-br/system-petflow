@@ -5,6 +5,7 @@ const CUSTOMER_API = window.location.hostname === "localhost"
     : "/api/public";
 
 document.addEventListener("DOMContentLoaded", () => {
+    clearLegacyPublicSession();
     setupTabs();
     setupPublicLogin();
     setupPublicRegister();
@@ -90,7 +91,7 @@ async function setupPublicAccount() {
         return;
     }
 
-    const token = localStorage.getItem("petflow_customer_token");
+    const token = getCustomerToken();
 
     if (!token) {
         window.location.href = "/login";
@@ -102,7 +103,7 @@ async function setupPublicAccount() {
     try {
         const payload = await request("/clientes/me", "GET");
         fillForm(form, payload.data);
-        localStorage.setItem("petflow_customer_user", JSON.stringify(payload.data));
+        sessionStorage.setItem("petflow_customer_user", JSON.stringify(payload.data));
     } catch {
         clearPublicSession();
         window.location.href = "/login";
@@ -120,7 +121,7 @@ async function setupPublicAccount() {
                 Object.fromEntries(new FormData(form).entries())
             );
 
-            localStorage.setItem("petflow_customer_user", JSON.stringify(payload.data));
+            sessionStorage.setItem("petflow_customer_user", JSON.stringify(payload.data));
             setStatus(status, "Dados atualizados com sucesso.");
         } catch (error) {
             setStatus(status, error.message);
@@ -154,6 +155,14 @@ async function setupPublicAccount() {
 }
 
 function clearPublicSession() {
+    sessionStorage.removeItem("petflow_customer_token");
+    sessionStorage.removeItem("petflow_customer_user");
+    sessionStorage.removeItem("petflow_public_favorites");
+    sessionStorage.removeItem("petflow_public_cart");
+    clearLegacyPublicSession();
+}
+
+function clearLegacyPublicSession() {
     localStorage.removeItem("petflow_customer_token");
     localStorage.removeItem("petflow_customer_user");
     localStorage.removeItem("petflow_public_favorites");
@@ -167,7 +176,7 @@ async function setupPublicOrders() {
         return;
     }
 
-    const token = localStorage.getItem("petflow_customer_token");
+    const token = getCustomerToken();
 
     if (!token) {
         window.location.href = "/login";
@@ -555,7 +564,7 @@ async function requestPasswordReset(type, body) {
 }
 
 async function request(endpoint, method = "GET", body) {
-    const token = localStorage.getItem("petflow_customer_token");
+    const token = getCustomerToken();
     const response = await fetch(`${CUSTOMER_API}${endpoint}`, {
         method,
         headers: {
@@ -575,8 +584,13 @@ async function request(endpoint, method = "GET", body) {
 }
 
 function saveCustomer(data) {
-    localStorage.setItem("petflow_customer_token", data.token);
-    localStorage.setItem("petflow_customer_user", JSON.stringify(data.user));
+    clearLegacyPublicSession();
+    sessionStorage.setItem("petflow_customer_token", data.token);
+    sessionStorage.setItem("petflow_customer_user", JSON.stringify(data.user));
+}
+
+function getCustomerToken() {
+    return sessionStorage.getItem("petflow_customer_token");
 }
 
 function fillForm(form, data) {

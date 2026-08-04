@@ -18,7 +18,7 @@ const PUBLIC_API = window.location.hostname === "localhost"
 
 let publicProducts = [];
 let publicCart = normalizeCartStorage();
-let publicFavorites = new Set(JSON.parse(localStorage.getItem("petflow_public_favorites") || "[]"));
+let publicFavorites = new Set(JSON.parse(sessionStorage.getItem("petflow_public_favorites") || "[]"));
 let publicCustomer = null;
 let publicNotifications = [];
 
@@ -448,8 +448,8 @@ function toggleCartProduct(id) {
 }
 
 function persistPublicState() {
-    localStorage.setItem("petflow_public_cart", JSON.stringify(publicCart));
-    localStorage.setItem("petflow_public_favorites", JSON.stringify([...publicFavorites]));
+    sessionStorage.setItem("petflow_public_cart", JSON.stringify(publicCart));
+    sessionStorage.setItem("petflow_public_favorites", JSON.stringify([...publicFavorites]));
     updateHeaderCounters();
     renderFavoritesItems();
 }
@@ -1098,6 +1098,10 @@ function handleCustomerLogout(event) {
 }
 
 function clearCustomerSession() {
+    sessionStorage.removeItem("petflow_customer_token");
+    sessionStorage.removeItem("petflow_customer_user");
+    sessionStorage.removeItem("petflow_public_favorites");
+    sessionStorage.removeItem("petflow_public_cart");
     localStorage.removeItem("petflow_customer_token");
     localStorage.removeItem("petflow_customer_user");
     localStorage.removeItem("petflow_public_favorites");
@@ -1186,17 +1190,17 @@ async function fetchCustomerProfile() {
         throw new Error(payload.message || "Cliente não autenticado.");
     }
 
-    localStorage.setItem("petflow_customer_user", JSON.stringify(payload.data));
+    sessionStorage.setItem("petflow_customer_user", JSON.stringify(payload.data));
     return payload.data;
 }
 
 function getCustomerToken() {
-    return localStorage.getItem("petflow_customer_token");
+    return sessionStorage.getItem("petflow_customer_token");
 }
 
 function readCustomerCache() {
     try {
-        return JSON.parse(localStorage.getItem("petflow_customer_user") || "null");
+        return JSON.parse(sessionStorage.getItem("petflow_customer_user") || "null");
     } catch {
         return null;
     }
@@ -1220,7 +1224,7 @@ function formatNotificationDate(value) {
 }
 function normalizeCartStorage() {
     try {
-        const stored = JSON.parse(localStorage.getItem("petflow_public_cart") || "{}");
+        const stored = JSON.parse(sessionStorage.getItem("petflow_public_cart") || "{}");
 
         if (Array.isArray(stored)) {
             return Object.fromEntries(stored.map(id => [String(id), 1]));

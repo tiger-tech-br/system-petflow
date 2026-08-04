@@ -46,7 +46,7 @@ const CATEGORY_CONFIG = {
 };
 
 let allProducts = [];
-let publicFavorites = new Set(JSON.parse(localStorage.getItem("petflow_public_favorites") || "[]"));
+let publicFavorites = new Set(JSON.parse(sessionStorage.getItem("petflow_public_favorites") || "[]"));
 let currentSlug = "caes";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -219,7 +219,7 @@ function bindCartButtons() {
             const cart = readCart();
 
             cart[id] = 1;
-            localStorage.setItem("petflow_public_cart", JSON.stringify(cart));
+            sessionStorage.setItem("petflow_public_cart", JSON.stringify(cart));
 
             button.classList.add("is-active");
             button.innerHTML = `<i class="fa-solid fa-check"></i><span>Na sacola</span>`;
@@ -236,7 +236,7 @@ function bindCartButtons() {
                 publicFavorites.add(id);
             }
 
-            localStorage.setItem("petflow_public_favorites", JSON.stringify([...publicFavorites]));
+            sessionStorage.setItem("petflow_public_favorites", JSON.stringify([...publicFavorites]));
             applyFilters();
         });
     });
@@ -256,7 +256,7 @@ function updateUrl(slug) {
 
 function readCart() {
     try {
-        return JSON.parse(localStorage.getItem("petflow_public_cart") || "{}") || {};
+        return JSON.parse(sessionStorage.getItem("petflow_public_cart") || "{}") || {};
     } catch {
         return {};
     }

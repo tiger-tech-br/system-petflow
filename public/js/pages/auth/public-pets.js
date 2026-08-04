@@ -198,7 +198,7 @@ function formatEnum(value) {
 }
 
 function getToken() {
-    return localStorage.getItem("petflow_customer_token");
+    return sessionStorage.getItem("petflow_customer_token");
 }
 
 function setStatus(element, message) {

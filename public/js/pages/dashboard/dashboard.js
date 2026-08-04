@@ -18,7 +18,7 @@ let unreadNotifications = 0;
 let audioUnlocked = false;
 
 function requireDashboardAuth() {
-    if (!localStorage.getItem("token")) {
+    if (!sessionStorage.getItem("token")) {
         window.location.href = "/admin/index.html";
     }
 }
@@ -102,6 +102,8 @@ function bindDashboardActions() {
     });
 
     logout?.addEventListener("click", () => {
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("user");
         localStorage.removeItem("token");
         localStorage.removeItem("user");
     });
@@ -342,7 +344,7 @@ function updateProfileName() {
     const profile = document.querySelector(".admin-profile span");
 
     try {
-        const user = JSON.parse(localStorage.getItem("user") || "null");
+        const user = JSON.parse(sessionStorage.getItem("user") || "null");
         const name = user?.nome || "Admin";
 
         if (profile) {
@@ -356,7 +358,7 @@ function updateProfileName() {
 }
 
 async function apiGet(endpoint) {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const response = await fetch(`${DASHBOARD_API}${endpoint}`, {
         headers: {
             ...(token ?{ Authorization: `Bearer ${token}` } : {})

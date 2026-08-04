@@ -77,7 +77,7 @@ function setupCartButton() {
         const cart = readCart();
 
         cart[id] = 1;
-        localStorage.setItem("petflow_public_cart", JSON.stringify(cart));
+        sessionStorage.setItem("petflow_public_cart", JSON.stringify(cart));
 
         button.classList.add("is-active");
         button.innerHTML = `<i class="fa-solid fa-check"></i>Na sacola`;
@@ -113,7 +113,7 @@ function normalize(value) {
 
 function readCart() {
     try {
-        return JSON.parse(localStorage.getItem("petflow_public_cart") || "{}") || {};
+        return JSON.parse(sessionStorage.getItem("petflow_public_cart") || "{}") || {};
     } catch {
         return {};
     }

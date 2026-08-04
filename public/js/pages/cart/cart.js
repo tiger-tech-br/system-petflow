@@ -167,6 +167,10 @@ async function renderCustomer() {
 }
 
 function clearCartSession() {
+    sessionStorage.removeItem("petflow_customer_token");
+    sessionStorage.removeItem("petflow_customer_user");
+    sessionStorage.removeItem("petflow_public_favorites");
+    sessionStorage.removeItem("petflow_public_cart");
     localStorage.removeItem("petflow_customer_token");
     localStorage.removeItem("petflow_customer_user");
     localStorage.removeItem("petflow_public_favorites");
@@ -302,7 +306,7 @@ async function fetchCustomerProfile() {
         throw new Error(payload.message || "Cliente não autenticado.");
     }
 
-    localStorage.setItem("petflow_customer_user", JSON.stringify(payload.data));
+    sessionStorage.setItem("petflow_customer_user", JSON.stringify(payload.data));
     return payload.data;
 }
 
@@ -328,18 +332,18 @@ function getProductId(product) {
 
 function readCart() {
     try {
-        return JSON.parse(localStorage.getItem("petflow_public_cart") || "{}") || {};
+        return JSON.parse(sessionStorage.getItem("petflow_public_cart") || "{}") || {};
     } catch {
         return {};
     }
 }
 
 function persistCart() {
-    localStorage.setItem("petflow_public_cart", JSON.stringify(cart));
+    sessionStorage.setItem("petflow_public_cart", JSON.stringify(cart));
 }
 
 function getToken() {
-    return localStorage.getItem("petflow_customer_token");
+    return sessionStorage.getItem("petflow_customer_token");
 }
 
 function hasDeliveryAddress(data) {

@@ -78,18 +78,20 @@ function clearSessionStorage() {
 
 function saveToken(token) {
 
-    localStorage.setItem("token", token);
+    sessionStorage.setItem("token", token);
+    localStorage.removeItem("token");
 
 }
 
 function getToken() {
 
-    return localStorage.getItem("token");
+    return sessionStorage.getItem("token");
 
 }
 
 function removeToken() {
 
+    sessionStorage.removeItem("token");
     localStorage.removeItem("token");
 
 }
@@ -100,18 +102,20 @@ function removeToken() {
 
 function saveUser(user) {
 
-    setLocalStorage("user", user);
+    setSessionStorage("user", user);
+    removeLocalStorage("user");
 
 }
 
 function getUser() {
 
-    return getLocalStorage("user");
+    return getSessionStorage("user");
 
 }
 
 function removeUser() {
 
+    removeSessionStorage("user");
     removeLocalStorage("user");
 
 }

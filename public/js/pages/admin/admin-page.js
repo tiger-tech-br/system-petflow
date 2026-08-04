@@ -120,6 +120,8 @@
     function setupAdminLogout() {
         document.querySelectorAll('a[href="/admin/index.html"]').forEach(link => {
             link.addEventListener("click", () => {
+                sessionStorage.removeItem("token");
+                sessionStorage.removeItem("user");
                 localStorage.removeItem("token");
                 localStorage.removeItem("user");
             });
