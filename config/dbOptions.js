@@ -1,9 +1,14 @@
 "use strict";
 
 function buildDbOptions() {
-    if (process.env.DATABASE_URL) {
+    const databaseUrl =
+        process.env.DATABASE_URL ||
+        process.env.POSTGRES_URL ||
+        process.env.DATABASE_PUBLIC_URL;
+
+    if (databaseUrl) {
         return {
-            connectionString: process.env.DATABASE_URL,
+            connectionString: databaseUrl,
             ...(process.env.DB_SSL === "true"
                 ? { ssl: { rejectUnauthorized: false } }
                 : {})
