@@ -612,6 +612,8 @@ async function update(request, response, next) {
 
 async function remove(request, response, next) {
 
+    const client = await db.connect();
+
     try {
 
         const customer = getAuthenticatedCustomer(
@@ -625,32 +627,77 @@ async function remove(request, response, next) {
 
         }
 
-        await db.query(
+        await client.query("BEGIN");
+
+        const profile = await getProfileById(
+            customer.id,
+            customer.empresaId
+        );
+
+        await client.query(
             `
-                UPDATE usuarios_clientes
-                SET
-                    ativo = FALSE,
-                    updated_at = NOW()
-                WHERE cliente_id = $1
-                  AND EXISTS (
-                      SELECT 1
-                      FROM clientes c
-                      WHERE c.id = usuarios_clientes.cliente_id
-                        AND c.empresa_id = $2
-                  )
+                DELETE FROM newsletter_inscritos
+                WHERE empresa_id = $1
+                  AND LOWER(email) = LOWER($2)
             `,
             [
-                customer.id,
-                customer.empresaId
+                customer.empresaId,
+                profile?.email || customer.email || ""
             ]
         );
 
-        await db.query(
+        await client.query(
             `
-                UPDATE clientes
+                DELETE FROM agendamentos
+                WHERE empresa_id = $1
+                  AND cliente_id = $2
+            `,
+            [
+                customer.empresaId,
+                customer.id
+            ]
+        );
+
+        await client.query(
+            `
+                DELETE FROM pets
+                WHERE empresa_id = $1
+                  AND cliente_id = $2
+            `,
+            [
+                customer.empresaId,
+                customer.id
+            ]
+        );
+
+        await client.query(
+            `
+                UPDATE vendas
                 SET
-                    ativo = FALSE,
+                    cliente_id = NULL,
                     updated_at = NOW()
+                WHERE empresa_id = $1
+                  AND cliente_id = $2
+            `,
+            [
+                customer.empresaId,
+                customer.id
+            ]
+        );
+
+        await client.query(
+            `
+                DELETE FROM usuarios_clientes
+                WHERE cliente_id = $1
+            `,
+            [
+                customer.id
+            ]
+        );
+
+        await client.query(
+            `
+                DELETE FROM clientes
                 WHERE id = $1
                   AND empresa_id = $2
             `,
@@ -660,6 +707,8 @@ async function remove(request, response, next) {
             ]
         );
 
+        await client.query("COMMIT");
+
         return response.status(200).json({
             success: true,
             message: "Cadastro excluído com sucesso."
@@ -667,7 +716,12 @@ async function remove(request, response, next) {
 
     } catch (error) {
 
+        await client.query("ROLLBACK");
         return next(error);
+
+    } finally {
+
+        client.release();
 
     }
 
