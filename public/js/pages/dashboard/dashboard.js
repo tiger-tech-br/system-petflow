@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupDashboardNotifications();
     bindDashboardActions();
     loadDashboard();
+    window.setInterval(loadDashboard, 30000);
 });
 
 const DASHBOARD_API = window.location.hostname === "localhost"
@@ -16,6 +17,8 @@ const DASHBOARD_API = window.location.hostname === "localhost"
 let dashboardNotifications = [];
 let unreadNotifications = 0;
 let audioUnlocked = false;
+let dashboardKnownOrderIds = new Set();
+let dashboardLoadedOnce = false;
 
 function requireDashboardAuth() {
     if (!sessionStorage.getItem("token")) {
@@ -294,15 +297,34 @@ function renderSuppliers(lowStock, purchases) {
 }
 
 function updateNotifications(sales) {
-    dashboardNotifications = sales.slice(0, 5).map(item => ({
+    const notifications = sales.slice(0, 5).map(item => ({
+        id: String(item.id),
         title: `Pedido #${shortId(item.id)} recebido`,
-        text: `${item.cliente || "Cliente avulso"} - ${currency(item.valor_total)}`
+        text: buildOrderNotificationText(item),
+        details: buildOrderNotificationDetails(item)
     }));
+    let hasNewNotifications = false;
 
-    unreadNotifications = dashboardNotifications.length;
+    if (!dashboardLoadedOnce) {
+        unreadNotifications = notifications.length;
+        dashboardKnownOrderIds = new Set(notifications.map(item => item.id));
+        dashboardLoadedOnce = true;
+    } else {
+        const newNotifications = notifications.filter(
+            item => !dashboardKnownOrderIds.has(item.id)
+        );
+
+        if (newNotifications.length) {
+            hasNewNotifications = true;
+            unreadNotifications += newNotifications.length;
+            newNotifications.forEach(item => dashboardKnownOrderIds.add(item.id));
+        }
+    }
+
+    dashboardNotifications = notifications;
     renderNotifications();
 
-    if (unreadNotifications > 0 && audioUnlocked) {
+    if (hasNewNotifications && audioUnlocked) {
         playNotificationSound();
     }
 }
@@ -335,9 +357,31 @@ function renderNotifications() {
             <div>
                 <strong>${escapeHtml(item.title)}</strong>
                 <span>${escapeHtml(item.text)}</span>
+                ${item.details ? `<small>${escapeHtml(item.details)}</small>` : ""}
             </div>
         </article>
     `).join("");
+}
+
+function buildOrderNotificationText(item) {
+    const contato =
+        item.cliente_whatsapp ||
+        item.cliente_telefone ||
+        item.cliente_email ||
+        "contato não informado";
+
+    return `${item.cliente || "Cliente avulso"} - ${contato} - ${currency(item.valor_total)}`;
+}
+
+function buildOrderNotificationDetails(item) {
+    return [
+        item.cliente_endereco,
+        item.cliente_numero,
+        item.cliente_complemento,
+        item.cliente_bairro,
+        item.cliente_cidade,
+        item.cliente_estado
+    ].filter(Boolean).join(", ");
 }
 
 function updateProfileName() {

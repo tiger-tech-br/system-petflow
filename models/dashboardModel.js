@@ -183,7 +183,27 @@ class DashboardModel {
 
                 c.nome AS cliente,
 
+                c.telefone AS cliente_telefone,
+
+                c.whatsapp AS cliente_whatsapp,
+
+                c.email AS cliente_email,
+
+                c.endereco AS cliente_endereco,
+
+                c.numero AS cliente_numero,
+
+                c.complemento AS cliente_complemento,
+
+                c.bairro AS cliente_bairro,
+
+                c.cidade AS cliente_cidade,
+
+                c.estado AS cliente_estado,
+
                 v.valor_total,
+
+                v.status,
 
                 v.data_venda
 
@@ -195,7 +215,7 @@ class DashboardModel {
 
             WHERE v.empresa_id=$1
 
-            AND v.status = ANY($3)
+            AND v.status <> 'CANCELADA'
 
             ORDER BY v.data_venda DESC
 
@@ -207,9 +227,7 @@ class DashboardModel {
 
             empresaId,
 
-            limite,
-
-            STATUS_VENDAS_CONFIRMADAS
+            limite
 
         ]);
 

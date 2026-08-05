@@ -766,16 +766,14 @@
             return;
         }
 
-        const search = (
+        const search = normalizeSearch(
             document.getElementById("pageSearch")?.value || ""
-        ).toLowerCase();
+        );
 
         const columns = config.columns || [];
         const showActions = config.mode !== "single";
         const filtered = records.filter(record =>
-            JSON.stringify(record)
-                .toLowerCase()
-                .includes(search)
+            normalizeSearch(JSON.stringify(record)).includes(search)
         );
 
         head.innerHTML = `
@@ -1801,5 +1799,13 @@
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;")
             .replaceAll("'", "&#039;");
+    }
+
+    function normalizeSearch(value) {
+        return String(value || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .trim();
     }
 })();
