@@ -22,7 +22,11 @@ async function findAll(empresaId) {
                 created_at,
                 updated_at
             FROM clientes
-            WHERE ($1::uuid IS NULL OR empresa_id = $1)
+            WHERE empresa_id = get_petflow_empresa_id()
+               OR (
+                   $1::uuid IS NOT NULL
+                   AND empresa_id = $1
+               )
             ORDER BY nome ASC
         `,
         [empresaId || null]
@@ -37,7 +41,13 @@ async function findById(id, empresaId) {
             SELECT *
             FROM clientes
             WHERE id = $1
-              AND ($2::uuid IS NULL OR empresa_id = $2)
+              AND (
+                  empresa_id = get_petflow_empresa_id()
+                  OR (
+                      $2::uuid IS NOT NULL
+                      AND empresa_id = $2
+                  )
+              )
             LIMIT 1
         `,
         [id, empresaId || null]
@@ -68,13 +78,12 @@ async function create(cliente) {
                 ativo
             )
             VALUES (
-                COALESCE($1, get_petflow_empresa_id()),
-                $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,TRUE
+                get_petflow_empresa_id(),
+                $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,TRUE
             )
             RETURNING *
         `,
         [
-            cliente.empresaId || cliente.empresa_id || null,
             cliente.nome,
             cliente.cpf,
             cliente.dataNascimento || cliente.data_nascimento || null,
@@ -95,7 +104,7 @@ async function create(cliente) {
     return result.rows[0];
 }
 
-async function update(id, cliente) {
+async function update(id, cliente, empresaId) {
     const result = await db.query(
         `
             UPDATE clientes
@@ -116,6 +125,13 @@ async function update(id, cliente) {
                 observacoes = $14,
                 updated_at = NOW()
             WHERE id = $15
+              AND (
+                  empresa_id = get_petflow_empresa_id()
+                  OR (
+                      $16::uuid IS NOT NULL
+                      AND empresa_id = $16
+                  )
+              )
             RETURNING *
         `,
         [
@@ -133,22 +149,30 @@ async function update(id, cliente) {
             cliente.cidade || null,
             cliente.estado || null,
             cliente.observacoes || null,
-            id
+            id,
+            empresaId || null
         ]
     );
 
     return result.rows[0] || null;
 }
 
-async function remove(id) {
+async function remove(id, empresaId) {
     await db.query(
         `
             UPDATE clientes
             SET ativo = FALSE,
                 updated_at = NOW()
             WHERE id = $1
+              AND (
+                  empresa_id = get_petflow_empresa_id()
+                  OR (
+                      $2::uuid IS NOT NULL
+                      AND empresa_id = $2
+                  )
+              )
         `,
-        [id]
+        [id, empresaId || null]
     );
 }
 
