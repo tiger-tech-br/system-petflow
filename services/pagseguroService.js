@@ -40,16 +40,18 @@ async function criarCheckout(pedido) {
 
     try {
 
-            console.log("===== REQUEST PAGBANK =====");
-            console.log(JSON.stringify(payload, null, 2));
+            console.log(
+    `===== REQUEST PAGBANK =====\n${JSON.stringify(payload, null, 2)}`
+);
 
                 const { data } = await client.post(
                     "/checkouts",
                     payload
                 );
 
-            console.log("===== RESPONSE PAGBANK =====");
-            console.log(JSON.stringify(data, null, 2));
+                console.log(
+    `===== RESPONSE PAGBANK =====\n${JSON.stringify(data, null, 2)}`
+);
 
 
         return normalizarCheckout(data);
