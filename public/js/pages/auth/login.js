@@ -95,15 +95,15 @@ function setupPasswordToggles() {
         button.className = "password-toggle";
         button.type = "button";
         button.setAttribute("aria-label", "Mostrar senha");
-        button.innerHTML = '<i class="fa-regular fa-eye"></i>';
+        button.innerHTML = '<i class="fa-regular fa-eye-slash"></i>';
 
         button.addEventListener("click", () => {
             const visible = input.type === "text";
             input.type = visible ? "password" : "text";
             button.setAttribute("aria-label", visible ? "Mostrar senha" : "Ocultar senha");
             button.innerHTML = visible
-                ? '<i class="fa-regular fa-eye"></i>'
-                : '<i class="fa-regular fa-eye-slash"></i>';
+                ? '<i class="fa-regular fa-eye-slash"></i>'
+                : '<i class="fa-regular fa-eye"></i>';
         });
 
         wrapper.appendChild(button);
