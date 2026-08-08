@@ -21,6 +21,7 @@ let publicCart = normalizeCartStorage();
 let publicFavorites = new Set(JSON.parse(sessionStorage.getItem("petflow_public_favorites") || "[]"));
 let publicCustomer = null;
 let publicNotifications = [];
+let currentSearchTerm = "";
 
 async function loadPublicCatalog() {
     const grid = document.querySelector(".products-grid");
@@ -40,7 +41,7 @@ async function loadPublicCatalog() {
         publicProducts = Array.isArray(payload.data) ? payload.data : [];
 
         if (publicProducts.length) {
-            renderProducts(publicProducts.slice(0, 6));
+            applyPublicSearch(getSearchValue(), false);
             updateHeaderCounters();
             return;
         }
@@ -49,12 +50,14 @@ async function loadPublicCatalog() {
         prepareStaticProductCards();
         bindProductActions();
         syncProductButtons();
+        applyPublicSearch(getSearchValue(), false);
         updateHeaderCounters();
     } catch {
         publicProducts = collectStaticProducts();
         prepareStaticProductCards();
         bindProductActions();
         syncProductButtons();
+        applyPublicSearch(getSearchValue(), false);
         updateHeaderCounters();
     }
 }
@@ -190,6 +193,10 @@ function setupPublicSearch() {
     });
 }
 
+function getSearchValue() {
+    return document.getElementById("search")?.value || "";
+}
+
 function setupNewsletterForm() {
     const form = document.getElementById("newsletterForm");
 
@@ -239,22 +246,31 @@ function setNewsletterStatus(element, message) {
 
 function filterProducts(term) {
     const normalized = normalize(term);
+
+    if (!normalized) {
+        renderProducts(publicProducts.slice(0, 6));
+        return;
+    }
+
     const matches = publicProducts.filter(product => {
         return [
             product.nome,
             product.descricao,
             product.categoria,
+            product.marca,
+            product.fornecedor,
             product.sku
         ].some(value => normalize(value).includes(normalized));
     });
 
-    renderProducts(matches.length ?matches : publicProducts.slice(0, 6), {
-        emptyMessage: matches.length ?"" : "Nenhum produto encontrado para essa busca."
+    renderProducts(matches, {
+        emptyMessage: "Nenhum produto encontrado para essa busca."
     });
 }
 
 function applyPublicSearch(term, shouldScroll) {
     const normalized = normalize(term);
+    currentSearchTerm = term || "";
 
     if (!normalized) {
         renderProducts(publicProducts.slice(0, 6));
@@ -445,7 +461,26 @@ function currentVisibleProducts() {
     const visibleIds = [...document.querySelectorAll("[data-product-card]")].map(card => card.dataset.id);
     const products = publicProducts.filter(product => visibleIds.includes(String(product.id || product.sku || product.nome)));
 
-    return products.length ?products : publicProducts.slice(0, 6);
+    if (products.length) {
+        return products;
+    }
+
+    const normalized = normalize(currentSearchTerm);
+
+    if (normalized) {
+        return publicProducts.filter(product => {
+            return [
+                product.nome,
+                product.descricao,
+                product.categoria,
+                product.marca,
+                product.fornecedor,
+                product.sku
+            ].some(value => normalize(value).includes(normalized));
+        });
+    }
+
+    return publicProducts.slice(0, 6);
 }
 
 function toggleSet(set, value) {
