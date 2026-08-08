@@ -1094,11 +1094,17 @@ function renderCustomerNotifications() {
     }
 
     const unread = publicNotifications.filter(item => !item.lida).length;
-    button.dataset.count = String(unread);
+
+    if (unread > 0) {
+        button.dataset.count = String(unread);
+    } else {
+        delete button.dataset.count;
+    }
+
     button.classList.toggle("has-count", unread > 0);
-    status.textContent = unread === 1
-        ? "1 nova"
-        : `${unread} novas`;
+    status.textContent = unread > 0
+        ? (unread === 1 ? "1 nova" : `${unread} novas`)
+        : "Nenhuma nova";
 
     if (!publicNotifications.length) {
         list.innerHTML = `

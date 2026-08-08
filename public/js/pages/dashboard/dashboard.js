@@ -306,7 +306,7 @@ function updateNotifications(sales) {
     let hasNewNotifications = false;
 
     if (!dashboardLoadedOnce) {
-        unreadNotifications = notifications.length;
+        unreadNotifications = 0;
         dashboardKnownOrderIds = new Set(notifications.map(item => item.id));
         dashboardLoadedOnce = true;
     } else {
@@ -339,11 +339,18 @@ function renderNotifications() {
         return;
     }
 
-    count.textContent = String(unreadNotifications);
-    count.hidden = unreadNotifications <= 0;
-    status.textContent = unreadNotifications === 1
-        ?"1 novo pedido"
-        : `${unreadNotifications} novos pedidos`;
+    if (unreadNotifications > 0) {
+        count.textContent = String(unreadNotifications);
+        count.hidden = false;
+        status.textContent = unreadNotifications === 1
+            ? "1 novo pedido"
+            : `${unreadNotifications} novos pedidos`;
+    } else {
+        count.textContent = "";
+        count.hidden = true;
+        status.textContent = "Nenhuma nova";
+    }
+
     button.classList.toggle("has-notification", unreadNotifications > 0);
 
     if (!dashboardNotifications.length) {
