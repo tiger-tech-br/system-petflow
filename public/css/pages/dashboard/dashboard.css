@@ -438,12 +438,14 @@
 
 @media (max-width: 720px) {
     .dashboard-topbar-actions {
+        width: 100%;
         flex-wrap: wrap;
-        justify-content: flex-end;
+        justify-content: flex-start;
         gap: 10px;
     }
 
     .dashboard-topbar-actions > .btn {
+        flex: 1 1 150px;
         min-height: 40px;
         padding: 0 11px;
         font-size: 13px;
@@ -455,6 +457,7 @@
     }
 
     .admin-profile {
+        flex: 1 1 170px;
         min-height: 40px;
         padding-right: 10px;
     }
@@ -488,5 +491,19 @@
     .supplier-list article {
         align-items: flex-start;
         flex-direction: column;
+    }
+}
+
+@media (max-width: 520px) {
+    .dashboard-topbar-actions > .btn {
+        flex-basis: calc(50% - 5px);
+    }
+
+    .notification-menu {
+        flex: 0 0 44px;
+    }
+
+    .admin-profile {
+        flex: 1 1 calc(100% - 54px);
     }
 }

@@ -182,14 +182,11 @@ function setupPublicSearch() {
 
     form.addEventListener("submit", event => {
         event.preventDefault();
-        filterProducts(input.value);
-        document.getElementById("products")?.scrollIntoView({ behavior: "smooth" });
+        applyPublicSearch(input.value, true);
     });
 
     input.addEventListener("input", () => {
-        if (!input.value.trim()) {
-            renderProducts(publicProducts.slice(0, 6));
-        }
+        applyPublicSearch(input.value, false);
     });
 }
 
@@ -253,6 +250,30 @@ function filterProducts(term) {
 
     renderProducts(matches.length ?matches : publicProducts.slice(0, 6), {
         emptyMessage: matches.length ?"" : "Nenhum produto encontrado para essa busca."
+    });
+}
+
+function applyPublicSearch(term, shouldScroll) {
+    const normalized = normalize(term);
+
+    if (!normalized) {
+        renderProducts(publicProducts.slice(0, 6));
+        filterStaticCards(".category-card, .service-card", "");
+        return;
+    }
+
+    filterProducts(term);
+    filterStaticCards(".category-card, .service-card", normalized);
+
+    if (shouldScroll) {
+        document.getElementById("products")?.scrollIntoView({ behavior: "smooth" });
+    }
+}
+
+function filterStaticCards(selector, normalizedTerm) {
+    document.querySelectorAll(selector).forEach(card => {
+        const text = normalize(card.textContent);
+        card.hidden = Boolean(normalizedTerm) && !text.includes(normalizedTerm);
     });
 }
 

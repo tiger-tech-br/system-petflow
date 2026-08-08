@@ -229,12 +229,6 @@ a {
     box-shadow: 0 12px 26px rgba(4, 118, 109, .18);
 }
 
-.btn-danger {
-    color: #ffffff;
-    background: #d94b3d;
-    box-shadow: 0 12px 24px rgba(217, 75, 61, .18);
-}
-
 .auth-panel {
     display: none;
 }
@@ -439,6 +433,17 @@ a {
     box-shadow: none;
 }
 
+.btn.btn-danger {
+    border-color: #dc2626;
+    color: #ffffff;
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    box-shadow: 0 14px 28px rgba(220, 38, 38, .20);
+}
+
+.btn.btn-danger:hover {
+    box-shadow: 0 16px 34px rgba(220, 38, 38, .25);
+}
+
 .login-note {
     justify-self: center;
     text-align: center;
@@ -452,7 +457,7 @@ a {
 
 .orders-list {
     display: grid;
-    gap: 16px;
+    gap: 18px;
 }
 
 .orders-empty {
@@ -479,11 +484,13 @@ a {
 
 .order-card {
     display: grid;
-    gap: 14px;
-    padding: 18px;
+    gap: 18px;
+    padding: 22px;
     border: 1px solid var(--line);
     border-radius: 8px;
-    background: #ffffff;
+    background:
+        linear-gradient(180deg, #ffffff 0%, #fbfefd 100%);
+    box-shadow: 0 18px 44px rgba(16, 33, 43, .08);
 }
 
 .order-card header,
@@ -496,7 +503,7 @@ a {
 
 .order-card header {
     align-items: flex-start;
-    padding-bottom: 12px;
+    padding-bottom: 14px;
     border-bottom: 1px solid var(--soft-line);
 }
 
@@ -510,9 +517,14 @@ a {
 }
 
 .order-card header strong {
-    display: block;
-    margin-top: 4px;
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    margin-top: 8px;
+    padding: 0 10px;
+    border-radius: 999px;
     color: var(--teal);
+    background: #e6f6f3;
     font-size: 1rem;
 }
 
@@ -522,6 +534,9 @@ a {
 }
 
 .order-card dl {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
     margin: 0;
 }
 
@@ -540,7 +555,7 @@ a {
 }
 
 .order-card li {
-    padding: 10px 12px;
+    padding: 12px 14px;
     border-radius: 8px;
     background: var(--surface);
     color: var(--muted);
@@ -626,7 +641,7 @@ a {
     align-items: center;
     justify-content: space-between;
     gap: 14px;
-    padding-top: 12px;
+    padding-top: 14px;
     border-top: 1px solid var(--soft-line);
 }
 
@@ -802,11 +817,14 @@ body {
     }
 
     .order-card header,
-    .order-card dl,
     .order-card li,
     .order-actions {
         flex-direction: column;
         gap: 7px;
+    }
+
+    .order-card dl {
+        grid-template-columns: 1fr;
     }
 
     .order-timeline {

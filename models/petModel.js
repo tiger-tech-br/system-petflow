@@ -41,7 +41,8 @@ async function findAll(empresaId) {
 
                 ON c.id = p.cliente_id
 
-            WHERE p.empresa_id = $1
+            WHERE p.empresa_id = get_petflow_empresa_id()
+               OR ($1::uuid IS NOT NULL AND p.empresa_id = $1)
 
             ORDER BY p.nome ASC
         `,
@@ -69,7 +70,10 @@ async function findById(id, empresaId) {
 
             WHERE id = $1
 
-            AND empresa_id = $2
+            AND (
+                empresa_id = get_petflow_empresa_id()
+                OR ($2::uuid IS NOT NULL AND empresa_id = $2)
+            )
 
             LIMIT 1
         `,
@@ -127,7 +131,7 @@ async function create(pet) {
 
             VALUES (
 
-                $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,TRUE
+                get_petflow_empresa_id(),$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,TRUE
 
             )
 
@@ -135,8 +139,6 @@ async function create(pet) {
         `,
 
         [
-
-            pet.empresaId,
 
             pet.clienteId,
 
@@ -205,9 +207,10 @@ async function update(id, pet, empresaId) {
 
                 id = $11
 
-            AND
-
-                empresa_id = $12
+            AND (
+                empresa_id = get_petflow_empresa_id()
+                OR ($12::uuid IS NOT NULL AND empresa_id = $12)
+            )
 
             RETURNING *
         `,
@@ -261,9 +264,10 @@ async function remove(id, empresaId) {
 
                 id = $1
 
-            AND
-
-                empresa_id = $2
+            AND (
+                empresa_id = get_petflow_empresa_id()
+                OR ($2::uuid IS NOT NULL AND empresa_id = $2)
+            )
         `,
 
         [

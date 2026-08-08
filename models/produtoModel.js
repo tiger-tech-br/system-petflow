@@ -35,7 +35,11 @@ async function findAll(empresaId) {
 
                 p.status,
 
-                c.nome AS categoria
+                c.nome AS categoria,
+
+                f.id AS fornecedor_id,
+
+                f.nome AS fornecedor
 
             FROM produtos p
 
@@ -43,7 +47,12 @@ async function findAll(empresaId) {
 
                 ON c.id = p.categoria_id
 
-            WHERE p.empresa_id = $1
+            LEFT JOIN fornecedores f
+
+                ON f.id = p.fornecedor_id
+
+            WHERE p.empresa_id = get_petflow_empresa_id()
+               OR ($1::uuid IS NOT NULL AND p.empresa_id = $1)
 
             ORDER BY p.nome ASC
         `,
@@ -73,9 +82,10 @@ async function findById(id, empresaId) {
 
                 id = $1
 
-            AND
-
-                empresa_id = $2
+            AND (
+                empresa_id = get_petflow_empresa_id()
+                OR ($2::uuid IS NOT NULL AND empresa_id = $2)
+            )
 
             LIMIT 1
         `,
@@ -109,6 +119,8 @@ async function create(produto) {
 
                 categoria_id,
 
+                fornecedor_id,
+
                 nome,
 
                 descricao,
@@ -129,7 +141,7 @@ async function create(produto) {
 
             VALUES (
 
-                $1,$2,$3,$4,$5,$6,$7,$8,$9,TRUE
+                get_petflow_empresa_id(),$1,$2,$3,$4,$5,$6,$7,$8,$9,TRUE
 
             )
 
@@ -138,9 +150,9 @@ async function create(produto) {
 
         [
 
-            produto.empresaId,
-
             produto.categoriaId,
+
+            produto.fornecedorId || produto.fornecedor_id || null,
 
             produto.nome,
 
@@ -179,29 +191,32 @@ async function update(id, produto, empresaId) {
 
                 categoria_id = $1,
 
-                nome = $2,
+                fornecedor_id = $2,
 
-                descricao = $3,
+                nome = $3,
 
-                sku = $4,
+                descricao = $4,
 
-                codigo_barras = $5,
+                sku = $5,
 
-                preco = $6,
+                codigo_barras = $6,
 
-                custo = $7,
+                preco = $7,
 
-                foto = $8,
+                custo = $8,
+
+                foto = $9,
 
                 updated_at = NOW()
 
             WHERE
 
-                id = $9
+                id = $10
 
-            AND
-
-                empresa_id = $10
+            AND (
+                empresa_id = get_petflow_empresa_id()
+                OR ($11::uuid IS NOT NULL AND empresa_id = $11)
+            )
 
             RETURNING *
         `,
@@ -209,6 +224,8 @@ async function update(id, produto, empresaId) {
         [
 
             produto.categoriaId,
+
+            produto.fornecedorId || produto.fornecedor_id || null,
 
             produto.nome,
 
@@ -251,9 +268,10 @@ async function remove(id, empresaId) {
 
                 id = $1
 
-            AND
-
-                empresa_id = $2
+            AND (
+                empresa_id = get_petflow_empresa_id()
+                OR ($2::uuid IS NOT NULL AND empresa_id = $2)
+            )
         `,
 
         [
