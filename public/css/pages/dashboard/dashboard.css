@@ -46,6 +46,10 @@
     font-weight: 900;
 }
 
+.notification-button span[hidden] {
+    display: none !important;
+}
+
 .notification-button.has-notification i {
     color: var(--admin-teal);
 }
