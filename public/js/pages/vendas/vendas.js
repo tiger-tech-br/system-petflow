@@ -21,6 +21,12 @@ const modalVenda = document.querySelector("#modalVenda");
 const modalConfirmacao = document.querySelector("#modalConfirmacao");
 
 const pesquisarVenda = document.querySelector("#pesquisarVenda");
+const buscarCliente = document.querySelector("#buscarCliente");
+const buscarProduto = document.querySelector("#buscarProduto");
+const modalCliente = document.querySelector("#modalCliente");
+const modalProduto = document.querySelector("#modalProduto");
+const clienteSelecionado = document.querySelector("#clienteSelecionado");
+const listaProdutos = document.querySelector("#listaProdutos");
 
 /* ==================================================
    ESTADO
@@ -29,6 +35,9 @@ const pesquisarVenda = document.querySelector("#pesquisarVenda");
 let vendaEditando = null;
 
 let vendaSelecionada = null;
+let vendasCarregadas = [];
+let clientesCarregados = [];
+let produtosCarregados = [];
 
 /* ==================================================
    INICIALIZAÇÃO
@@ -51,6 +60,8 @@ function inicializar() {
     configurarEventos();
 
     carregarVendas();
+
+    carregarDadosPesquisa();
 
 }
 
@@ -120,7 +131,24 @@ function configurarEventos() {
 
     }
 
+    configurarCampoBusca(buscarCliente, pesquisarClientes);
+    configurarCampoBusca(modalCliente, pesquisarClientes);
+    configurarCampoBusca(buscarProduto, pesquisarProdutos);
+    configurarCampoBusca(modalProduto, pesquisarProdutos);
+
     configurarEventosTabela();
+
+}
+
+function configurarCampoBusca(input, callback) {
+
+    if (!input) return;
+
+    input.addEventListener("input", event => {
+
+        callback(event.target.value, input);
+
+    });
 
 }
 
@@ -230,9 +258,15 @@ async function carregarVendas() {
 
     try {
 
-        const vendas = await VendaService.getAll();
+        const vendas = normalizarResposta(
 
-        renderizarTabela(vendas);
+            await VendaService.getAll()
+
+        );
+
+        vendasCarregadas = Array.isArray(vendas) ? vendas : [];
+
+        renderizarTabela(vendasCarregadas);
 
     }
 
@@ -241,6 +275,32 @@ async function carregarVendas() {
         console.error(error);
 
         alert("Erro ao carregar as vendas.");
+
+    }
+
+}
+
+async function carregarDadosPesquisa() {
+
+    try {
+
+        const [clientes, produtos] = await Promise.all([
+
+            apiGet("/clientes"),
+
+            apiGet("/produtos")
+
+        ]);
+
+        clientesCarregados = normalizarResposta(clientes);
+
+        produtosCarregados = normalizarResposta(produtos);
+
+        pesquisarProdutos(buscarProduto?.value || "", buscarProduto);
+
+    } catch (error) {
+
+        console.error("Erro ao carregar dados de pesquisa:", error);
 
     }
 
@@ -680,29 +740,240 @@ async function cancelarVenda(id) {
 
 function pesquisarVendas(event) {
 
-    const texto = event.target.value
+    const texto = normalizarTexto(event.target.value);
+
+    if (!texto) {
+
+        renderizarTabela(vendasCarregadas);
+
+        return;
+
+    }
+
+    const vendasFiltradas = vendasCarregadas.filter(venda =>
+
+        normalizarTexto([
+
+            venda.id,
+
+            venda.cliente,
+
+            venda.cliente_nome,
+
+            venda.forma_pagamento,
+
+            venda.status,
+
+            venda.total,
+
+            venda.valor_total,
+
+            venda.valor_final
+
+        ].filter(Boolean).join(" ")).includes(texto)
+
+    );
+
+    renderizarTabela(vendasFiltradas);
+
+}
+
+function pesquisarClientes(termo, input) {
+
+    const texto = normalizarTexto(termo);
+
+    const destino = input === modalCliente
+
+        ? obterPainelResultados(input)
+
+        : clienteSelecionado;
+
+    if (!destino) return;
+
+    if (!texto) {
+
+        destino.innerHTML = input === modalCliente ? "" : "Nenhum cliente selecionado.";
+
+        return;
+
+    }
+
+    const encontrados = clientesCarregados
+
+        .filter(cliente => normalizarTexto([
+
+            cliente.nome,
+
+            cliente.email,
+
+            cliente.telefone,
+
+            cliente.whatsapp,
+
+            cliente.cpf,
+
+            cliente.cidade
+
+        ].filter(Boolean).join(" ")).includes(texto))
+
+        .slice(0, 8);
+
+    if (!encontrados.length) {
+
+        destino.innerHTML = `<div class="empty-state">Nenhum cliente encontrado.</div>`;
+
+        return;
+
+    }
+
+    destino.innerHTML = encontrados.map(cliente => `
+        <button class="search-result-item" type="button" data-client-id="${escapeHtml(cliente.id)}">
+            <strong>${escapeHtml(cliente.nome || "Cliente")}</strong>
+            <span>${escapeHtml(cliente.telefone || cliente.whatsapp || cliente.email || "")}</span>
+        </button>
+    `).join("");
+
+    destino.querySelectorAll("[data-client-id]").forEach(button => {
+
+        button.addEventListener("click", () => selecionarCliente(button.dataset.clientId, input));
+
+    });
+
+}
+
+function pesquisarProdutos(termo, input) {
+
+    const texto = normalizarTexto(termo);
+
+    const destino = input === modalProduto
+
+        ? obterPainelResultados(input)
+
+        : listaProdutos;
+
+    if (!destino) return;
+
+    const produtos = texto
+
+        ? produtosCarregados.filter(produto => normalizarTexto([
+
+            produto.nome,
+
+            produto.descricao,
+
+            produto.categoria,
+
+            produto.marca,
+
+            produto.fornecedor,
+
+            produto.sku,
+
+            produto.codigo_barras
+
+        ].filter(Boolean).join(" ")).includes(texto))
+
+        : produtosCarregados.slice(0, 8);
+
+    const encontrados = produtos.slice(0, 10);
+
+    if (!encontrados.length) {
+
+        destino.innerHTML = `<div class="empty-state">Nenhum produto encontrado.</div>`;
+
+        return;
+
+    }
+
+    destino.innerHTML = encontrados.map(produto => `
+        <button class="search-result-item product-search-item" type="button" data-product-id="${escapeHtml(produto.id)}">
+            <strong>${escapeHtml(produto.nome || "Produto")}</strong>
+            <span>${formatarMoeda(produto.preco || produto.preco_venda || 0)}${produto.fornecedor ? ` - ${escapeHtml(produto.fornecedor)}` : ""}</span>
+        </button>
+    `).join("");
+
+}
+
+function selecionarCliente(id, input) {
+
+    const cliente = clientesCarregados.find(item => String(item.id) === String(id));
+
+    if (!cliente) return;
+
+    const clienteId = document.querySelector("#clienteId");
+
+    if (clienteId) clienteId.value = cliente.id;
+
+    if (input) input.value = cliente.nome || "";
+
+    if (clienteSelecionado) {
+
+        clienteSelecionado.innerHTML = `
+            <strong>${escapeHtml(cliente.nome || "Cliente")}</strong>
+            <span>${escapeHtml(cliente.telefone || cliente.whatsapp || cliente.email || "")}</span>
+        `;
+
+    }
+
+}
+
+function obterPainelResultados(input) {
+
+    if (!input) return null;
+
+    let painel = input.parentElement?.querySelector(".search-results");
+
+    if (!painel) {
+
+        painel = document.createElement("div");
+
+        painel.className = "search-results";
+
+        input.insertAdjacentElement("afterend", painel);
+
+    }
+
+    return painel;
+
+}
+
+function normalizarResposta(resposta) {
+
+    if (Array.isArray(resposta)) return resposta;
+
+    if (Array.isArray(resposta?.data)) return resposta.data;
+
+    return [];
+
+}
+
+function normalizarTexto(valor) {
+
+    return String(valor || "")
+
+        .normalize("NFD")
+
+        .replace(/[\u0300-\u036f]/g, "")
 
         .trim()
 
         .toLowerCase();
 
-    const linhas = tabelaVendas.querySelectorAll("tr");
+}
 
-    linhas.forEach(linha => {
+function escapeHtml(valor) {
 
-        linha.style.display =
+    return String(valor || "")
 
-            linha.textContent
+        .replaceAll("&", "&amp;")
 
-                .toLowerCase()
+        .replaceAll("<", "&lt;")
 
-                .includes(texto)
+        .replaceAll(">", "&gt;")
 
-            ?""
+        .replaceAll('"', "&quot;")
 
-            : "none";
-
-    });
+        .replaceAll("'", "&#039;");
 
 }
 

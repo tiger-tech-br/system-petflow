@@ -140,6 +140,8 @@ function productHaystack(product) {
         product.nome,
         product.descricao,
         product.categoria,
+        product.marca,
+        product.fornecedor,
         product.sku
     ].filter(Boolean).join(" "));
 }
