@@ -2,6 +2,120 @@
 
 const db = require("../database/connection");
 
+function normalizeEmail(email) {
+    return String(email || "")
+        .trim()
+        .toLowerCase();
+}
+
+function onlyDigits(value) {
+    return String(value || "")
+        .replace(/\D/g, "");
+}
+
+function duplicateMessage(field) {
+    const messages = {
+        cpf: "Esse CPF já está cadastrado.",
+        telefone: "Esse telefone já está cadastrado.",
+        whatsapp: "Esse celular já está cadastrado.",
+        email: "Esse e-mail já está cadastrado."
+    };
+
+    return messages[field] || messages.email;
+}
+
+async function findDuplicate({
+    email,
+    cpf,
+    telefone,
+    whatsapp,
+    excludeId = null,
+    empresaId = null
+}) {
+    const normalizedEmail = normalizeEmail(email);
+    const normalizedCpf = onlyDigits(cpf);
+    const normalizedTelefone = onlyDigits(telefone);
+    const normalizedWhatsapp = onlyDigits(whatsapp);
+
+    if (
+        !normalizedEmail &&
+        !normalizedCpf &&
+        !normalizedTelefone &&
+        !normalizedWhatsapp
+    ) {
+        return null;
+    }
+
+    const result = await db.query(
+        `
+            SELECT
+                id,
+                CASE
+                    WHEN $1 <> ''
+                     AND LOWER(TRIM(email)) = $1 THEN 'email'
+                    WHEN $2 <> ''
+                     AND REGEXP_REPLACE(COALESCE(cpf, ''), '\\D', '', 'g') = $2 THEN 'cpf'
+                    WHEN $5 <> ''
+                     AND (
+                        REGEXP_REPLACE(COALESCE(telefone, ''), '\\D', '', 'g') = $5
+                        OR REGEXP_REPLACE(COALESCE(whatsapp, ''), '\\D', '', 'g') = $5
+                     ) THEN 'telefone'
+                    WHEN $6 <> ''
+                     AND (
+                        REGEXP_REPLACE(COALESCE(telefone, ''), '\\D', '', 'g') = $6
+                        OR REGEXP_REPLACE(COALESCE(whatsapp, ''), '\\D', '', 'g') = $6
+                     ) THEN 'whatsapp'
+                    ELSE NULL
+                END AS field
+            FROM clientes
+            WHERE ($3::uuid IS NULL OR id <> $3)
+              AND (
+                  empresa_id = get_petflow_empresa_id()
+                  OR empresa_id IS NULL
+                  OR (
+                      $4::uuid IS NOT NULL
+                      AND empresa_id = $4
+                  )
+              )
+              AND (
+                  (
+                      $1 <> ''
+                      AND LOWER(TRIM(email)) = $1
+                  )
+                  OR (
+                      $2 <> ''
+                      AND REGEXP_REPLACE(COALESCE(cpf, ''), '\\D', '', 'g') = $2
+                  )
+                  OR (
+                      $5 <> ''
+                      AND (
+                          REGEXP_REPLACE(COALESCE(telefone, ''), '\\D', '', 'g') = $5
+                          OR REGEXP_REPLACE(COALESCE(whatsapp, ''), '\\D', '', 'g') = $5
+                      )
+                  )
+                  OR (
+                      $6 <> ''
+                      AND (
+                          REGEXP_REPLACE(COALESCE(telefone, ''), '\\D', '', 'g') = $6
+                          OR REGEXP_REPLACE(COALESCE(whatsapp, ''), '\\D', '', 'g') = $6
+                      )
+                  )
+              )
+            LIMIT 1
+        `,
+        [
+            normalizedEmail,
+            normalizedCpf,
+            excludeId,
+            empresaId || null,
+            normalizedTelefone,
+            normalizedWhatsapp
+        ]
+    );
+
+    return result.rows[0] || null;
+}
+
 async function findAll(empresaId) {
     const result = await db.query(
         `
@@ -99,6 +213,22 @@ async function findById(id, empresaId) {
 }
 
 async function create(cliente) {
+    const duplicate = await findDuplicate({
+        email: cliente.email,
+        cpf: cliente.cpf,
+        telefone: cliente.telefone,
+        whatsapp: cliente.whatsapp,
+        empresaId: cliente.empresaId
+    });
+
+    if (duplicate) {
+        const error = new Error(duplicateMessage(duplicate.field));
+
+        error.status = 409;
+        error.statusCode = 409;
+        throw error;
+    }
+
     const result = await db.query(
         `
             INSERT INTO clientes (
@@ -147,6 +277,23 @@ async function create(cliente) {
 }
 
 async function update(id, cliente, empresaId) {
+    const duplicate = await findDuplicate({
+        email: cliente.email,
+        cpf: cliente.cpf,
+        telefone: cliente.telefone,
+        whatsapp: cliente.whatsapp,
+        excludeId: id,
+        empresaId
+    });
+
+    if (duplicate) {
+        const error = new Error(duplicateMessage(duplicate.field));
+
+        error.status = 409;
+        error.statusCode = 409;
+        throw error;
+    }
+
     const result = await db.query(
         `
             UPDATE clientes
@@ -233,6 +380,8 @@ async function remove(id, empresaId) {
 module.exports = {
     findAll,
     findById,
+    findDuplicate,
+    duplicateMessage,
     create,
     update,
     remove

@@ -47,19 +47,71 @@ async function register(request, response, next) {
             `
                 SELECT
                     c.id,
-                    uc.cliente_id AS usuario_cliente_id
+                    uc.cliente_id AS usuario_cliente_id,
+                    CASE
+                        WHEN LOWER(COALESCE(c.email, uc.email)) = LOWER($1) THEN 'email'
+                        WHEN $3 <> ''
+                         AND REGEXP_REPLACE(COALESCE(c.cpf, ''), '\\D', '', 'g') = $3 THEN 'cpf'
+                        WHEN $4 <> ''
+                         AND (
+                            REGEXP_REPLACE(COALESCE(c.telefone, ''), '\\D', '', 'g') = $4
+                            OR REGEXP_REPLACE(COALESCE(c.whatsapp, ''), '\\D', '', 'g') = $4
+                         ) THEN 'telefone'
+                        WHEN $5 <> ''
+                         AND (
+                            REGEXP_REPLACE(COALESCE(c.telefone, ''), '\\D', '', 'g') = $5
+                            OR REGEXP_REPLACE(COALESCE(c.whatsapp, ''), '\\D', '', 'g') = $5
+                         ) THEN 'whatsapp'
+                        ELSE NULL
+                    END AS field
                 FROM clientes c
                 LEFT JOIN usuarios_clientes uc
                     ON uc.cliente_id = c.id
-                WHERE LOWER(c.email) = LOWER($1)
-                  AND c.empresa_id = $2
+                WHERE (
+                    c.empresa_id = $2
+                    OR c.empresa_id IS NULL
+                    OR uc.cliente_id IS NOT NULL
+                )
+                  AND (
+                    LOWER(COALESCE(c.email, uc.email)) = LOWER($1)
+                    OR (
+                        $3 <> ''
+                        AND REGEXP_REPLACE(COALESCE(c.cpf, ''), '\\D', '', 'g') = $3
+                    )
+                    OR (
+                        $4 <> ''
+                        AND (
+                            REGEXP_REPLACE(COALESCE(c.telefone, ''), '\\D', '', 'g') = $4
+                            OR REGEXP_REPLACE(COALESCE(c.whatsapp, ''), '\\D', '', 'g') = $4
+                        )
+                    )
+                    OR (
+                        $5 <> ''
+                        AND (
+                            REGEXP_REPLACE(COALESCE(c.telefone, ''), '\\D', '', 'g') = $5
+                            OR REGEXP_REPLACE(COALESCE(c.whatsapp, ''), '\\D', '', 'g') = $5
+                        )
+                    )
+                  )
                 LIMIT 1
             `,
             [
                 data.email,
-                empresaId
+                empresaId,
+                onlyDigits(data.cpf),
+                onlyDigits(data.telefone),
+                onlyDigits(data.whatsapp)
             ]
         );
+
+        if (existing.rows[0]) {
+
+            return response.status(409).json({
+                success: false,
+                message: duplicateCustomerMessage(existing.rows[0].field)
+            });
+
+        }
 
         let clienteId = existing.rows[0]?.id;
 
@@ -116,6 +168,7 @@ async function register(request, response, next) {
                     INSERT INTO clientes (
                         empresa_id,
                         nome,
+                        cpf,
                         email,
                         telefone,
                         whatsapp,
@@ -134,7 +187,7 @@ async function register(request, response, next) {
                         $2,
                         $3,
                         $4,
-                        $4,
+                        $5,
                         $5,
                         $6,
                         $7,
@@ -143,6 +196,7 @@ async function register(request, response, next) {
                         $10,
                         $11,
                         $12,
+                        $13,
                         TRUE
                     )
                     RETURNING id
@@ -150,6 +204,7 @@ async function register(request, response, next) {
                 [
                     empresaId,
                     data.nome,
+                    data.cpf || null,
                     data.email.toLowerCase(),
                     data.telefone,
                     data.cep || null,
@@ -1085,6 +1140,26 @@ function hasText(value) {
         value !== undefined &&
         String(value).trim() !== ""
     );
+
+}
+
+function onlyDigits(value) {
+
+    return String(value || "")
+        .replace(/\D/g, "");
+
+}
+
+function duplicateCustomerMessage(field) {
+
+    const messages = {
+        cpf: "Esse CPF já está cadastrado.",
+        telefone: "Esse telefone já está cadastrado.",
+        whatsapp: "Esse celular já está cadastrado.",
+        email: "Esse e-mail já está cadastrado."
+    };
+
+    return messages[field] || messages.email;
 
 }
 
