@@ -6,28 +6,64 @@ async function findAll(empresaId) {
     const result = await db.query(
         `
             SELECT
-                id,
-                nome,
-                cpf,
-                telefone,
-                whatsapp,
-                email,
-                cidade,
-                estado,
-                ativo,
+                c.id,
+                c.nome,
+                c.cpf,
+                c.data_nascimento,
+                c.telefone,
+                c.whatsapp,
+                COALESCE(c.email, uc.email) AS email,
+                c.cep,
+                c.endereco,
+                c.numero,
+                c.complemento,
+                c.bairro,
+                c.cidade,
+                c.estado,
+                c.ativo,
                 CASE
-                    WHEN ativo = TRUE THEN 'ativo'
+                    WHEN c.ativo = TRUE THEN 'ativo'
                     ELSE 'inativo'
                 END AS status,
-                created_at,
-                updated_at
+                COUNT(p.id)::INTEGER AS total_pets,
+                COALESCE(
+                    STRING_AGG(
+                        DISTINCT p.nome,
+                        ', '
+                    ) FILTER (WHERE p.id IS NOT NULL),
+                    'Nenhum pet cadastrado'
+                ) AS pets,
+                CONCAT_WS(
+                    ', ',
+                    NULLIF(c.endereco, ''),
+                    NULLIF(c.numero, ''),
+                    NULLIF(c.complemento, ''),
+                    NULLIF(c.bairro, ''),
+                    NULLIF(c.cidade, ''),
+                    NULLIF(c.estado, '')
+                ) AS endereco_completo,
+                c.created_at,
+                c.updated_at
             FROM clientes
-            WHERE empresa_id = get_petflow_empresa_id()
+            LEFT JOIN usuarios_clientes uc
+                ON uc.cliente_id = c.id
+            LEFT JOIN pets p
+                ON p.cliente_id = c.id
+               AND p.ativo = TRUE
+               AND (
+                   p.empresa_id = c.empresa_id
+                   OR p.empresa_id IS NULL
+                   OR p.empresa_id = get_petflow_empresa_id()
+               )
+            WHERE c.empresa_id = get_petflow_empresa_id()
+               OR c.empresa_id IS NULL
+               OR uc.cliente_id IS NOT NULL
                OR (
                    $1::uuid IS NOT NULL
-                   AND empresa_id = $1
+                   AND c.empresa_id = $1
                )
-            ORDER BY nome ASC
+            GROUP BY c.id, uc.email
+            ORDER BY c.nome ASC
         `,
         [empresaId || null]
     );
@@ -43,6 +79,12 @@ async function findById(id, empresaId) {
             WHERE id = $1
               AND (
                   empresa_id = get_petflow_empresa_id()
+                  OR empresa_id IS NULL
+                  OR EXISTS (
+                      SELECT 1
+                      FROM usuarios_clientes uc
+                      WHERE uc.cliente_id = clientes.id
+                  )
                   OR (
                       $2::uuid IS NOT NULL
                       AND empresa_id = $2
@@ -127,6 +169,12 @@ async function update(id, cliente, empresaId) {
             WHERE id = $15
               AND (
                   empresa_id = get_petflow_empresa_id()
+                  OR empresa_id IS NULL
+                  OR EXISTS (
+                      SELECT 1
+                      FROM usuarios_clientes uc
+                      WHERE uc.cliente_id = clientes.id
+                  )
                   OR (
                       $16::uuid IS NOT NULL
                       AND empresa_id = $16
@@ -166,6 +214,12 @@ async function remove(id, empresaId) {
             WHERE id = $1
               AND (
                   empresa_id = get_petflow_empresa_id()
+                  OR empresa_id IS NULL
+                  OR EXISTS (
+                      SELECT 1
+                      FROM usuarios_clientes uc
+                      WHERE uc.cliente_id = clientes.id
+                  )
                   OR (
                       $2::uuid IS NOT NULL
                       AND empresa_id = $2

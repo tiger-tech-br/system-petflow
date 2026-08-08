@@ -40,4 +40,15 @@ BEGIN
     IF to_regclass('public.newsletter_inscritos') IS NOT NULL THEN
         UPDATE newsletter_inscritos SET empresa_id = v_empresa_id WHERE empresa_id IS DISTINCT FROM v_empresa_id;
     END IF;
+
+    IF to_regclass('public.usuarios_clientes') IS NOT NULL THEN
+        UPDATE clientes c
+        SET empresa_id = v_empresa_id
+        WHERE EXISTS (
+            SELECT 1
+            FROM usuarios_clientes uc
+            WHERE uc.cliente_id = c.id
+        )
+        AND c.empresa_id IS DISTINCT FROM v_empresa_id;
+    END IF;
 END $$;

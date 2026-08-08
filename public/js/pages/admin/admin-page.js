@@ -619,6 +619,7 @@
 
             renderTable();
             renderScheduleCalendar();
+            updateGenericInsights();
             updateScheduleInsights();
             updateSalesSummary();
             setStatus(`${records.length} registro(s) carregado(s).`);
@@ -626,6 +627,7 @@
             records = [];
             renderTable();
             renderScheduleCalendar();
+            updateGenericInsights();
             updateScheduleInsights();
             updateSalesSummary();
             setStatus(error.message || "Não foi possível carregar os dados.");
@@ -1509,6 +1511,44 @@
             value.textContent = String(
                 records.filter(record => record.status === status).length
             );
+        });
+    }
+
+    function updateGenericInsights() {
+        if (isSalesPage || isSchedulePage) {
+            return;
+        }
+
+        const today = new Date();
+        const currentMonth = today.getMonth();
+        const currentYear = today.getFullYear();
+        const totalPets = records.reduce(
+            (sum, record) => sum + Number(record.total_pets || 0),
+            0
+        );
+
+        const summary = {
+            total: String(records.length),
+            active: String(records.filter(record => record.ativo !== false).length),
+            inactive: String(records.filter(record => record.ativo === false).length),
+            with_pets: String(records.filter(record => Number(record.total_pets || 0) > 0).length),
+            pets: String(totalPets),
+            new_month: String(records.filter(record => {
+                const date = new Date(record.created_at);
+
+                return !Number.isNaN(date.getTime()) &&
+                    date.getMonth() === currentMonth &&
+                    date.getFullYear() === currentYear;
+            }).length)
+        };
+
+        document.querySelectorAll("[data-insight-key]").forEach(card => {
+            const key = card.dataset.insightKey;
+            const value = card.querySelector("[data-insight-value]");
+
+            if (value && Object.prototype.hasOwnProperty.call(summary, key)) {
+                value.textContent = summary[key];
+            }
         });
     }
 
