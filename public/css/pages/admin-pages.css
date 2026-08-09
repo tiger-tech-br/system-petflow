@@ -326,10 +326,35 @@ body > .sidebar {
 
 .schedule-calendar-header {
     align-items: center;
+    gap: 18px;
+    padding-bottom: 18px;
+}
+
+.schedule-calendar-header > div:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.schedule-calendar-header .muted {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 0;
+    padding: 7px 13px;
+    border-radius: 999px;
+    background: rgba(15, 154, 139, 0.12);
+    color: var(--admin-primary);
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1;
+    text-transform: uppercase;
 }
 
 .schedule-calendar-header h3 {
-    margin-top: 4px;
+    margin: 0;
+    color: var(--admin-text);
+    font-size: clamp(24px, 3vw, 34px);
+    line-height: 1.1;
     text-transform: capitalize;
 }
 
@@ -1020,6 +1045,15 @@ textarea.form-control {
 
     .schedule-weekdays {
         display: none;
+    }
+
+    .schedule-calendar-header {
+        gap: 14px;
+        padding-bottom: 16px;
+    }
+
+    .schedule-calendar-header h3 {
+        font-size: 26px;
     }
 
     .schedule-calendar-grid {
