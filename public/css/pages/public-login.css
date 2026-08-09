@@ -162,6 +162,21 @@ a {
     flex-wrap: wrap;
 }
 
+.pet-observations-field {
+    gap: 10px;
+}
+
+.pet-observations-field label {
+    margin-bottom: 2px;
+}
+
+.pet-observations-field textarea.form-control {
+    min-height: 88px;
+    padding: 13px 15px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
 .public-pets-list {
     display: grid;
     gap: 12px;
@@ -203,6 +218,40 @@ a {
     gap: 8px;
     flex-wrap: wrap;
     justify-content: flex-end;
+}
+
+.pets-container .btn-clear-pet {
+    border-color: #cbdde1;
+    color: #344b58;
+    background: #f7fbfa;
+    box-shadow: none;
+}
+
+.pets-container .btn-clear-pet:hover {
+    background: #eef6f5;
+    box-shadow: 0 12px 24px rgba(16, 33, 43, .10);
+}
+
+.pets-container .btn-edit-pet {
+    border-color: #0b7cbf;
+    color: #ffffff;
+    background: linear-gradient(135deg, #0b7cbf, #16a3d8);
+    box-shadow: 0 12px 24px rgba(11, 124, 191, .18);
+}
+
+.pets-container .btn-edit-pet:hover {
+    box-shadow: 0 15px 30px rgba(11, 124, 191, .24);
+}
+
+.pets-container .btn-remove-pet {
+    border-color: #dc2626;
+    color: #ffffff;
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    box-shadow: 0 12px 24px rgba(220, 38, 38, .18);
+}
+
+.pets-container .btn-remove-pet:hover {
+    box-shadow: 0 15px 30px rgba(220, 38, 38, .24);
 }
 
 .auth-tab,

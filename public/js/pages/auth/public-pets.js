@@ -112,11 +112,11 @@ function renderPets() {
                 <p>${escapeHtml(formatPetDetails(pet))}</p>
             </div>
             <div class="pet-card-actions">
-                <button class="btn btn-secondary" type="button" data-edit-pet="${escapeHtml(pet.id)}">
+                <button class="btn btn-secondary btn-edit-pet" type="button" data-edit-pet="${escapeHtml(pet.id)}">
                     <i class="fa-solid fa-pen"></i>
                     Editar
                 </button>
-                <button class="btn btn-secondary" type="button" data-remove-pet="${escapeHtml(pet.id)}">
+                <button class="btn btn-secondary btn-remove-pet" type="button" data-remove-pet="${escapeHtml(pet.id)}">
                     <i class="fa-solid fa-trash"></i>
                     Remover
                 </button>
