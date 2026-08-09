@@ -67,7 +67,7 @@ async function findDuplicate({
                      ) THEN 'whatsapp'
                     ELSE NULL
                 END AS field
-            FROM clientes
+            FROM clientes c
             WHERE ($3::uuid IS NULL OR id <> $3)
               AND (
                   empresa_id = get_petflow_empresa_id()
@@ -158,7 +158,7 @@ async function findAll(empresaId) {
                 ) AS endereco_completo,
                 c.created_at,
                 c.updated_at
-            FROM clientes
+            FROM clientes c
             LEFT JOIN usuarios_clientes uc
                 ON uc.cliente_id = c.id
             LEFT JOIN pets p

@@ -9,6 +9,7 @@
 
     const isSalesPage = config.key === "vendas";
     const isSchedulePage = config.key === "agendamentos";
+    const isReadOnlyPage = config.readOnly === true;
 
     let records = [];
     let editingId = null;
@@ -27,6 +28,7 @@
         buildPipeline();
         buildScheduleCalendar();
         buildForm();
+        applyReadOnlyLayout();
 
         if (!isSalesPage) {
             populateRemoteSelects();
@@ -290,6 +292,11 @@
             return;
         }
 
+        if (isReadOnlyPage) {
+            form.innerHTML = "";
+            return;
+        }
+
         if (isSalesPage) {
             renderSaleEmptyState(form);
             return;
@@ -313,6 +320,18 @@
                 </button>
             </div>
         `;
+    }
+
+    function applyReadOnlyLayout() {
+        if (!isReadOnlyPage) {
+            return;
+        }
+
+        const formPanel = document.getElementById("recordForm")?.closest(".panel");
+        const contentGrid = document.querySelector(".content-grid");
+
+        formPanel?.remove();
+        contentGrid?.classList.add("content-grid-wide");
     }
 
     function buildFormField(field) {
@@ -773,7 +792,7 @@
         );
 
         const columns = config.columns || [];
-        const showActions = config.mode !== "single";
+        const showActions = config.mode !== "single" && !isReadOnlyPage;
         const filtered = records.filter(record =>
             normalizeSearch(JSON.stringify(record)).includes(search)
         );
