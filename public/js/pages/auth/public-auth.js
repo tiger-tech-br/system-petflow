@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupPublicAccount();
     setupPublicOrders();
     setupCepLookup();
+    setupCpfMasks();
     setupForgotPassword();
     setupPublicResetPassword();
     setupPasswordToggles();
@@ -67,6 +68,11 @@ function setupPublicRegister() {
     form?.addEventListener("submit", async event => {
         event.preventDefault();
         const status = document.getElementById("registerStatus");
+
+        if (!validateCpfInput(form.elements.cpf, status)) {
+            return;
+        }
+
         setStatus(status, "Criando cadastro...");
 
         try {
@@ -112,6 +118,11 @@ async function setupPublicAccount() {
 
     form.addEventListener("submit", async event => {
         event.preventDefault();
+
+        if (!validateCpfInput(form.elements.cpf, status)) {
+            return;
+        }
+
         setStatus(status, "Salvando...");
 
         try {
@@ -454,6 +465,55 @@ function setupCepLookup() {
 
         input.addEventListener("blur", lookup);
     });
+}
+
+function setupCpfMasks() {
+    document.querySelectorAll("input[name='cpf']").forEach(input => {
+        input.addEventListener("input", () => {
+            const digits = input.value.replace(/\D/g, "").slice(0, 11);
+            input.value = formatCpf(digits);
+        });
+
+        input.addEventListener("blur", () => {
+            validateCpfInput(input, document.getElementById("accountStatus") || document.getElementById("registerStatus"));
+        });
+    });
+}
+
+function validateCpfInput(input, status) {
+    if (!input) {
+        return true;
+    }
+
+    const digits = input.value.replace(/\D/g, "");
+
+    if (!/^\d{11}$/.test(digits)) {
+        setStatus(status, "Informe um CPF válido com 11 números.");
+        input.focus();
+        return false;
+    }
+
+    input.value = formatCpf(digits);
+    setStatus(status, "");
+    return true;
+}
+
+function formatCpf(value) {
+    const digits = String(value || "").replace(/\D/g, "").slice(0, 11);
+
+    if (digits.length > 9) {
+        return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+    }
+
+    if (digits.length > 6) {
+        return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+    }
+
+    if (digits.length > 3) {
+        return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+    }
+
+    return digits;
 }
 
 function setupForgotPassword() {

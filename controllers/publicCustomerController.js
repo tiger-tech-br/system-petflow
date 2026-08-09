@@ -625,27 +625,46 @@ async function update(request, response, next) {
 
         }
 
+        const duplicate = await findDuplicateCustomer({
+            cpf: data.cpf,
+            telefone: data.telefone,
+            whatsapp: data.whatsapp,
+            excludeId: customer.id,
+            empresaId: customer.empresaId
+        });
+
+        if (duplicate) {
+
+            return response.status(409).json({
+                success: false,
+                message: duplicateCustomerMessage(duplicate.field)
+            });
+
+        }
+
         await db.query(
             `
                 UPDATE clientes
                 SET
                     nome = $1,
-                    telefone = $2,
-                    whatsapp = $2,
-                    cep = $3,
-                    endereco = $4,
-                    numero = $5,
-                    complemento = $6,
-                    bairro = $7,
-                    cidade = $8,
-                    estado = $9,
-                    data_nascimento = $10,
+                    cpf = $2,
+                    telefone = $3,
+                    whatsapp = $3,
+                    cep = $4,
+                    endereco = $5,
+                    numero = $6,
+                    complemento = $7,
+                    bairro = $8,
+                    cidade = $9,
+                    estado = $10,
+                    data_nascimento = $11,
                     updated_at = NOW()
-                WHERE id = $11
-                  AND empresa_id = $12
+                WHERE id = $12
+                  AND empresa_id = $13
             `,
             [
                 data.nome,
+                formatCpf(data.cpf),
                 data.telefone,
                 data.cep || null,
                 data.endereco || null,
@@ -1004,6 +1023,7 @@ async function getProfileById(id, empresaId) {
                 id,
                 empresa_id,
                 nome,
+                cpf,
                 email,
                 telefone,
                 whatsapp,
@@ -1036,6 +1056,7 @@ function buildAuthPayload(cliente) {
         id: cliente.id,
         empresaId: cliente.empresa_id,
         nome: cliente.nome,
+        cpf: cliente.cpf,
         email: cliente.email,
         telefone: cliente.telefone,
         cep: cliente.cep,
@@ -1114,6 +1135,7 @@ function hasRequiredProfileData(data) {
 
     return Boolean(
         hasText(data?.nome) &&
+        isValidCpf(data?.cpf) &&
         hasText(data?.telefone) &&
         hasRequiredAddressData(data)
     );
@@ -1147,6 +1169,99 @@ function onlyDigits(value) {
 
     return String(value || "")
         .replace(/\D/g, "");
+
+}
+
+function isValidCpf(value) {
+
+    return /^\d{11}$/.test(onlyDigits(value));
+
+}
+
+function formatCpf(value) {
+
+    const digits = onlyDigits(value);
+
+    if (!isValidCpf(digits)) {
+
+        return null;
+
+    }
+
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+
+}
+
+async function findDuplicateCustomer({
+    cpf,
+    telefone,
+    whatsapp,
+    excludeId,
+    empresaId
+}) {
+
+    const normalizedCpf = onlyDigits(cpf);
+    const normalizedTelefone = onlyDigits(telefone);
+    const normalizedWhatsapp = onlyDigits(whatsapp);
+
+    const { rows } = await db.query(
+        `
+            SELECT
+                id,
+                CASE
+                    WHEN $1 <> ''
+                     AND REGEXP_REPLACE(COALESCE(cpf, ''), '\\D', '', 'g') = $1 THEN 'cpf'
+                    WHEN $4 <> ''
+                     AND (
+                        REGEXP_REPLACE(COALESCE(telefone, ''), '\\D', '', 'g') = $4
+                        OR REGEXP_REPLACE(COALESCE(whatsapp, ''), '\\D', '', 'g') = $4
+                     ) THEN 'telefone'
+                    WHEN $5 <> ''
+                     AND (
+                        REGEXP_REPLACE(COALESCE(telefone, ''), '\\D', '', 'g') = $5
+                        OR REGEXP_REPLACE(COALESCE(whatsapp, ''), '\\D', '', 'g') = $5
+                     ) THEN 'whatsapp'
+                    ELSE NULL
+                END AS field
+            FROM clientes
+            WHERE id <> $2
+              AND (
+                  empresa_id = $3
+                  OR empresa_id = get_petflow_empresa_id()
+                  OR empresa_id IS NULL
+              )
+              AND (
+                  (
+                      $1 <> ''
+                      AND REGEXP_REPLACE(COALESCE(cpf, ''), '\\D', '', 'g') = $1
+                  )
+                  OR (
+                      $4 <> ''
+                      AND (
+                          REGEXP_REPLACE(COALESCE(telefone, ''), '\\D', '', 'g') = $4
+                          OR REGEXP_REPLACE(COALESCE(whatsapp, ''), '\\D', '', 'g') = $4
+                      )
+                  )
+                  OR (
+                      $5 <> ''
+                      AND (
+                          REGEXP_REPLACE(COALESCE(telefone, ''), '\\D', '', 'g') = $5
+                          OR REGEXP_REPLACE(COALESCE(whatsapp, ''), '\\D', '', 'g') = $5
+                      )
+                  )
+              )
+            LIMIT 1
+        `,
+        [
+            normalizedCpf,
+            excludeId,
+            empresaId,
+            normalizedTelefone,
+            normalizedWhatsapp
+        ]
+    );
+
+    return rows[0] || null;
 
 }
 
