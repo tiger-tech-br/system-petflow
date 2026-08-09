@@ -553,6 +553,13 @@ body > .sidebar {
     background: transparent;
 }
 
+.admin-layout input:not([type="date"]),
+.admin-layout textarea,
+.admin-layout [contenteditable="true"] {
+    user-select: text;
+    -webkit-user-select: text;
+}
+
 .btn {
     display: inline-flex;
     align-items: center;

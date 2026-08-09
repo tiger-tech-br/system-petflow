@@ -95,6 +95,21 @@ function securityMiddleware(app) {
     app.use(helmet({
         contentSecurityPolicy: {
             directives: {
+                "script-src": [
+                    "'self'",
+                    "'unsafe-inline'",
+                    "https://cdnjs.cloudflare.com"
+                ],
+                "style-src": [
+                    "'self'",
+                    "'unsafe-inline'",
+                    "https://cdnjs.cloudflare.com"
+                ],
+                "font-src": [
+                    "'self'",
+                    "https://cdnjs.cloudflare.com",
+                    "data:"
+                ],
                 "connect-src": [
                     "'self'",
                     "https://viacep.com.br",
