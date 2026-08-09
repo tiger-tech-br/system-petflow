@@ -1048,21 +1048,91 @@ textarea.form-control {
     }
 
     .schedule-calendar-header {
+        align-items: stretch;
         gap: 14px;
         padding-bottom: 16px;
     }
 
+    .schedule-calendar-actions {
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1fr) 44px;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .schedule-calendar-actions .btn {
+        width: 100%;
+        min-height: 44px;
+        padding-inline: 10px;
+    }
+
     .schedule-calendar-header h3 {
-        font-size: 26px;
+        font-size: clamp(24px, 8vw, 32px);
     }
 
     .schedule-calendar-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(7, minmax(42px, 1fr));
+        overflow-x: auto;
+        border-top: 1px solid var(--admin-line);
+        -webkit-overflow-scrolling: touch;
     }
 
     .schedule-day {
-        min-height: auto;
+        min-width: 42px;
+        min-height: 78px;
+        gap: 5px;
+        padding: 7px 5px;
+        border-right: 1px solid #edf2f4;
+    }
+
+    .schedule-day:nth-child(7n) {
         border-right: 0;
+    }
+
+    .schedule-day header {
+        gap: 3px;
+    }
+
+    .schedule-day header span {
+        width: 34px;
+        height: 34px;
+        margin-inline: auto;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 10px;
+        background: #e6f6f3;
+        color: var(--admin-text);
+        font-size: 16px;
+        font-weight: 900;
+    }
+
+    .schedule-day header small {
+        min-height: 14px;
+        color: var(--admin-primary);
+        font-size: 9px;
+        line-height: 1.2;
+        text-align: center;
+    }
+
+    .schedule-day-items {
+        gap: 4px;
+    }
+
+    .schedule-event {
+        padding: 5px;
+        border-radius: 7px;
+        font-size: 10px;
+    }
+
+    .schedule-event strong,
+    .schedule-event span,
+    .schedule-event em {
+        font-size: 10px;
+        line-height: 1.25;
+    }
+
+    .schedule-event span {
+        display: none;
     }
 
     .page-heading {
