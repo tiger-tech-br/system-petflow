@@ -51,8 +51,8 @@ body {
     width: min(1280px, calc(100% - 32px));
     min-height: 82px;
     display: grid;
-    grid-template-columns: 142px minmax(220px, 330px) minmax(0, 1fr) max-content;
-    gap: 10px;
+    grid-template-columns: 154px minmax(220px, 330px) minmax(0, 1fr) max-content;
+    gap: 16px;
     align-items: center;
 }
 
@@ -163,7 +163,7 @@ body {
     width: 100%;
     display: flex;
     justify-content: flex-start;
-    gap: 3px;
+    gap: 10px;
     min-width: 0;
 }
 
@@ -172,6 +172,7 @@ body {
     display: flex;
     justify-content: flex-start;
     overflow: hidden;
+    padding-left: 8px;
 }
 
 .menu-item {
@@ -185,8 +186,8 @@ body {
     display: inline-flex;
     align-items: center;
     min-height: 40px;
-    padding: 0 8px;
-    border-radius: 999px;
+    padding: 0 4px;
+    border-radius: 0;
     color: #425460;
     font-size: .84rem;
     font-weight: 700;
@@ -195,7 +196,7 @@ body {
 .menu-link:hover,
 .menu-link.active {
     color: var(--pf-teal);
-    background: #e6f6f3;
+    background: transparent;
 }
 
 .menu-login-item {
