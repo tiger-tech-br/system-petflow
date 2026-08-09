@@ -7,6 +7,7 @@ const CUSTOMER_API = window.location.hostname === "localhost"
 document.addEventListener("DOMContentLoaded", () => {
     clearLegacyPublicSession();
     setupTabs();
+    setupEmailVerificationFromUrl();
     setupPublicLogin();
     setupPublicRegister();
     setupPublicAccount();
@@ -82,12 +83,37 @@ function setupPublicRegister() {
                 Object.fromEntries(new FormData(form).entries())
             );
 
-            saveCustomer(payload.data);
-            window.location.href = "/";
+            setStatus(status, payload.message || "Cadastro criado. Verifique seu e-mail para ativar a conta.");
+            form.reset();
+            document.querySelector("[data-auth-tab='login']")?.click();
         } catch (error) {
             setStatus(status, error.message);
         }
     });
+}
+
+async function setupEmailVerificationFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("verificar_email");
+
+    if (!token) {
+        return;
+    }
+
+    const status = document.getElementById("loginStatus");
+    setStatus(status, "Confirmando seu e-mail...");
+
+    try {
+        const payload = await request(
+            `/clientes/verificar-email?token=${encodeURIComponent(token)}`,
+            "GET"
+        );
+
+        setStatus(status, payload.message || "E-mail confirmado com sucesso. Você já pode entrar.");
+        window.history.replaceState({}, document.title, "/login");
+    } catch (error) {
+        setStatus(status, error.message || "Não foi possível confirmar o e-mail.");
+    }
 }
 
 async function setupPublicAccount() {

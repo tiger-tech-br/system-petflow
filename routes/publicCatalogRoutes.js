@@ -18,6 +18,8 @@ router.post("/newsletter", newsletterController.subscribe);
 router.get("/newsletter/cancelar", newsletterController.unsubscribe);
 router.post("/clientes/cadastro", publicCustomerController.register);
 router.post("/clientes/login", publicCustomerController.login);
+router.get("/clientes/verificar-email", publicCustomerController.verifyEmail);
+router.post("/clientes/verificar-email", publicCustomerController.verifyEmail);
 router.post("/clientes/esqueci-senha", publicCustomerController.forgotPassword);
 router.post("/clientes/redefinir-senha", publicCustomerController.resetPassword);
 router.get("/clientes/me", customerAuthMiddleware, publicCustomerController.me);

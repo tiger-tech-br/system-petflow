@@ -58,6 +58,26 @@ function welcomeTemplate({ name }) {
     };
 }
 
+function emailVerificationTemplate({ name, verifyUrl }) {
+    const safeName = escapeHtml(firstName(name) || "cliente");
+
+    return {
+        subject: "Confirme seu e-mail na PetFlow",
+        text: `Olá, ${safeName}. Confirme seu e-mail para ativar sua conta PetFlow: ${verifyUrl}`,
+        html: baseEmail(`
+            <h1>Confirme seu e-mail</h1>
+            <p>Olá, ${safeName}.</p>
+            <p>Recebemos seu cadastro na PetFlow. Para ativar sua conta e poder comprar, confirme seu e-mail pelo botão abaixo.</p>
+            <p>
+                <a href="${escapeHtml(verifyUrl)}" style="display:inline-block;background:#04766d;color:#fff;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700">
+                    Confirmar e-mail
+                </a>
+            </p>
+            <p style="color:#647481;font-size:13px">Se você não fez este cadastro, ignore este e-mail.</p>
+        `)
+    };
+}
+
 function passwordResetTemplate({ name, resetUrl }) {
     const safeName = escapeHtml(firstName(name) || "cliente");
 
@@ -269,6 +289,7 @@ module.exports = {
     sendEmail,
     sendOptionalEmail,
     welcomeTemplate,
+    emailVerificationTemplate,
     passwordResetTemplate,
     appointmentReminderTemplate,
     birthdayGreetingTemplate,

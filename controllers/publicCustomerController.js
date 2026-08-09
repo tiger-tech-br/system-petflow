@@ -12,8 +12,7 @@ const {
 
 const {
     sendEmail,
-    sendOptionalEmail,
-    welcomeTemplate,
+    emailVerificationTemplate,
     passwordResetTemplate
 } = require("../services/emailService");
 
@@ -35,6 +34,14 @@ async function register(request, response, next) {
         const senhaHash = await bcrypt.hash(
             data.senha,
             10
+        );
+
+        const verificationToken = crypto
+            .randomBytes(32)
+            .toString("hex");
+
+        const verificationExpiresAt = new Date(
+            Date.now() + 1000 * 60 * 60 * 24
         );
 
         const empresaIdResult = await db.query(
@@ -229,6 +236,8 @@ async function register(request, response, next) {
                     email,
                     senha_hash,
                     email_verificado,
+                    token_verificacao_email,
+                    token_verificacao_expiracao,
                     ativo
                 )
                 VALUES (
@@ -236,13 +245,17 @@ async function register(request, response, next) {
                     $2,
                     $3,
                     FALSE,
+                    $4,
+                    $5,
                     TRUE
                 )
             `,
             [
                 clienteId,
                 data.email.toLowerCase(),
-                senhaHash
+                senhaHash,
+                verificationToken,
+                verificationExpiresAt
             ]
         );
 
@@ -258,11 +271,14 @@ async function register(request, response, next) {
             tipo: "SISTEMA"
         });
 
-        const template = welcomeTemplate({
-            name: profile.nome
+        const verificationUrl = `${APP_URL}/login?verificar_email=${verificationToken}`;
+
+        const template = emailVerificationTemplate({
+            name: profile.nome,
+            verifyUrl: verificationUrl
         });
 
-        sendOptionalEmail({
+        await sendEmail({
             to: profile.email,
             subject: template.subject,
             html: template.html,
@@ -271,8 +287,7 @@ async function register(request, response, next) {
 
         return response.status(201).json({
             success: true,
-            message: "Cadastro criado com sucesso.",
-            data: buildAuthPayload(profile)
+            message: "Cadastro criado. Enviamos um link de confirmação para seu e-mail."
         });
 
     } catch (error) {
@@ -303,6 +318,7 @@ async function login(request, response, next) {
                 SELECT
                     c.*,
                     uc.senha_hash,
+                    uc.email_verificado,
                     uc.ativo AS usuario_ativo
                 FROM clientes c
                 INNER JOIN usuarios_clientes uc
@@ -342,6 +358,15 @@ async function login(request, response, next) {
             return response.status(401).json({
                 success: false,
                 message: "E-mail ou senha inválidos."
+            });
+
+        }
+
+        if (!cliente.email_verificado) {
+
+            return response.status(403).json({
+                success: false,
+                message: "Confirme seu e-mail antes de entrar. Verifique sua caixa de entrada."
             });
 
         }
@@ -467,6 +492,62 @@ async function forgotPassword(request, response, next) {
         return response.status(200).json({
             success: true,
             message: "Enviamos as instruções de recuperação para seu e-mail."
+        });
+
+    } catch (error) {
+
+        return next(error);
+
+    }
+
+}
+
+async function verifyEmail(request, response, next) {
+
+    try {
+
+        const token = String(
+            request.query?.token ||
+            request.body?.token ||
+            ""
+        ).trim();
+
+        if (!token) {
+
+            return response.status(400).json({
+                success: false,
+                message: "Link de confirmação inválido."
+            });
+
+        }
+
+        const { rowCount } = await db.query(
+            `
+                UPDATE usuarios_clientes
+                SET
+                    email_verificado = TRUE,
+                    token_verificacao_email = NULL,
+                    token_verificacao_expiracao = NULL,
+                    updated_at = NOW()
+                WHERE token_verificacao_email = $1
+                  AND token_verificacao_expiracao > NOW()
+                  AND ativo = TRUE
+            `,
+            [token]
+        );
+
+        if (!rowCount) {
+
+            return response.status(400).json({
+                success: false,
+                message: "Link de confirmação inválido ou expirado."
+            });
+
+        }
+
+        return response.status(200).json({
+            success: true,
+            message: "E-mail confirmado com sucesso. Você já pode entrar."
         });
 
     } catch (error) {
@@ -1314,6 +1395,7 @@ module.exports = {
     register,
     login,
     forgotPassword,
+    verifyEmail,
     resetPassword,
     me,
     update,
