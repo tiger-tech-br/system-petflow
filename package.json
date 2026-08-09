@@ -9,6 +9,7 @@
     "db:migrate": "node scripts/migrate.js",
     "db:seed-admin": "node scripts/seed-admin.js",
     "db:seed-catalog": "node scripts/seed-catalog.js",
+    "db:seed-demo-clients": "node scripts/seed-demo-clients.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
