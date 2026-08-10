@@ -39,26 +39,13 @@ async function criarCheckout(pedido) {
     const payload = buildCheckoutPayload(pedido);
 
     try {
-
-            console.log(
-    `===== REQUEST PAGBANK =====\n${JSON.stringify(payload, null, 2)}`
-);
-
-                const { data } = await client.post(
-                    "/checkouts",
-                    payload
-                );
-
-                console.log(
-    `===== RESPONSE PAGBANK =====\n${JSON.stringify(data, null, 2)}`
-);
-
+        const { data } = await client.post(
+            "/checkouts",
+            payload
+        );
 
         return normalizarCheckout(data);
     } catch (error) {
-            console.log("===== ERRO PAGBANK =====");
-            console.log(error.response?.data || error.message);
-
         throw buildPagSeguroError(error);
     }
 }
@@ -100,7 +87,6 @@ function buildCheckoutPayload(pedido) {
     return {
         reference_id: String(pedido.id),
         customer_modifiable: true,
-        address_modifiable: false,
         return_url: `${appUrl}/meus-pedidos`,
         redirect_url: `${appUrl}/meus-pedidos`,
         redirect_waiting_time: 5,
@@ -154,15 +140,10 @@ function buildPaymentMethods() {
 }
 
 function buildCustomer(cliente) {
-    const taxId = onlyDigits(cliente.cpf || cliente.cnpj || "");
     const customer = {
-        name: cliente.nome || "Cliente PetFlow",
-        email: cliente.email || undefined
+        name: normalizeText(cliente.nome || "Cliente PetFlow", 120),
+        email: normalizeText(cliente.email, 60) || undefined
     };
-
-    if (taxId.length === 11 || taxId.length === 14) {
-        customer.tax_id = taxId;
-    }
 
     const phone = buildPhone(cliente);
 
@@ -301,7 +282,7 @@ function buildPhone(cliente) {
         ""
     );
 
-    if (phone.length < 10) {
+    if (phone.length !== 11 || phone[2] !== "9") {
         return null;
     }
 
@@ -319,6 +300,12 @@ function toCents(value) {
 
 function onlyDigits(value) {
     return String(value || "").replace(/\D/g, "");
+}
+
+function normalizeText(value, maxLength) {
+    return String(value || "")
+        .trim()
+        .slice(0, maxLength);
 }
 
 function buildPagSeguroError(error) {
