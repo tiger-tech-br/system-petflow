@@ -32,6 +32,13 @@ const limiter = rateLimit({
 
     legacyHeaders: false,
 
+    skip: request =>
+        request.method === "OPTIONS" ||
+        (
+            request.method === "GET" &&
+            !request.path.startsWith("/api/")
+        ),
+
     message: {
 
         success: false,
