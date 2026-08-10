@@ -348,11 +348,11 @@ function renderOrderTimeline(status) {
         },
         {
             status: "PAGAMENTO_APROVADO",
-            label: "Pagamento aprovado"
+            label: "Pedido recebido"
         },
         {
             status: "EM_SEPARACAO",
-            label: "Em separação"
+            label: "Preparando"
         },
         {
             status: "SAIU_PARA_ENTREGA",
@@ -386,8 +386,8 @@ function formatStatus(status) {
         PENDENTE: "Pendente",
         APROVADO: "Aprovado",
         AGUARDANDO_PAGAMENTO: "Aguardando pagamento",
-        PAGAMENTO_APROVADO: "Pagamento aprovado",
-        EM_SEPARACAO: "Em separação",
+        PAGAMENTO_APROVADO: "Pedido recebido",
+        EM_SEPARACAO: "Preparando",
         EM_ENTREGA: "Em entrega",
         SAIU_PARA_ENTREGA: "Saiu para entrega",
         ENTREGUE: "Entregue",

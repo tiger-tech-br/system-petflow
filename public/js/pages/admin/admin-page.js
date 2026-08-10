@@ -853,12 +853,13 @@
         if (isSalesPage) {
             return `
                 <button
-                    class="icon-btn"
+                    class="btn btn-small"
                     type="button"
                     data-action="details"
                     data-id="${escapeHtml(record.id)}"
-                    title="Ver detalhes">
+                    title="Ver detalhes e atualizar status">
                     <i class="fa-solid fa-eye"></i>
+                    Status
                 </button>
             `;
         }
@@ -1142,11 +1143,11 @@
             },
             {
                 value: "PAGAMENTO_APROVADO",
-                label: "Pagamento aprovado"
+                label: "Pedido recebido"
             },
             {
                 value: "EM_SEPARACAO",
-                label: "Em separação"
+                label: "Preparando"
             },
             {
                 value: "SAIU_PARA_ENTREGA",
@@ -1629,8 +1630,8 @@
         const labels = {
             PENDENTE: "Pendente",
             AGUARDANDO_PAGAMENTO: "Aguardando pagamento",
-            PAGAMENTO_APROVADO: "Pagamento aprovado",
-            EM_SEPARACAO: "Em separação",
+            PAGAMENTO_APROVADO: "Pedido recebido",
+            EM_SEPARACAO: "Preparando",
             SAIU_PARA_ENTREGA: "Saiu para entrega",
             ENTREGUE: "Entregue",
             FINALIZADA: "Finalizado",

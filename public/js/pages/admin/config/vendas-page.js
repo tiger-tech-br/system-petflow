@@ -84,11 +84,11 @@ window.PetFlowAdminPage = {
                 },
                 {
                     value: "PAGAMENTO_APROVADO",
-                    label: "Pagamento aprovado"
+                    label: "Pedido recebido"
                 },
                 {
                     value: "EM_SEPARACAO",
-                    label: "Em separação"
+                    label: "Preparando"
                 },
                 {
                     value: "SAIU_PARA_ENTREGA",
