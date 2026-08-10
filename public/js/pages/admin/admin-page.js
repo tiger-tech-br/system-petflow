@@ -1288,7 +1288,7 @@
             PIX: "PIX",
             CARTAO_DEBITO: "Cartão de débito",
             CARTAO_CREDITO: "Cartão de crédito",
-            PAGBANK: "PagBank"
+            PAGBANK: "Aguardando pagamento"
         };
 
         return labels[value] ||
