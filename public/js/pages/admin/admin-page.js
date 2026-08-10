@@ -29,6 +29,7 @@
         buildScheduleCalendar();
         buildForm();
         applyReadOnlyLayout();
+        applySalesLayout();
 
         if (!isSalesPage) {
             populateRemoteSelects();
@@ -332,6 +333,15 @@
 
         formPanel?.remove();
         contentGrid?.classList.add("content-grid-wide");
+    }
+
+    function applySalesLayout() {
+        if (!isSalesPage) {
+            return;
+        }
+
+        document.querySelector(".content-grid")?.classList.add("sales-layout");
+        document.querySelector(".data-table")?.classList.add("sales-list-table");
     }
 
     function buildFormField(field) {
@@ -797,6 +807,11 @@
             normalizeSearch(JSON.stringify(record)).includes(search)
         );
 
+        if (isSalesPage) {
+            renderSalesList(head, body, filtered);
+            return;
+        }
+
         head.innerHTML = `
             <tr>
                 ${columns.map(column => `
@@ -845,6 +860,80 @@
                         </div>
                     </td>
                 ` : ""}
+            </tr>
+        `).join("");
+    }
+
+    function renderSalesList(head, body, filtered) {
+        head.innerHTML = "";
+
+        if (!filtered.length) {
+            body.innerHTML = `
+                <tr>
+                    <td>
+                        <div class="empty-state">
+                            <i class="fa-regular fa-folder-open"></i>
+
+                            <strong>Nenhum pedido encontrado</strong>
+
+                            <span>
+                                NÃ£o existem pedidos para exibir.
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        body.innerHTML = filtered.map(record => `
+            <tr class="sale-card-row">
+                <td>
+                    <article class="sale-card-summary">
+                        <header>
+                            <div>
+                                <span>Pedido #${escapeHtml(shortRecordId(record.id))}</span>
+                                <strong>${escapeHtml(record.cliente_nome || "Cliente nÃ£o informado")}</strong>
+                            </div>
+
+                            ${formatValue(record.status, { type: "status" })}
+                        </header>
+
+                        <dl>
+                            <div>
+                                <dt>Data</dt>
+                                <dd>${escapeHtml(formatAdminDate(record.data_venda))}</dd>
+                            </div>
+
+                            <div>
+                                <dt>Itens</dt>
+                                <dd>${escapeHtml(record.quantidade_itens || 0)}</dd>
+                            </div>
+
+                            <div>
+                                <dt>Pagamento</dt>
+                                <dd>${escapeHtml(formatPaymentLabel(record.forma_pagamento))}</dd>
+                            </div>
+
+                            <div>
+                                <dt>Total</dt>
+                                <dd>${formatAdminCurrency(record.valor_final)}</dd>
+                            </div>
+                        </dl>
+
+                        <footer>
+                            <button
+                                class="btn btn-small"
+                                type="button"
+                                data-action="details"
+                                data-id="${escapeHtml(record.id)}">
+                                <i class="fa-solid fa-receipt"></i>
+                                Ver detalhes
+                            </button>
+                        </footer>
+                    </article>
+                </td>
             </tr>
         `).join("");
     }
@@ -927,6 +1016,10 @@
         try {
             const sale = await apiGet(`${config.endpoint}/${id}`);
             renderSaleDetails(form, sale);
+            form.closest(".panel")?.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
         } catch (error) {
             form.innerHTML = `
                 <div class="empty-state">
