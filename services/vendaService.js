@@ -30,7 +30,8 @@ const {
 const FORMAS_PAGAMENTO = [
     "PIX",
     "CARTAO_CREDITO",
-    "CARTAO_DEBITO"
+    "CARTAO_DEBITO",
+    "PAGBANK"
 ];
 
 /* ==================================================

@@ -916,7 +916,15 @@ async function orders(request, response, next) {
                 SELECT
                     v.id,
                     v.status,
-                    v.forma_pagamento,
+                    CASE
+                        WHEN v.pagseguro_response #>> '{charges,0,payment_method,type}' = 'CREDIT_CARD'
+                            THEN 'CARTAO_CREDITO'
+                        WHEN v.pagseguro_response #>> '{charges,0,payment_method,type}' = 'DEBIT_CARD'
+                            THEN 'CARTAO_DEBITO'
+                        WHEN v.pagseguro_response #>> '{charges,0,payment_method,type}' = 'PIX'
+                            THEN 'PIX'
+                        ELSE v.forma_pagamento
+                    END AS forma_pagamento,
                     v.pagseguro_checkout_id,
                     v.pagseguro_checkout_url,
                     v.pagseguro_status,

@@ -19,7 +19,8 @@ const {
 const FORMAS_PAGAMENTO_ACEITAS = [
     "PIX",
     "CARTAO_CREDITO",
-    "CARTAO_DEBITO"
+    "CARTAO_DEBITO",
+    "PAGBANK"
 ];
 
 const CAMPOS_ENDERECO_OBRIGATORIOS = [
@@ -60,7 +61,7 @@ async function criarPedido(request, response, next) {
         const formaPagamento = String(
             body.formaPagamento ??
             body.forma_pagamento ??
-            "PIX"
+            "PAGBANK"
         )
             .trim()
             .toUpperCase();

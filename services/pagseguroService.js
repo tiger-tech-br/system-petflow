@@ -169,6 +169,10 @@ function normalizarCheckout(data) {
         orderId: data?.order_id || data?.reference_id || null,
         chargeId: charge?.id || null,
         status: data?.status || charge?.status || null,
+        paymentMethod: mapPaymentMethod(
+            charge?.payment_method?.type ||
+            data?.payment_method?.type
+        ),
         checkoutUrl: payLink?.href || null,
         qrCode: qrCode?.links?.[0]?.href || qrCode?.text || null,
         qrCodeText: qrCode?.text || null,
@@ -198,6 +202,13 @@ function extrairEventoWebhook(body) {
         pagseguroStatus,
         orderId: body?.order_id || body?.id || null,
         chargeId: body?.charges?.[0]?.id || body?.charge_id || null,
+        paymentMethod: mapPaymentMethod(
+            body?.charges?.[0]?.payment_method?.type ||
+            body?.payment_method?.type ||
+            body?.paymentMethod?.type ||
+            body?.payment_method ||
+            body?.paymentMethod
+        ),
         vendaStatus: mapStatusToVenda(pagseguroStatus),
         raw: body
     };
@@ -257,6 +268,20 @@ function mapStatusToVenda(status) {
     }
 
     return "AGUARDANDO_PAGAMENTO";
+}
+
+function mapPaymentMethod(method) {
+    const normalized = String(method || "").trim().toUpperCase();
+
+    const methods = {
+        PIX: "PIX",
+        CREDIT_CARD: "CARTAO_CREDITO",
+        DEBIT_CARD: "CARTAO_DEBITO",
+        CARTAO_CREDITO: "CARTAO_CREDITO",
+        CARTAO_DEBITO: "CARTAO_DEBITO"
+    };
+
+    return methods[normalized] || null;
 }
 
 function buildAddress(cliente) {

@@ -29,7 +29,15 @@ class VendaModel {
                 v.desconto,
                 v.acrescimo,
                 v.valor_final,
-                v.forma_pagamento,
+                CASE
+                    WHEN v.pagseguro_response #>> '{charges,0,payment_method,type}' = 'CREDIT_CARD'
+                        THEN 'CARTAO_CREDITO'
+                    WHEN v.pagseguro_response #>> '{charges,0,payment_method,type}' = 'DEBIT_CARD'
+                        THEN 'CARTAO_DEBITO'
+                    WHEN v.pagseguro_response #>> '{charges,0,payment_method,type}' = 'PIX'
+                        THEN 'PIX'
+                    ELSE v.forma_pagamento
+                END AS forma_pagamento,
                 v.status,
                 v.data_venda,
                 COUNT(iv.id)::INTEGER AS quantidade_itens
@@ -72,7 +80,15 @@ class VendaModel {
                 v.desconto,
                 v.acrescimo,
                 v.valor_final,
-                v.forma_pagamento,
+                CASE
+                    WHEN v.pagseguro_response #>> '{charges,0,payment_method,type}' = 'CREDIT_CARD'
+                        THEN 'CARTAO_CREDITO'
+                    WHEN v.pagseguro_response #>> '{charges,0,payment_method,type}' = 'DEBIT_CARD'
+                        THEN 'CARTAO_DEBITO'
+                    WHEN v.pagseguro_response #>> '{charges,0,payment_method,type}' = 'PIX'
+                        THEN 'PIX'
+                    ELSE v.forma_pagamento
+                END AS forma_pagamento,
                 v.status,
                 v.pagseguro_checkout_id,
                 v.pagseguro_order_id,
@@ -289,10 +305,11 @@ class VendaModel {
                 pagseguro_qr_code = COALESCE($6, pagseguro_qr_code),
                 pagseguro_qr_code_text = COALESCE($7, pagseguro_qr_code_text),
                 pagseguro_response = COALESCE($8::jsonb, pagseguro_response),
+                forma_pagamento = COALESCE($9, forma_pagamento),
                 pagamento_atualizado_em = CURRENT_TIMESTAMP,
                 updated_at = CURRENT_TIMESTAMP
-            WHERE id = $9
-              AND empresa_id = $10
+            WHERE id = $10
+              AND empresa_id = $11
             RETURNING *;
         `;
 
@@ -305,6 +322,7 @@ class VendaModel {
             dados.pagseguroQrCode ?? dados.pagseguro_qr_code ?? null,
             dados.pagseguroQrCodeText ?? dados.pagseguro_qr_code_text ?? null,
             dados.pagseguroResponse ?? dados.pagseguro_response ?? null,
+            dados.formaPagamento ?? dados.forma_pagamento ?? null,
             id,
             empresaId
         ];
@@ -365,9 +383,10 @@ class VendaModel {
                 pagseguro_order_id = COALESCE($3, pagseguro_order_id),
                 pagseguro_charge_id = COALESCE($4, pagseguro_charge_id),
                 pagseguro_response = COALESCE($5::jsonb, pagseguro_response),
+                forma_pagamento = COALESCE($6, forma_pagamento),
                 pagamento_atualizado_em = CURRENT_TIMESTAMP,
                 updated_at = CURRENT_TIMESTAMP
-            WHERE id = $6
+            WHERE id = $7
             RETURNING *;
         `;
 
@@ -377,6 +396,7 @@ class VendaModel {
             pagseguroOrderId,
             pagseguroChargeId,
             dados.pagseguroResponse ?? dados.pagseguro_response ?? null,
+            dados.formaPagamento ?? dados.forma_pagamento ?? null,
             vendaAtual.id
         ];
 

@@ -69,7 +69,8 @@ async function criarPagamento(request, response, next) {
                     pagseguroCheckoutUrl: checkout.checkoutUrl,
                     pagseguroQrCode: checkout.qrCode,
                     pagseguroQrCodeText: checkout.qrCodeText,
-                    pagseguroResponse: checkout.raw
+                    pagseguroResponse: checkout.raw,
+                    formaPagamento: checkout.paymentMethod
                 }
             );
 
@@ -128,7 +129,8 @@ async function consultarPagamento(request, response, next) {
             pagseguroStatus: checkout.status,
             pagseguroOrderId: checkout.orderId,
             pagseguroChargeId: checkout.chargeId,
-            pagseguroResponse: checkout.raw
+            pagseguroResponse: checkout.raw,
+            formaPagamento: checkout.paymentMethod
         };
 
         const vendaAtualizada = status === "PAGAMENTO_APROVADO"
@@ -184,7 +186,8 @@ async function receberWebhook(request, response, next) {
             pagseguroStatus: event.pagseguroStatus,
             pagseguroOrderId: event.orderId,
             pagseguroChargeId: event.chargeId,
-            pagseguroResponse: event.raw
+            pagseguroResponse: event.raw,
+            formaPagamento: event.paymentMethod
         };
 
         if (event.vendaStatus === "PAGAMENTO_APROVADO") {

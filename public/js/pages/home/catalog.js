@@ -838,7 +838,7 @@ async function submitPublicOrder(event) {
                 Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
-                formaPagamento: "PIX",
+                formaPagamento: "PAGBANK",
                 observacoes: data.observacoes,
                 itens: items.map(({ product, quantity }) => ({
                     produto_id: product.id,
