@@ -877,7 +877,7 @@
                             <strong>Nenhum pedido encontrado</strong>
 
                             <span>
-                                NÃ£o existem pedidos para exibir.
+                                Não existem pedidos para exibir.
                             </span>
                         </div>
                     </td>
@@ -894,7 +894,7 @@
                         <header>
                             <div>
                                 <span>Pedido #${escapeHtml(shortRecordId(record.id))}</span>
-                                <strong>${escapeHtml(record.cliente_nome || "Cliente nÃ£o informado")}</strong>
+                                <strong>${escapeHtml(record.cliente_nome || "Cliente não informado")}</strong>
                             </div>
 
                             ${formatValue(record.status, { type: "status" })}
