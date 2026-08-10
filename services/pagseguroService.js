@@ -130,7 +130,7 @@ function buildPaymentMethods() {
         }
     ];
 
-    if (process.env.PAGSEGURO_ENABLE_DEBIT === "true") {
+    if (process.env.PAGSEGURO_ENABLE_DEBIT !== "false") {
         methods.push({
             type: "DEBIT_CARD"
         });
