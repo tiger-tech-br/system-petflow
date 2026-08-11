@@ -50,6 +50,7 @@ let publicFavorites = new Set(JSON.parse(sessionStorage.getItem("petflow_public_
 let currentSlug = "caes";
 
 document.addEventListener("DOMContentLoaded", () => {
+    setupPublicHeader();
     setupCategoryPage();
 });
 
@@ -225,6 +226,7 @@ function bindCartButtons() {
 
             button.classList.add("is-active");
             button.innerHTML = `<i class="fa-solid fa-check"></i><span>Na sacola</span>`;
+            updateHeaderCounters();
         });
     });
 
@@ -239,9 +241,151 @@ function bindCartButtons() {
             }
 
             sessionStorage.setItem("petflow_public_favorites", JSON.stringify([...publicFavorites]));
+            updateHeaderCounters();
             applyFilters();
         });
     });
+}
+
+function setupPublicHeader() {
+    setupHeaderSearch();
+    setupMenuToggle();
+    setupCustomerHeader();
+    updateHeaderCounters();
+}
+
+function setupHeaderSearch() {
+    const form = document.getElementById("publicHeaderSearch");
+    const input = document.getElementById("search");
+
+    input?.addEventListener("input", () => {
+        const categorySearch = document.getElementById("categorySearch");
+
+        if (categorySearch) {
+            categorySearch.value = input.value;
+            applyFilters();
+        }
+    });
+
+    form?.addEventListener("submit", event => {
+        event.preventDefault();
+
+        const categorySearch = document.getElementById("categorySearch");
+
+        if (categorySearch) {
+            categorySearch.value = input?.value || "";
+            applyFilters();
+        }
+    });
+}
+
+function setupMenuToggle() {
+    const button = document.querySelector(".menu-toggle");
+    const menu = document.getElementById("menu");
+
+    button?.addEventListener("click", () => {
+        const willOpen = !menu?.classList.contains("active");
+
+        menu?.classList.toggle("active", willOpen);
+        button.setAttribute("aria-expanded", String(willOpen));
+        button.setAttribute("aria-label", willOpen ? "Fechar menu" : "Abrir menu");
+    });
+}
+
+function setupCustomerHeader() {
+    const token = getCustomerToken();
+    const cached = readCustomerCache();
+    const firstName = getFirstName(cached?.nome);
+    const fullName = String(cached?.nome || "Cliente").trim();
+    const notificationButton = document.querySelector(".customer-notification-button");
+
+    if (notificationButton) {
+        notificationButton.hidden = !token;
+    }
+
+    document.querySelectorAll("[data-public-logout]").forEach(link => link.remove());
+
+    document.querySelectorAll("a[href='/login'], a[href='/conta'], .menu-login-link").forEach(link => {
+        if (token) {
+            link.href = "/conta";
+            link.textContent = firstName;
+            link.title = fullName;
+            link.classList.add("is-authenticated");
+            link.setAttribute("aria-label", "Abrir minha conta");
+            insertLogoutLink(link);
+            return;
+        }
+
+        link.href = "/login";
+        link.textContent = "Entrar";
+        link.removeAttribute("title");
+        link.classList.remove("is-authenticated");
+        link.setAttribute("aria-label", "Entrar na conta");
+    });
+}
+
+function insertLogoutLink(accountLink) {
+    const logout = document.createElement("a");
+    logout.href = "#";
+    logout.className = accountLink.classList.contains("menu-login-link")
+        ? "menu-link public-logout-link"
+        : "btn btn-secondary public-logout-link";
+    logout.dataset.publicLogout = "true";
+    logout.textContent = "Sair";
+    logout.setAttribute("aria-label", "Sair da conta");
+    logout.addEventListener("click", handleCustomerLogout);
+    accountLink.insertAdjacentElement("afterend", logout);
+}
+
+function handleCustomerLogout(event) {
+    event.preventDefault();
+    clearCustomerSession();
+    setupCustomerHeader();
+    updateHeaderCounters();
+    applyFilters();
+}
+
+function clearCustomerSession() {
+    sessionStorage.removeItem("petflow_customer_token");
+    sessionStorage.removeItem("petflow_customer_user");
+    sessionStorage.removeItem("petflow_public_favorites");
+    sessionStorage.removeItem("petflow_public_cart");
+    localStorage.removeItem("petflow_customer_token");
+    localStorage.removeItem("petflow_customer_user");
+    localStorage.removeItem("petflow_public_favorites");
+    localStorage.removeItem("petflow_public_cart");
+    publicFavorites = new Set();
+}
+
+function updateHeaderCounters() {
+    const cartCount = Object.values(readCart()).reduce((sum, quantity) => sum + Number(quantity || 0), 0);
+
+    document.querySelectorAll("[aria-label='Sacola'], .menu-action-link[aria-label='Abrir sacola']").forEach(link => {
+        link.dataset.count = String(cartCount);
+        link.classList.toggle("has-count", cartCount > 0);
+    });
+
+    document.querySelectorAll("[aria-label='Favoritos'], .menu-action-link[aria-label='Abrir favoritos']").forEach(link => {
+        link.dataset.count = String(publicFavorites.size);
+        link.classList.toggle("has-count", publicFavorites.size > 0);
+    });
+}
+
+function getCustomerToken() {
+    return sessionStorage.getItem("petflow_customer_token");
+}
+
+function readCustomerCache() {
+    try {
+        return JSON.parse(sessionStorage.getItem("petflow_customer_user") || "null");
+    } catch {
+        return null;
+    }
+}
+
+function getFirstName(name) {
+    const firstName = String(name || "Cliente").trim().split(/\s+/)[0] || "Cliente";
+    return firstName.length > 12 ? `${firstName.slice(0, 11)}...` : firstName;
 }
 
 function productSlug(product) {

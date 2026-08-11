@@ -6,21 +6,98 @@
     <meta name="description" content="Produtos PetFlow organizados por tipo de pet.">
     <title>PetFlow | Categoria</title>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/base/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/pages/home-carousel.css?v=20260809-3">
     <link rel="stylesheet" href="/css/pages/public-category.css">
 </head>
 <body>
-    <header class="category-topbar">
-        <a class="brand" href="/" aria-label="Voltar para a PetFlow">
-            <img src="/images/logo/fred-petflow-logo-transparent.png" alt="Logo PetFlow">
-            <strong>PetFlow</strong>
-        </a>
-        <nav aria-label="Navegação">
-            <a href="/#categories">Categorias</a>
-            <a href="/#products">Produtos</a>
-            <a href="/sacola">Sacola</a>
-            <a href="/login">Entrar</a>
-        </nav>
+    <header class="header">
+        <div class="container">
+            <a class="logo" href="/#hero" aria-label="Ir para a página inicial">
+                <img
+                    src="/images/logo/fred-petflow-logo-transparent.png"
+                    alt="Logo da PetFlow"
+                    width="60"
+                    height="60">
+                <span class="logo-text">PetFlow</span>
+            </a>
+
+            <form class="search-form" id="publicHeaderSearch" role="search" aria-label="Pesquisar produtos" autocomplete="off">
+                <label class="sr-only" for="search">Pesquisar produtos</label>
+                <input
+                    class="form-control"
+                    type="search"
+                    id="search"
+                    name="search"
+                    placeholder="Buscar produtos e serviços"
+                    maxlength="100"
+                    aria-label="Pesquisar produtos">
+                <button class="search-button" type="submit" aria-label="Pesquisar"></button>
+            </form>
+
+            <nav class="menu" id="menu" aria-label="Menu principal">
+                <ul class="menu-list">
+                    <li class="menu-item">
+                        <a href="/#hero" class="menu-link">Início</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/#categories" class="menu-link active">Categorias</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/#products" class="menu-link">Produtos</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/#services" class="menu-link">Serviços</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/#newsletter" class="menu-link">Contato</a>
+                    </li>
+                    <li class="menu-item menu-login-item">
+                        <a href="/login" class="menu-link menu-login-link">Entrar</a>
+                    </li>
+                    <li class="menu-item menu-actions-item">
+                        <a href="/#products" class="menu-action-link" aria-label="Abrir favoritos">
+                            <i class="fa-regular fa-heart"></i>
+                            Favoritos
+                        </a>
+                        <a href="/sacola" class="menu-action-link" aria-label="Abrir sacola">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                            Sacola
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button
+                    class="icon-badge customer-notification-button"
+                    type="button"
+                    aria-label="Notificações"
+                    aria-expanded="false"
+                    hidden>
+                    <i class="fa-regular fa-bell"></i>
+                </button>
+
+                <a href="/#products" class="icon-badge" aria-label="Favoritos">
+                    <i class="fa-regular fa-heart"></i>
+                </a>
+
+                <a href="/sacola" class="icon-badge" aria-label="Sacola">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                </a>
+
+                <a href="/login" class="btn btn-primary">Entrar</a>
+
+                <button
+                    class="menu-toggle"
+                    type="button"
+                    aria-label="Abrir menu"
+                    aria-controls="menu"
+                    aria-expanded="false">
+                </button>
+            </div>
+        </div>
     </header>
 
     <main class="category-page">
@@ -65,6 +142,6 @@
         </section>
     </main>
 
-    <script src="/js/pages/categories/category-detail.js?v=20260808-1"></script>
+    <script src="/js/pages/categories/category-detail.js?v=20260811-1"></script>
 </body>
 </html>
