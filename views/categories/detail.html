@@ -6,13 +6,12 @@
     <meta name="description" content="Produtos PetFlow organizados por tipo de pet.">
     <title>PetFlow | Categoria</title>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/css/base/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="/css/pages/home-carousel.css?v=20260809-3">
+    <link rel="stylesheet" href="/css/layout/public-header.css?v=20260811-1">
     <link rel="stylesheet" href="/css/pages/public-category.css">
 </head>
 <body>
-    <header class="header">
+    <header class="header public-header">
         <div class="container">
             <a class="logo" href="/#hero" aria-label="Ir para a página inicial">
                 <img
@@ -23,12 +22,12 @@
                 <span class="logo-text">PetFlow</span>
             </a>
 
-            <form class="search-form" id="publicHeaderSearch" role="search" aria-label="Pesquisar produtos" autocomplete="off">
-                <label class="sr-only" for="search">Pesquisar produtos</label>
+            <form class="search-form" data-public-header-search role="search" aria-label="Pesquisar produtos" autocomplete="off">
+                <label class="sr-only" for="publicHeaderSearch">Pesquisar produtos</label>
                 <input
                     class="form-control"
                     type="search"
-                    id="search"
+                    id="publicHeaderSearch"
                     name="search"
                     placeholder="Buscar produtos e serviços"
                     maxlength="100"
@@ -142,6 +141,7 @@
         </section>
     </main>
 
-    <script src="/js/pages/categories/category-detail.js?v=20260811-1"></script>
+    <script src="/js/layout/public-header.js?v=20260811-1"></script>
+    <script src="/js/pages/categories/category-detail.js?v=20260811-2"></script>
 </body>
 </html>

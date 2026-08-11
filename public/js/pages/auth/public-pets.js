@@ -10,6 +10,10 @@ document.addEventListener("DOMContentLoaded", () => {
     setupPublicPets();
 });
 
+document.addEventListener("petflow:customer-logout", () => {
+    window.location.href = "/";
+});
+
 async function setupPublicPets() {
     if (!getToken()) {
         window.location.href = "/login";

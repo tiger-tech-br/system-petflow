@@ -12,6 +12,13 @@ document.addEventListener("DOMContentLoaded", () => {
     setupCartPage();
 });
 
+document.addEventListener("petflow:customer-logout", async () => {
+    cart = {};
+    persistCart();
+    renderCart();
+    await renderCustomer();
+});
+
 async function setupCartPage() {
     try {
         const response = await fetch(`${CART_API}/produtos`);
@@ -307,6 +314,7 @@ async function fetchCustomerProfile() {
     }
 
     sessionStorage.setItem("petflow_customer_user", JSON.stringify(payload.data));
+    window.PetFlowPublicHeader?.update();
     return payload.data;
 }
 
@@ -340,6 +348,7 @@ function readCart() {
 
 function persistCart() {
     sessionStorage.setItem("petflow_public_cart", JSON.stringify(cart));
+    window.PetFlowPublicHeader?.update();
 }
 
 function getToken() {

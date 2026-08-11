@@ -81,6 +81,7 @@ function setupCartButton() {
 
         button.classList.add("is-active");
         button.innerHTML = `<i class="fa-solid fa-check"></i>Na sacola`;
+        window.PetFlowPublicHeader?.update();
         setStatus(document.getElementById("productStatus"), "Produto adicionado à sacola.");
     });
 }
