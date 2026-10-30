@@ -72,7 +72,7 @@ O operador deve verificar a idade da posição e a precisão, sem interpretar um
 
 ## E-mails e pendências da fila
 
-Em **Administração → E-mails**, ADMIN e GERENTE consultam estados, tentativas, prazos e orientações; somente ADMIN pode reagendar quando elegível ou encerrar a análise. A tela não exibe destinatário, assunto, conteúdo ou chave do provedor. Cadastro e recuperação de senha usam envio direto e não aparecem nessa fila de notificações.
+Em **Administração → E-mails**, ADMIN e GERENTE consultam estados, tentativas, prazos e orientações; somente ADMIN pode reagendar quando elegível ou encerrar a análise. A tela não exibe destinatário, assunto, conteúdo ou chave do provedor. O cadastro funciona sem envio de e-mail; comprovação opcional do endereço e recuperação de senha usam envio direto e não aparecem nessa fila de notificações opcionais.
 
 | Estado | Interpretação e ação |
 | --- | --- |
@@ -90,11 +90,16 @@ Se o erro for de configuração, confira chave Resend, remetente e domínio veri
 
 ## Contas, atendimento e privacidade
 
+- Cadastro e acesso por senha funcionam sem confirmação por e-mail. A conta permanece com endereço não verificado até comprovação opcional válida; isso não autoriza vincular dados históricos apenas por coincidência do e-mail informado.
 - Crie contas individuais com o perfil necessário. Desative acessos que não serão mais usados e revise usuários após desligamentos.
 - A criação inicial por `db:seed-admin` preserva contas existentes. Para acesso perdido, utilize recuperação de senha ou outro administrador autorizado.
 - Use **Atendimento** e **Privacidade** para registrar e responder protocolos. A exportação do titular exclui senhas, tokens e dados técnicos sensíveis; revise o destinatário antes de entregar o arquivo.
 - Retenção de documentos comerciais/clínicos, exclusão e resposta a solicitações precisam seguir a decisão aprovada da loja. Não exclua histórico operacional para resolver uma solicitação sem essa avaliação.
 - Troca de `JWT_SECRET` invalida sessões e links assinados. Planeje comunicação e nova autenticação quando houver rotação.
+
+As informações públicas ficam em `/ajuda`, `/privacidade`, `/politica-de-privacidade`, `/politica-de-cookies` e `/termos-de-uso`. O atendimento de titulares e a exportação disponíveis em `/atendimento.html` exigem acesso à própria conta; um canal público verdadeiro deve atender também quem não consegue entrar.
+
+Revise as variáveis `LEGAL_CONTROLLER_NAME`, `LEGAL_CONTROLLER_DOCUMENT`, `LEGAL_CONTROLLER_ADDRESS`, `LEGAL_PRIVACY_EMAIL`, `LEGAL_PRIVACY_CONTACT` e `LEGAL_PRIVACY_RESPONSIBLE` antes de confirmar `LEGAL_PUBLIC_INFORMATION_CONFIRMED=true`. O preenchimento não aprova automaticamente a conformidade da operação. Mudanças dos textos exigem revisão da versão em `config/privacyPolicy.js`, preservação da redação anterior e conferência dos novos registros; a variável de ambiente antiga `PRIVACY_POLICY_VERSION` não substitui essa constante.
 
 ## Backup PostgreSQL
 
@@ -157,7 +162,8 @@ O Railway executa migração em pre-deploy, e `npm start` verifica novamente. A 
 | Frete indisponível | Origem completa, Routes API, chave do servidor, cota e regra de distância. |
 | Mapa não aparece | Chave do navegador, domínio autorizado, Maps JavaScript API e conexão do aparelho. |
 | Upload recusado | Cloud name técnico e chaves do mesmo ambiente, tamanho e formato da imagem. |
-| Cliente não recebe cadastro/recuperação | Configuração Resend, domínio/remetente e resultado do envio direto no provedor. |
+| Cliente não consegue cadastrar-se ou entrar | Validação dos campos, duplicidade, credenciais, situação da conta e resposta da aplicação. A confirmação por e-mail não é requisito de acesso. |
+| Cliente não recebe comprovação opcional/recuperação | Configuração Resend, domínio/remetente e resultado do envio direto no provedor. |
 | Pedido pago sem confirmação local | Referência e cobrança no PagBank; Conferir pagamentos e Conciliação. |
 | Mensagens opcionais acumuladas | Servidor ativo, fila E-mails, prazos, conta Resend e limites. |
 

@@ -26,7 +26,7 @@ Use `APROVADO`, `REPROVADO`, `PENDENTE` ou `NÃO APLICÁVEL` com justificativa. 
 | I03 | Executar `check:config` com configuração própria; ausência de placeholders, conexão/nome coerentes, URLs públicas HTTPS e integrações corretas. | PENDENTE |
 | I04 | Criar ADMIN próprio com `db:seed-admin`, entrar no painel e retirar `ADMIN_PASSWORD` do ambiente. Reexecutar seed com mesmo e-mail não altera senha/perfil. | PENDENTE |
 | I05 | Confirmar que contas de hospedagem, banco, domínio, PagBank, Resend, Cloudinary e Google pertencem ao comprador; acessos temporários identificados. | PENDENTE |
-| I06 | Dados empresariais, identidade, contatos, textos legais, versão de privacidade, origem/frete e catálogo reais aprovados. Revisar/desativar `PETFLOW10`; nenhum estoque de demonstração em produção. | PENDENTE |
+| I06 | Dados empresariais, identidade, contatos, textos legais, versão de `config/privacyPolicy.js`, variáveis públicas `LEGAL_*`, origem/frete e catálogo reais aprovados. A confirmação dos dados públicos não certifica conformidade jurídica. Revisar/desativar `PETFLOW10`; nenhum estoque de demonstração em produção. | PENDENTE |
 | I07 | Após deploy, `/api/health` e `/api/readiness` respondem 200; aplicação reinicia sem perder dados e continua compatível com as migrações. | PENDENTE |
 
 ## Verificações automatizadas
@@ -43,7 +43,7 @@ O runner de integração não lê `.env`. Nunca apontá-lo ao banco operacional 
 
 | ID | Cenário e resultado esperado | Situação |
 | --- | --- | --- |
-| F01 | Cliente de teste controlado se cadastra, recebe e-mail real, confirma o endereço, entra e recupera a senha. Link já usado/expirado não pode ser reutilizado. | PENDENTE |
+| F01 | Cliente de teste controlado se cadastra e entra imediatamente com e-mail e senha, sem aguardar mensagem ou confirmação do endereço. O cadastro não marca o endereço como comprovado nem inscreve automaticamente em newsletter. Testar senha incorreta e conta inativa. | PENDENTE |
 | F02 | Catálogo exibe categoria/produto reais, foto e preço corretos; upload real chega ao Cloudinary do comprador. Registrar e depois remover a imagem temporária, se criada para o teste. | PENDENTE |
 | F03 | Cotar entrega para endereço controlado: faixa gratuita, faixa cobrada e endereço fora da cobertura têm resultados compatíveis com a política aprovada. | PENDENTE |
 | F04 | Aplicar cupom permitido e conferir subtotal, desconto, frete e total no site e no checkout PagBank. Cupom inválido/expirado não reduz o valor. | PENDENTE |
@@ -56,6 +56,8 @@ O runner de integração não lê `.env`. Nunca apontá-lo ao banco operacional 
 | F11 | Devolução: aprovar itens, registrar recebimento, decidir reposição de estoque por item e verificar reembolso/conciliação sem confundir estoque com dinheiro. | PENDENTE |
 | F12 | Notificação opcional de pedido/atendimento passa pela fila e é aceita pelo Resend. Conferir recebimento real em caixa controlada e distinguir aceitação de entrega. | PENDENTE |
 | F13 | Fila E-mails: ADMIN/GERENTE consultam; ADMIN trata falha elegível e encerra análise; envio INCERTA não é reenviado. Falha controlada deve ser ensaiada fora da operação pública. | PENDENTE |
+| F14 | Separadamente do cadastro, solicitar comprovação opcional do e-mail e conferir recebimento real em caixa controlada. Link válido comprova o endereço; link usado ou expirado não pode ser reutilizado. O acesso por senha permanece independente dessa etapa. | PENDENTE |
+| F15 | Solicitar recuperação de senha e conferir recebimento real. O link permite definir nova senha, invalida o acesso anterior conforme o fluxo e não pode ser reutilizado nem aceito após expiração. | PENDENTE |
 
 Para F05 e F10, guardar apenas identificadores necessários, datas, valores e confirmação redigida dos resultados. Encerrar o teste conforme o combinado com o comprador, conciliando a cobrança e eventual reembolso; não abandonar cobranças ou itens fictícios na operação.
 
@@ -90,7 +92,7 @@ Copiar uma linha para cada teste executado. Evidência pode ser log sanitizado, 
 | --- | --- | --- | --- | --- |
 | A preencher | A preencher | A preencher | A preencher | A preencher |
 
-Falhas na criação da instalação, acesso administrativo, pagamento, integridade de estoque/financeiro, entrega prometida, envio necessário para cadastro ou recuperação de dados bloqueiam a abertura operacional até resolução. Demais pendências precisam de decisão explícita, impacto descrito, responsável e prazo; não transformar ausência de teste em aprovação.
+Falhas na criação da instalação, cadastro e acesso, pagamento, integridade de estoque/financeiro, entrega prometida ou envio necessário para recuperação de senha bloqueiam a abertura operacional até resolução. Demais pendências precisam de decisão explícita, impacto descrito, responsável e prazo; não transformar ausência de teste em aprovação.
 
 ## Registro de aceite
 

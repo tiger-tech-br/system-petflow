@@ -56,3 +56,16 @@ test("consumo de recuperação é UPDATE atômico com expiração e revogação"
     assert.equal(calls.length,1);assert.match(calls[0].sql,/token_expiracao>NOW\(\)/);assert.match(calls[0].sql,/sessao_versao=sessao_versao\+1/);
     assert.equal(calls[0].params[1],hashToken("secret"));
 });
+
+test("sessão de cliente dispensa e-mail verificado mantendo conta ativa, empresa e anonimização",async()=>{
+    const customer={...account,perfil:"CLIENTE",email_verificado:false};
+    const token=signSession(customer,"customer",secret);
+    const result=await authenticate(token,[customer],"customer");
+    assert.equal(result.next,true);assert.equal(result.req.customer.type,"customer");
+    assert.deepEqual(result.queries[0].params,[customer.id,customer.empresa_id]);
+    assert.match(result.queries[0].sql,/c\.ativo = TRUE/);assert.match(result.queries[0].sql,/uc\.ativo = TRUE/);
+    assert.match(result.queries[0].sql,/c\.anonimizado_em IS NULL/);assert.doesNotMatch(result.queries[0].sql,/email_verificado/);
+    const revoked=await authenticate(token,[{...customer,sessao_versao:3}],"customer");
+    assert.equal(revoked.res.statusCode,401);assert.equal(revoked.next,false);
+    const inactive=await authenticate(token,[],"customer");assert.equal(inactive.res.statusCode,401);
+});

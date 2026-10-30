@@ -76,11 +76,12 @@
                                 <a href="/#products" class="menu-link" data-public-nav="products">Produtos</a>
                             </li>
                             <li class="menu-item">
-                                <a href="/#services" class="menu-link" data-public-nav="services">Serviços</a>
+                                <a href="/servicos" class="menu-link" data-public-nav="services">Serviços</a>
                             </li>
                             <li class="menu-item">
                                 <a href="/#newsletter" class="menu-link" data-public-nav="contact">Contato</a>
                             </li>
+                            <li class="menu-item"><a href="/ajuda" class="menu-link">Ajuda</a></li>
                             <li class="menu-item menu-login-item">
                                 <a href="/login" class="menu-link menu-login-link">Entrar</a>
                             </li>

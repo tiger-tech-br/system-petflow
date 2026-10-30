@@ -53,6 +53,7 @@
         href="/css/pages/home-carousel.css?v=20260809-3">
 
     <link rel="stylesheet" href="/css/pages/storefront-refresh.css?v=20261029-1">
+    <link rel="stylesheet" href="/css/pages/services-catalog.css?v=20261030-1">
     <link rel="stylesheet" href="/css/layout/public-header.css?v=20261029-1">
 
 </head>
@@ -186,7 +187,7 @@
                         <li class="menu-item">
 
                             <a
-                                href="#services"
+                                href="/servicos"
                                 class="menu-link">
 
                                 Serviços
@@ -207,6 +208,7 @@
 
                         </li>
 
+                        <li class="menu-item"><a href="/ajuda" class="menu-link">Ajuda</a></li>
                         <li class="menu-item menu-login-item">
 
                             <a
@@ -335,7 +337,7 @@
                             <p class="hero-description">Produtos, serviços e carinho para fazer parte de cada fase da vida do seu pet.</p>
                             <div class="hero-buttons">
                                 <a href="#products" class="btn btn-primary">Explorar produtos <span aria-hidden="true">→</span></a>
-                                <a href="#services" class="btn btn-outline">Conhecer serviços</a>
+                                <a href="/servicos" class="btn btn-outline">Conhecer serviços</a>
                             </div>
                         </div>
                     </div>
@@ -380,7 +382,7 @@
                                 </a>
 
                                 <a
-                                    href="#services"
+                                    href="/servicos"
                                     class="btn btn-outline">
 
                                     Conheça os Serviços
@@ -436,7 +438,7 @@
                             <div class="hero-buttons">
 
                                 <a
-                                    href="#services"
+                                    href="/servicos"
                                     class="btn btn-primary">
 
                                     Agendar Serviço
@@ -548,7 +550,7 @@
                         <div class="hero-buttons">
 
                             <a
-                                href="#services"
+                                href="/servicos"
                                 class="btn btn-primary">
 
                                 Saiba Mais
@@ -634,7 +636,7 @@
         <nav class="store-assurances" aria-label="Conheça a PetFlow">
             <a href="/meus-pedidos"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i><span><strong>Entrega acompanhada</strong><small>Consulte seus pedidos</small></span></a>
             <a href="/sacola"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span><strong>Pagamento online</strong><small>Checkout com PagBank</small></span></a>
-            <a href="#services"><i class="fa-solid fa-paw" aria-hidden="true"></i><span><strong>Cuidado em cada fase</strong><small>Conheça nossos serviços</small></span></a>
+            <a href="/servicos"><i class="fa-solid fa-paw" aria-hidden="true"></i><span><strong>Cuidado em cada fase</strong><small>Conheça nossos serviços</small></span></a>
             <a href="#newsletter"><i class="fa-regular fa-envelope" aria-hidden="true"></i><span><strong>Mais perto de você</strong><small>Dicas e novidades por e-mail</small></span></a>
         </nav>
 
@@ -906,63 +908,20 @@
         ========================================== -->
 
     <section
-        class="services"
+        class="services services-intro"
         id="services"
         aria-labelledby="services-title">
 
-        <div class="container">
-
-                <!-- ==========================================
-                    CABEÇALHO
-                =========================================== -->
-
-            <div class="section-header">
-
-                <span class="section-subtitle">
-
-                    Serviços
-
-                </span>
-
-                <h2 id="services-title">
-
-                    Cuidamos do seu pet com carinho
-
-                </h2>
-
-                <p>
-
-                    Nossa equipe oferece serviços especializados para garantir saúde,
-                    bem-estar e qualidade de vida ao seu melhor amigo.
-
-                </p>
-
+        <div class="container services-intro-inner">
+            <div class="services-intro-copy">
+                <span class="services-intro-icon" aria-hidden="true"><i class="fa-solid fa-heart"></i></span>
+                <div>
+                    <span class="services-eyebrow">Serviços PetFlow</span>
+                    <h2 id="services-title">Um cuidado além da rotina.</h2>
+                    <p>Conheça os atendimentos para o seu pet, confira os detalhes e solicite um horário na nossa página de serviços.</p>
+                </div>
             </div>
-
-            <!-- ==========================================
-                GRID
-            =========================================== -->
-
-            <div class="services-grid"><p role="status">Carregando serviços...</p></div>
-
-            <!-- ==========================================
-                BOTÒO
-            =========================================== -->
-
-            <div class="section-action">
-
-                <a
-                    href="/servicos/banho"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="btn btn-primary">
-
-                    Agendar um Serviço
-
-                </a>
-
-            </div>
-
+            <a class="services-button" href="/servicos">Conhecer serviços <span aria-hidden="true">→</span></a>
         </div>
 
     </section>
@@ -1302,7 +1261,7 @@
 
                             <li>
 
-                                <a href="#services">
+                                <a href="/servicos">
 
                                     Serviços
 
@@ -1350,6 +1309,10 @@
 
                             </li>
                             <li><a href="/entrega-demo.html">Demonstração da entrega</a></li>
+                            <li><a href="/ajuda">Ajuda e perguntas frequentes</a></li>
+                            <li><a href="/privacidade">Central de Privacidade</a></li>
+                            <li><a href="/politica-de-cookies">Cookies e armazenamento</a></li>
+                            <li><button class="footer-privacy-button" type="button" data-privacy-preferences>Preferências de privacidade</button></li>
 
                         </ul>
 
@@ -1498,6 +1461,7 @@
     <a href="/meus-pedidos"><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i><span>Pedidos</span></a>
     <a href="/conta"><i class="fa-regular fa-user" aria-hidden="true"></i><span>Conta</span></a>
 </nav>
+<script src="/js/legal/site-privacy.js?v=20261030-1" defer></script>
 </body>
 
 </html>

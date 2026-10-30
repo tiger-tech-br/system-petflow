@@ -69,3 +69,33 @@
     .professional #editor,
     .professional article { padding: 18px; }
 }
+
+/* Acabamento comum aos módulos administrativos. */
+.professional > header, .professional nav, .professional .table-wrap,
+.professional #editor, .professional article { border-radius: 16px; box-shadow: var(--admin-shadow, 0 6px 24px rgb(23 45 58 / 5%)); }
+.professional > header { padding: 28px 30px; border-left-width: 4px; background: linear-gradient(105deg, #fff, #f3faf6); }
+.professional nav { padding: 17px; gap: 8px; }
+.professional nav button { min-height: 42px; border-radius: 9px; padding: 11px 16px; }
+.professional input, .professional select, .professional textarea { border-radius: 9px; }
+.professional td { padding-top: 17px; padding-bottom: 17px; }
+@media (max-width: 600px) {
+    .professional > header { padding: 23px; }
+    .professional nav { padding: 13px; }
+    .professional nav button { min-height: 44px; }
+}
+
+.professional .table-wrap { container: admin-panel / inline-size; }
+.professional .data-table { min-width: 0; table-layout: fixed; }
+.professional form > *, .professional :is(input, select, textarea) { min-width: 0; max-width: 100%; }
+
+@media (max-width: 1024px) {
+    .professional { width: 100%; max-width: 600px; margin-inline: auto; }
+    .professional > header, .professional h2, .professional #status, .professional #emailSummary { text-align: center; }
+    .professional nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .professional nav button { width: 100%; min-width: 0; padding-inline: 8px; }
+    .professional nav button:last-child:nth-child(odd) { grid-column: 1 / -1; }
+    .professional form { justify-content: center; }
+    .professional label { width: 100%; text-align: center; }
+    .professional .pagination { justify-content: center; }
+    .professional #editor > button { display: block; margin-inline: auto; }
+}

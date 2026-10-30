@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const { signSession, validPassword, hashToken } = require("../services/sessionService");
 const validation = require("../services/customerValidation");
+const { PRIVACY_POLICY_VERSION } = require("../config/privacyPolicy");
 const db = require("../database/connection");
 const {
     JWT_SECRET,
@@ -37,14 +38,14 @@ async function register(request, response, next) {
             if (existing.rowCount) throw Object.assign(new Error("Dados já cadastrados. Entre na conta ou recupere sua senha."), { status: 409 });
             const created = await client.query(
                 "INSERT INTO clientes (empresa_id,nome,cpf,email,telefone,whatsapp,cep,endereco,numero,complemento,bairro,cidade,estado,data_nascimento,ativo,privacidade_versao,privacidade_aceita_em) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,TRUE,$15,NOW()) RETURNING id",
-                [empresaId,data.nome.trim(),formatCpf(data.cpf),data.email.trim().toLowerCase(),phone,whatsapp,validation.digits(data.cep),data.endereco.trim(),data.numero.trim(),data.complemento||null,data.bairro.trim(),data.cidade.trim(),data.estado.toUpperCase(),data.data_nascimento||null,process.env.PRIVACY_POLICY_VERSION||"2026-10-29"]);
+                [empresaId,data.nome.trim(),formatCpf(data.cpf),data.email.trim().toLowerCase(),phone,whatsapp,validation.digits(data.cep),data.endereco.trim(),data.numero.trim(),data.complemento||null,data.bairro.trim(),data.cidade.trim(),data.estado.toUpperCase(),data.data_nascimento||null,PRIVACY_POLICY_VERSION]);
             const id=created.rows[0].id;
             await client.query(
                 "INSERT INTO usuarios_clientes (cliente_id,email,senha_hash,email_verificado,token_verificacao_email,token_verificacao_expiracao,ativo) VALUES ($1,$2,$3,FALSE,NULL,NULL,TRUE)",
                 [id,data.email.trim().toLowerCase(),senhaHash]);
             for (const finalidade of ["PRIVACIDADE","TERMOS"]) await client.query(
                 "INSERT INTO lgpd_consentimentos (empresa_id,cliente_id,finalidade,versao,concedido,origem,ip_hash,user_agent_hash) VALUES ($1,$2,$3,$4,TRUE,'SITE',$5,$6)",
-                [empresaId,id,finalidade,process.env.PRIVACY_POLICY_VERSION||"2026-10-29",
+                [empresaId,id,finalidade,PRIVACY_POLICY_VERSION,
                     crypto.createHmac("sha256",JWT_SECRET).update(request.ip||"").digest("hex"),
                     crypto.createHmac("sha256",JWT_SECRET).update(request.get("user-agent")||"").digest("hex")]);
             // A conta já pode entrar com senha. O endereço informado permanece
@@ -66,7 +67,7 @@ async function resendVerification(request,response,next) {
             await sendEmail({to:rows[0].email,...template,idempotencyKey:"verify-"+hashToken(token)})
                 .catch(()=>console.warn("[email] reenvio de confirmação não enviado"));
         }
-        return response.json({success:true,message:"Se houver cadastro pendente, enviaremos um novo link de confirmação."});
+        return response.json({success:true,message:"Se houver uma conta ativa com e-mail ainda não verificado, enviaremos um link para confirmação opcional do endereço."});
     } catch(error) { return next(error); }
 }
 
@@ -118,7 +119,8 @@ async function login(request, response, next) {
         if (
             !cliente ||
             !cliente.usuario_ativo ||
-            !cliente.ativo
+            !cliente.ativo ||
+            cliente.anonimizado_em
         ) {
 
             return response.status(401).json({

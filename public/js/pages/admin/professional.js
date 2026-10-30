@@ -131,6 +131,7 @@
   }
   function cell(text, tag = "td") {
     const item = document.createElement(tag);
+    if (tag === "th") item.scope = "col";
     item.textContent = text ?? "—";
     return item;
   }
@@ -210,9 +211,12 @@
             ].includes(key)
               ? new Date(value).toLocaleDateString("pt-BR")
               : new Date(value).toLocaleString("pt-BR");
-          row.append(cell(value));
+          const valueCell = cell(value);
+          valueCell.dataset.label = headingLabels[key] || key.replaceAll("_", " ");
+          row.append(valueCell);
         });
         const action = cell("");
+        action.dataset.label = "Ações";
         const button = document.createElement("button");
         button.textContent = view === "notificacoes" ? "Marcar lida" : "Abrir";
         button.disabled = view === "notificacoes" && !!record.lida_em;

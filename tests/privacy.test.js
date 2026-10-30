@@ -229,6 +229,8 @@ test("exportação inclui registros clínicos, itens, atendimento e conta com ca
   );
   assert.equal(data.perfil.nome, "Ana");
   assert.equal(data.conta.email_verificado, true);
+  assert.equal(data.newsletter[0].email, "ana@example.test");
+  assert.match(queries.find(item => /FROM newsletter_inscritos/.test(item.sql)).sql, /uc\.email_verificado=TRUE.*LOWER\(uc\.email\)=LOWER\(c\.email\)/);
   assert.equal(data.pets[0].microchip, "chip");
   assert.equal(data.prontuarios[0].receita, "Receita");
   assert.equal(data.vacinacoes[0].vacina_id, "vacina");
@@ -278,7 +280,7 @@ test("exportação rejeita cliente de outra empresa antes de buscar dados depend
   assert.equal(calls, 2);
 });
 
-function requestDb({ tipo = "EXCLUSAO", retention = false } = {}) {
+function requestDb({ tipo = "EXCLUSAO", retention = false, verifiedEmail = true } = {}) {
   const writes = [],
     queries = [];
   const client = {
@@ -298,6 +300,8 @@ function requestDb({ tipo = "EXCLUSAO", retention = false } = {}) {
         };
       if (/SELECT \* FROM clientes/.test(sql))
         return { rows: [{ id: customer.id, email: "ana@example.test" }] };
+      if (/SELECT uc\.email_verificado FROM usuarios_clientes/.test(sql))
+        return { rows: [{ email_verificado: verifiedEmail }] };
       if (/AS retention/.test(sql)) return { rows: [{ retention }] };
       if (/^(UPDATE|DELETE|INSERT)/.test(sql)) writes.push({ sql, params });
       return { rows: [] };
@@ -414,4 +418,37 @@ test("falha na fila reverte o processamento e revogação só aceita finalidade 
     valid.queries.some((q) => /AS retention/.test(q.sql)),
     false,
   );
+});
+
+test("exportação de conta sem prova do e-mail não busca inscrição pré-existente por igualdade textual", async () => {
+  const queries = [];
+  const db = { transaction: async callback => callback({ query: async sql => {
+    queries.push(sql);
+    if (/FROM clientes WHERE/.test(sql)) return { rows: [{ id: customer.id, email: "someone@example.test" }] };
+    if (/FROM usuarios_clientes u/.test(sql)) return { rows: [{ email: "someone@example.test", email_verificado: false }] };
+    assert.doesNotMatch(sql, /FROM newsletter_inscritos/, "Não deve sequer consultar a inscrição alheia.");
+    return { rows: [] };
+  } }) };
+  const data = await service().exportCustomerData(db, customer);
+  assert.equal(data.conta.email_verificado, false);
+  assert.deepEqual(data.newsletter, []);
+  assert.ok(queries.some(sql => /FROM clientes WHERE/.test(sql)));
+});
+
+test("conta não verificada não revoga newsletter alheia nem recebe resposta de protocolo por e-mail", async () => {
+  let emails = 0;
+  const privacy = service(async () => { emails++; });
+  const revoke = requestDb({ tipo: "REVOGACAO", verifiedEmail: false });
+  await assert.rejects(privacy.processRequest(revoke,
+    { ...actor, body: { confirmacao: "PROCESSAR", finalidade: "NEWSLETTER" } }, "request"), { status: 409 });
+  assert.equal(revoke.writes.length, 0);
+  assert.equal(revoke.rolledBack, true);
+  const remove = requestDb({ verifiedEmail: false });
+  const result = await privacy.processRequest(remove, actor, "request");
+  assert.equal(result.email, null);
+  assert.equal(remove.committed, true);
+  assert.equal(emails, 0);
+  assert.ok(remove.writes.some(item => /UPDATE usuarios_clientes/.test(item.sql)));
+  assert.ok(remove.writes.some(item => /UPDATE lgpd_solicitacoes/.test(item.sql)));
+  assert.ok(!remove.writes.some(item => /newsletter_inscritos|'NEWSLETTER'/.test(item.sql)));
 });

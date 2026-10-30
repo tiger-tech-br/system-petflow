@@ -6,11 +6,12 @@ O pacote contém código e estrutura de banco para uma instalação nova. A entr
 
 ## O que está incluído
 
-- Loja: catálogo, cadastro e confirmação de e-mail, conta do cliente, sacola, cupons, cotação de frete e acompanhamento de pedidos.
+- Loja: catálogo, cadastro com acesso imediato por senha, confirmação de e-mail opcional, conta do cliente, sacola, cupons, cotação de frete e acompanhamento de pedidos.
 - Pagamentos: checkout hospedado no PagBank, consulta de confirmação, webhook, conciliação, cancelamento e tratamento de reembolsos/devoluções.
 - Gestão: clientes, pets, categorias, produtos, fornecedores, compras, estoque, financeiro, serviços, funcionários e agendamentos.
 - Administração: usuários e permissões, auditoria, atendimento, privacidade, fila de e-mails, consultas, prontuários e vacinação.
 - Operação: migrações versionadas, endpoints de saúde, scripts de backup/restauração e empacotamento de entrega.
+- Informação e suporte: Central de Ajuda pública em `/ajuda`, com 16 perguntas frequentes; Central de Privacidade em `/privacidade`, Política de Privacidade em `/politica-de-privacidade` e Cookies e Armazenamento em `/politica-de-cookies`.
 
 O rastreamento é web: exige HTTPS, permissão de localização e página aberta no celular. Bloquear a tela, trocar de aplicativo ou perder conexão pode interromper as posições. Não há aplicativo nativo, garantia de rastreamento em segundo plano nem administração de várias lojas independentes na mesma instância.
 
@@ -67,7 +68,7 @@ Não há etapa de compilação do frontend: o Express entrega os arquivos HTML, 
    Abra [a loja local](http://localhost:4500) e [o login administrativo](http://localhost:4500/admin/index.html). `npm start` executa `db:migrate` antes de iniciar. `npm run dev` usa observação de arquivos e requer migrações executadas previamente.
 
 9. No painel, complete **Configurações**, crie usuários da equipe e cadastre categorias, fornecedores, produtos, estoque real e serviços. Revise os cupons existentes: as migrações incluem o cupom demonstrativo público `PETFLOW10`, com 10% de desconto; ajuste ou desative antes de abrir a loja.
-10. Revise a identidade visual, os contatos públicos, os termos e a política de privacidade com os dados aprovados da loja. A tela Configurações não reescreve automaticamente todos os textos, imagens e templates estáticos. Siga o [roteiro de entrega](docs/ENTREGA-COMERCIAL.md).
+10. Revise a identidade visual, os contatos públicos, os termos e a política de privacidade com os dados aprovados da loja. Preencha as variáveis públicas `LEGAL_*` e confira o canal antes de definir `LEGAL_PUBLIC_INFORMATION_CONFIRMED=true`. Essa confirmação identifica informações revisadas; não certifica conformidade jurídica. A tela Configurações não reescreve automaticamente todos os textos, imagens e templates estáticos. Siga o [roteiro de entrega](docs/ENTREGA-COMERCIAL.md).
 
 ### Catálogo de demonstração
 
@@ -92,9 +93,14 @@ Use [.env.example](.env.example) como inventário de variáveis. Nunca versionar
 | E-mail | `RESEND_API_KEY`, `EMAIL_FROM` em domínio verificado e, opcionalmente, `EMAIL_TEST_TO` controlado pelo operador. |
 | Imagens | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` e `MAX_FILE_SIZE`. O cloud name é o identificador técnico do ambiente. |
 | Entrega | `GOOGLE_MAPS_API_KEY` para Routes API, `GOOGLE_MAPS_BROWSER_API_KEY` para Maps JavaScript API, `DELIVERY_ORIGIN_ADDRESS` completo e política `DELIVERY_*` da loja. |
-| Regras operacionais | `ORDER_RESERVATION_MINUTES`, `CANCELLATION_WINDOW_MINUTES`, `CANCELLATION_MIN_DISTANCE_METERS` e `PRIVACY_POLICY_VERSION`, coerentes com a operação e o conteúdo publicado. |
+| Regras operacionais | `ORDER_RESERVATION_MINUTES`, `CANCELLATION_WINDOW_MINUTES` e `CANCELLATION_MIN_DISTANCE_METERS`, coerentes com a operação. A versão dos textos e dos registros de privacidade vem de `config/privacyPolicy.js`; a antiga variável de ambiente `PRIVACY_POLICY_VERSION` não substitui essa versão. |
+| Identificação e privacidade | `LEGAL_CONTROLLER_NAME`, `LEGAL_CONTROLLER_DOCUMENT`, `LEGAL_CONTROLLER_ADDRESS`, `LEGAL_PRIVACY_EMAIL`, `LEGAL_PRIVACY_CONTACT` e `LEGAL_PRIVACY_RESPONSIBLE`. `LEGAL_PUBLIC_INFORMATION_CONFIRMED` permanece `false` até a revisão dos dados e do atendimento reais. |
 
 O checkout envia ao PagBank as URLs de retorno e de webhook a partir de `APP_URL`. O endpoint é `/api/public/pagamentos/webhook`; deve ser público em HTTPS. Abrir o endereço de retorno não confirma um pagamento. PIX e crédito estão previstos no checkout; a disponibilidade efetiva depende da conta PagBank. A entrega comercial usa o endpoint de produção e requer ensaios financeiros controlados e autorizados pelo comprador.
+
+O cliente pode cadastrar-se e entrar com senha sem envio de confirmação. Esse fluxo não comprova a posse do e-mail: a conta permanece não verificada até uma confirmação opcional válida. Recuperação de senha e confirmação opcional continuam utilizando e-mail; as notificações opcionais seguem sua fila própria. O cadastro não inscreve o cliente automaticamente na newsletter.
+
+As páginas legais e os controles de titulares são uma estrutura para a implantação. Identificação verdadeira do responsável, finalidades, bases legais, retenção, fornecedores, canais atendidos e práticas da loja ainda precisam de aprovação. Não anunciar uma instalação demonstrativa ou com configuração pendente como juridicamente homologada.
 
 ## Publicação no Railway
 

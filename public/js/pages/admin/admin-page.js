@@ -843,10 +843,10 @@
         head.innerHTML = `
             <tr>
                 ${columns.map(column => `
-                    <th>${escapeHtml(column.label)}</th>
+                    <th scope="col">${escapeHtml(column.label)}</th>
                 `).join("")}
 
-                ${showActions ? "<th>Ações</th>" : ""}
+                ${showActions ? '<th scope="col">Ações</th>' : ""}
             </tr>
         `;
 
@@ -873,7 +873,7 @@
         body.innerHTML = filtered.map(record => `
             <tr>
                 ${columns.map(column => `
-                    <td>
+                    <td data-label="${escapeHtml(column.label)}">
                         ${formatValue(
                             getRecordValue(record, column.key),
                             column
@@ -882,7 +882,7 @@
                 `).join("")}
 
                 ${showActions ? `
-                    <td>
+                    <td data-label="Ações">
                         <div class="row-actions">
                             ${buildRowActions(record)}
                         </div>

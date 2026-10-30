@@ -74,12 +74,14 @@ body:has(.home) { background: #fff; }
 .home .service-card p { font-size: .78rem; }
 .home .service-meta strong { font-size: 1rem; }
 .home .benefits { background: #fff; }
-.home .benefits-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-.home .benefit-card { padding: 20px; gap: 12px; border-radius: 9px; background: #fff; box-shadow: none; }
-.home .benefit-icon { width: 44px; height: 44px; border-radius: 11px; background: #eef7f4; color: #04766d; }
+.home .benefits .section-header { margin-bottom: 30px; text-align: center; }
+.home .benefits .section-header p { max-width: 640px; margin-inline: auto; }
+.home .benefits-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.home .benefit-card { display: flex; flex-direction: column; align-items: center; padding: 28px 24px; gap: 16px; border-radius: 9px; background: #fff; box-shadow: none; text-align: center; }
+.home .benefit-icon { flex: 0 0 44px; width: 44px; height: 44px; border-radius: 11px; background: #eef7f4; color: #04766d; }
 .home .benefit-icon i { font-size: 20px; }
-.home .benefit-card h3 { margin: 0 0 6px; font-size: .9rem; }
-.home .benefit-card p { margin: 0; font-size: .76rem; }
+.home .benefit-card h3 { margin: 0; font-size: .9rem; line-height: 1.45; }
+.home .benefit-card p { max-width: 34ch; margin: 0; font-size: .76rem; line-height: 1.7; }
 .home .newsletter { margin-top: 28px; padding: 48px 0; }
 .home .newsletter h2 { max-width: 580px; font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 1.16; letter-spacing: -.04em; }
 .home .newsletter p { font-size: .85rem; line-height: 1.7; }
@@ -92,6 +94,7 @@ body:has(.home) { background: #fff; }
 .home .newsletter-form .btn { min-height: 44px; font-size: .82rem; }
 .footer { padding-top: 38px; font-size: .8rem; }
 .footer h3, .footer h4 { font-size: .9rem; }
+.footer-privacy-button { padding: 0; border: 0; color: inherit; background: transparent; font: inherit; text-align: left; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; min-height: 32px; }
 .footer-bottom { font-size: .69rem; }
 .store-mobile-nav { display: none; }
 :where(.home, .store-mobile-nav) :is(a, button, input):focus-visible { outline: 3px solid #f8c846; outline-offset: 3px; }
@@ -139,6 +142,8 @@ body:has(.home) { background: #fff; }
   .home .product-content { padding: 12px 10px; }
   .home .cart-action.add { min-height: 42px; font-size: .64rem; }
   .home .services-grid, .home .benefits-grid { grid-template-columns: 1fr; }
+  .home .benefits .section-header { margin-bottom: 24px; }
+  .home .benefit-card { padding: 26px 22px; }
   .home .service-card img { aspect-ratio: 2.3; }
   .home .newsletter-content { grid-template-columns: minmax(0, 1fr); gap: 22px; }
   .home .newsletter { padding: 32px 0; }

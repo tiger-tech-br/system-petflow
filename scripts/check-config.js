@@ -65,6 +65,9 @@ function checkConfiguration(env, { production = env.NODE_ENV === "production" } 
   for (const key of ["DELIVERY_CHARGE_FRACTION", "DB_SSL", "PAGSEGURO_ENABLE_DEBIT"]) {
     if (!["true", "false"].includes(env[key])) add(key, "Use true ou false explicitamente.");
   }
+  if (production && !require("../services/publicLegalService").publicLegalConfiguration(env).configured) {
+    add("LEGAL_PUBLIC_INFORMATION_CONFIRMED", "Preencha a identificação e o contato público de privacidade da empresa e confirme os dados revisados. A configuração não certifica conformidade jurídica.");
+  }
   return { ok: issues.length === 0, mode: production ? "production" : "development", issues };
 }
 

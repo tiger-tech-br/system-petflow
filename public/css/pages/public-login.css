@@ -888,6 +888,8 @@ body {
 }
 
 /* Visual da loja — 29/10/2026. Acesso e conta com todos os estados originais. */
+.access-demo-notice { margin: 0 0 18px; padding: 12px 14px; border: 1px solid #ecddba; border-radius: 9px; color: #775b31; background: #fff9ed; font-size: 11px; line-height: 1.65; }
+.access-demo-notice[hidden] { display: none !important; }
 body {
     background: #f5f8f6;
     padding: 36px 20px;
@@ -1048,4 +1050,139 @@ body {
     .auth-tabs {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+}
+
+/* Acesso do cliente: layout próprio, sem interferir em conta, pedidos e pets. */
+body.customer-access {
+    display: block;
+    min-width: 0;
+    padding: 0 24px 32px;
+    background: #f3f7f4;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+.customer-access .access-topbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    width: min(1120px, 100%); min-height: 76px; margin-inline: auto;
+}
+.customer-access .access-wordmark { display: inline-flex; align-items: center; gap: 9px; font-size: 22px; font-weight: 800; letter-spacing: -.7px; color: #173c30; }
+.customer-access .access-wordmark img { display: block; width: 44px; height: 44px; object-fit: contain; }
+.customer-access .access-back { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; color: #526d61; font-size: 12px; font-weight: 600; }
+.customer-access .access-back span { color: var(--teal); font-size: 20px; }
+body.customer-access .login-container.access-shell,
+body.customer-access .login-container.access-shell:has(#publicRegisterForm.active) {
+    display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
+    align-items: stretch; width: min(1120px, 100%); margin: 8px auto 0;
+    overflow: hidden; border: 1px solid #dce8df; border-radius: 20px;
+    background: #fff; box-shadow: 0 10px 40px #1a42250d;
+}
+.customer-access .access-story { min-width: 0; background: #045a54; color: #fff; }
+.customer-access .access-picture { height: 228px; overflow: hidden; background: #04675f; }
+.customer-access .access-picture img { display: block; width: 100%; max-width: 100%; height: 100%; object-fit: cover; object-position: 78% center; }
+.customer-access .access-story-copy { padding: 28px 32px 32px; }
+.customer-access .access-kicker { color: #c9e4d8; font-size: 10px; font-weight: 650; letter-spacing: .15em; text-transform: uppercase; }
+.customer-access .access-story h2 { margin: 15px 0 13px; font-size: clamp(29px, 3vw, 37px); line-height: 1.14; letter-spacing: -1.1px; font-weight: 750; }
+.customer-access .access-story h2 em { font-style: normal; color: #f8c846; }
+.customer-access .access-story p { margin: 0; max-width: 330px; color: #d0e5dd; font-size: 13px; line-height: 1.7; }
+.customer-access .access-story ul { display: grid; gap: 12px; margin: 23px 0; padding: 0; list-style: none; }
+.customer-access .access-story li { display: flex; align-items: center; gap: 10px; color: #e7f4ed; font-size: 12px; line-height: 1.5; }
+.customer-access .access-story li span { display: grid; width: 24px; height: 24px; flex: 0 0 24px; place-items: center; border: 1px solid #ffffff26; border-radius: 7px; color: #f8c846; font-size: 16px; }
+.customer-access .access-story-copy > a { display: inline-flex; align-items: center; gap: 10px; min-height: 40px; color: #fff; font-size: 11px; text-decoration: underline; text-underline-offset: 4px; }
+body.customer-access .access-form-card,
+body.customer-access .login-container:has(#publicRegisterForm.active) .access-form-card {
+    min-width: 0; padding: 30px 40px 26px;
+}
+.customer-access .access-form-card .login-header { justify-items: start; gap: 8px; margin-bottom: 22px; text-align: left; }
+.customer-access .access-form-card .login-logo { display: none; }
+.customer-access .access-form-card .login-eyebrow { min-height: 25px; padding: 5px 9px; border-radius: 5px; font-size: 9px; font-weight: 700; letter-spacing: .08em; }
+.customer-access .access-form-card .login-header h1 { max-width: none; margin: 3px 0 0; font-size: clamp(24px, 2.4vw, 30px); line-height: 1.2; font-weight: 750; letter-spacing: -.9px; }
+.customer-access .access-form-card .login-header p,
+body.customer-access .login-container:has(#publicRegisterForm.active) .login-header p { display: block; margin: 0; color: #71847a; font-size: 12px; line-height: 1.7; }
+.customer-access .access-form-card .auth-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; padding: 5px; margin-bottom: 22px; border: 1px solid #e4ece6; border-radius: 9px; background: #f5f8f5; }
+.customer-access .auth-tab { min-width: 0; min-height: 43px; padding: 8px; font-size: 12px; font-weight: 650; border-radius: 6px; }
+.customer-access .auth-tab.active { background: #04766d; box-shadow: 0 2px 5px #04766d12; }
+.customer-access .auth-panel[hidden] { display: none !important; }
+.customer-access .access-form-card .login-form { gap: 17px; }
+.customer-access .access-form-card .form-group { min-width: 0; gap: 7px; }
+.customer-access .access-form-card .form-group label { font-size: 12px; font-weight: 600; color: #345347; }
+.customer-access .access-form-card .form-control { min-width: 0; min-height: 46px; padding-inline: 13px; border: 1px solid #d8e4db; border-radius: 7px; font-size: 14px; background: #fff; }
+.customer-access .access-form-card .form-control:focus { border-color: #04766d; box-shadow: 0 0 0 3px #04766d12; }
+.customer-access .access-form-card .btn { width: 100%; min-height: 46px; gap: 10px; padding: 12px 15px; margin: 0; border-radius: 7px; font-size: 13px; font-weight: 650; box-shadow: none; }
+.customer-access .access-form-card .password-control .form-control { padding-right: 50px; }
+.customer-access .access-form-card .password-toggle { right: 2px; width: 43px; height: 42px; border-radius: 6px; }
+.customer-access .access-form-card .form-row { margin: 0; font-size: 12px; }
+.customer-access .access-form-card .login-note { min-height: 0; margin: 0; padding: 0; font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+.customer-access .access-form-card .login-note:empty { display: none; }
+.customer-access .access-form-card .login-note[data-state="error"] { padding: 11px 13px; border: 1px solid #f2cfc4; border-radius: 8px; background: #fff4ef; color: #a13d29; }
+.customer-access .access-form-card .login-note[data-state="success"] { padding: 11px 13px; border: 1px solid #cce5d3; border-radius: 8px; background: #eff9f1; color: #276344; }
+.customer-access .access-optional { padding-top: 13px; border-top: 1px solid #edf2ee; color: #688073; font-size: 11px; }
+.customer-access .access-optional summary { min-height: 30px; padding: 7px 0; cursor: pointer; }
+.customer-access .access-optional p { margin: 6px 0 10px; font-size: 11px; line-height: 1.7; }
+.customer-access .access-optional button { min-height: 40px; }
+.customer-access .access-legal { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 22px; padding-top: 16px; border-top: 1px solid #edf2ee; font-size: 10px; color: #7b8d82; }
+.customer-access .access-legal nav { display: flex; gap: 13px; flex-wrap: wrap; }
+.customer-access .access-legal a { min-height: 24px; display: inline-flex; align-items: center; color: #426857; text-decoration: underline; text-underline-offset: 3px; }
+body.customer-access #publicRegisterForm.auth-panel.active { display: grid; grid-template-columns: minmax(0, 1fr); gap: 21px; }
+.customer-access .access-register-note { display: flex; align-items: center; gap: 8px; margin: 0; padding: 11px 13px; border: 1px solid #d7e9dc; border-radius: 8px; color: #2c6d50; background: #f1f9f3; font-size: 11px; line-height: 1.6; }
+.customer-access .access-register-note span { font-size: 15px; }
+.customer-access .access-fieldset { min-width: 0; margin: 0; padding: 19px 0 0; border: 0; border-top: 1px solid #e4ece6; }
+.customer-access .access-fieldset legend { display: flex; align-items: center; gap: 9px; max-width: 100%; padding: 0 9px 0 0; color: #284b3b; font-size: 13px; font-weight: 700; }
+.customer-access .access-fieldset legend span { display: grid; width: 23px; height: 23px; place-items: center; border-radius: 6px; background: #e8f3ec; color: #04766d; font-size: 10px; }
+.customer-access .access-fieldset-note { margin: 0 0 16px; font-size: 11px; color: #75897c; line-height: 1.7; }
+.customer-access .access-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; min-width: 0; }
+body.customer-access #publicRegisterForm .form-group { grid-column: auto; }
+body.customer-access #publicRegisterForm .field-wide { grid-column: 1 / -1; }
+body.customer-access .login-container #publicRegisterForm .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-column: 1 / -1; gap: 16px; min-width: 0; }
+.customer-access .form-group label small { color: #8b9b90; font-size: 9px; font-weight: 500; }
+.customer-access .access-field-help { margin: 0; color: #7b8e81; font-size: 10px; line-height: 1.7; }
+.customer-access .access-consent { grid-column: 1 / -1; display: grid; grid-template-columns: 17px minmax(0, 1fr); align-items: start; gap: 9px; color: #597364; font-size: 11px; line-height: 1.7; cursor: pointer; }
+.customer-access .access-consent input { width: 16px; height: 16px; margin: 2px 0 0; accent-color: #04766d; }
+.customer-access .access-consent a { color: #04766d; text-decoration: underline; text-underline-offset: 3px; }
+.customer-access :is(a,button,input):focus-visible { outline: 3px solid #f8c846; outline-offset: 3px; }
+@media (max-width: 900px) {
+    body.customer-access { padding-inline: 18px; }
+    body.customer-access .login-container.access-shell,
+    body.customer-access .login-container.access-shell:has(#publicRegisterForm.active) { grid-template-columns: minmax(0, .72fr) minmax(0, 1fr); }
+    .customer-access .access-story-copy { padding: 26px 23px; }
+    .customer-access .access-picture { height: 220px; }
+    body.customer-access .access-form-card,
+    body.customer-access .login-container:has(#publicRegisterForm.active) .access-form-card { padding: 28px; }
+    .customer-access .access-story h2 { font-size: 29px; }
+}
+@media (max-width: 720px) {
+    body.customer-access { padding: 0 14px 24px; }
+    .customer-access .access-topbar { min-height: 67px; gap: 12px; }
+    .customer-access .access-wordmark { font-size: 20px; }
+    .customer-access .access-wordmark img { width: 38px; height: 38px; }
+    .customer-access .access-back { gap: 7px; font-size: 10px; }
+    body.customer-access .login-container.access-shell,
+    body.customer-access .login-container.access-shell:has(#publicRegisterForm.active) { grid-template-columns: minmax(0, 1fr); margin-top: 4px; border-radius: 14px; }
+    .customer-access .access-story { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: 164px; }
+    .customer-access .access-picture { grid-column: 2; grid-row: 1; height: 100%; min-height: 164px; }
+    .customer-access .access-picture img { object-position: 79% center; }
+    .customer-access .access-story-copy { grid-column: 1; grid-row: 1; padding: 22px 16px; align-self: center; }
+    .customer-access .access-kicker { font-size: 8px; letter-spacing: .08em; }
+    .customer-access .access-story h2 { margin: 10px 0; font-size: clamp(21px, 4.6vw, 28px); letter-spacing: -.7px; }
+    .customer-access .access-story-copy > p,
+    .customer-access .access-story ul,
+    .customer-access .access-story-copy > a { display: none; }
+    body.customer-access .access-form-card,
+    body.customer-access .login-container:has(#publicRegisterForm.active) .access-form-card { padding: 25px 22px 22px; }
+    .customer-access .access-form-card .login-header h1 { font-size: 25px; }
+    .customer-access .access-fields { grid-template-columns: minmax(0, 1fr); gap: 15px; }
+    body.customer-access .login-container #publicRegisterForm .form-grid { grid-template-columns: minmax(0, 1fr); }
+    .customer-access .access-form-card .form-control { font-size: 16px; }
+    .customer-access .access-legal { font-size: 10px; }
+}
+@media (max-width: 380px) {
+    body.customer-access { padding-inline: 10px; }
+    .customer-access .access-topbar { gap: 8px; }
+    .customer-access .access-back { font-size: 9px; }
+    body.customer-access .access-form-card,
+    body.customer-access .login-container:has(#publicRegisterForm.active) .access-form-card { padding-inline: 17px; }
+    .customer-access .access-form-card .login-header h1 { font-size: 23px; }
+    .customer-access .access-story-copy { padding-inline: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .customer-access :is(a,button,input) { transition: none; }
 }

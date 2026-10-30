@@ -23,12 +23,13 @@ Uma instância atende uma loja, com banco, domínio, configuração e contas de 
 
 | Área | Entrega funcional prevista |
 | --- | --- |
-| Loja web | Catálogo, detalhes de produtos e serviços, cadastro e conta do cliente, sacola, cupons e pedidos. |
+| Loja web | Catálogo, detalhes de produtos e serviços, cadastro com acesso por senha sem confirmação obrigatória de e-mail, conta do cliente, sacola, cupons e pedidos. |
 | Pagamentos | Checkout hospedado no PagBank, confirmação consultada no provedor, webhook, conciliação e tratamento de pagamento incerto. PIX e crédito; débito condicionado à habilitação da conta. |
 | Entrega | Frete por distância consultada no Google Routes, link privado do entregador e acompanhamento das posições recebidas no navegador. |
 | Administração | Clientes, pets, categorias, produtos, estoque, fornecedores, compras, pedidos e financeiro operacional. |
 | Serviços e clínica | Agenda, funcionários, consultas, prontuários, vacinas e lembretes. |
 | Atendimento | Solicitações do consumidor, devoluções, reembolso, solicitações de privacidade e exportação de dados do titular. |
+| Informação pública | Central de Ajuda com 16 FAQs, Central de Privacidade, Política de Privacidade, Cookies e Armazenamento e Termos de Uso. |
 | Operação | Usuários/permissões, auditoria, fila de notificações por e-mail, migrações, saúde da aplicação, backup e restauração por comando. |
 
 O sistema não inclui emissão fiscal, contabilidade, integração com marketplaces, aplicativo nativo, rastreamento garantido com tela bloqueada, geolocalização offline ou operação de múltiplas lojas em uma instância. Novos gateways, integrações, layouts e funcionalidades exigem escopo adicional. O painel financeiro registra operações da aplicação; o extrato e a liquidação efetiva devem ser conciliados com o provedor.
@@ -60,7 +61,7 @@ Hospedagem e integrações não possuem gratuidade garantida neste pacote. Quant
 2. **Preparar contas próprias.** Criar a infraestrutura na conta do comprador. Confirmar a conta recebedora PagBank, domínio de envio Resend, ambiente Cloudinary e projeto Google com APIs necessárias. Fornecer acesso delegado quando necessário, por canal privado.
 3. **Instalar em banco vazio.** Seguir o [README](../README.MD), executar `npm ci`, `check:config`, `db:migrate` e criar o administrador com `db:seed-admin`. Retirar a senha de instalação do ambiente depois.
 4. **Configurar a loja.** Preencher dados empresariais no painel, definir frete/origem e cadastrar catálogo e saldo físico reais. Revisar o cupom `PETFLOW10` criado pelas migrações. Não ativar o catálogo demonstrativo em produção.
-5. **Publicar identidade e contatos.** Revisar cabeçalhos, rodapés, imagens, nomes, templates de e-mail e páginas em `views/legal`. Esses conteúdos possuem textos estáticos e não são todos atualizados pela tela Configurações. Conferir a versão informada em `PRIVACY_POLICY_VERSION` com a política aprovada.
+5. **Publicar identidade e contatos.** Revisar cabeçalhos, rodapés, imagens, nomes, templates de e-mail e páginas em `views/legal`. Esses conteúdos não são todos atualizados pela tela Configurações. A versão dos documentos e dos registros é coordenada em `config/privacyPolicy.js`; a antiga variável de ambiente `PRIVACY_POLICY_VERSION` não altera a versão publicada. Preencher `LEGAL_CONTROLLER_NAME`, `LEGAL_CONTROLLER_DOCUMENT`, `LEGAL_CONTROLLER_ADDRESS`, `LEGAL_PRIVACY_EMAIL`, `LEGAL_PRIVACY_CONTACT` e `LEGAL_PRIVACY_RESPONSIBLE` com informações públicas reais. Somente após revisão dos dados e do atendimento, definir `LEGAL_PUBLIC_INFORMATION_CONFIRMED=true`; essa confirmação não representa certificação jurídica. Aprovar finalidades, bases legais, retenção, fornecedores e práticas com o responsável da loja.
 6. **Homologar.** Executar as verificações técnicas, testar integrações na conta do comprador e preencher [ACEITE.md](ACEITE.md). Compra e estorno reais precisam de valor, pagador e responsável previamente definidos; a presença de um link de checkout não comprova pagamento aprovado.
 7. **Treinar a operação.** Demonstrar pedidos, estoque, atendimento, devolução, conciliação, fila de e-mails, link do entregador e procedimento de recuperação. Ensaiar backup/restauração em banco separado.
 8. **Entregar e encerrar acessos temporários.** Entregar ZIP, hash, manifesto e evidências sem dados pessoais desnecessários. Confirmar posse das contas pelo comprador, remover acessos temporários conforme combinado e registrar pendências, aceite e início do suporte contratado.
@@ -69,9 +70,10 @@ Hospedagem e integrações não possuem gratuidade garantida neste pacote. Quant
 
 - A aplicação é web e requer conexão. No celular do entregador, autorizar a localização, manter a página aberta e retornar a ela após usar outro aplicativo. O sistema não garante coleta com tela bloqueada ou navegador suspenso.
 - A configuração de frete depende de endereço de origem correto e Google Routes disponível. O checkout depende dos serviços externos ativos e das regras da conta PagBank.
-- Confirmação de cadastro e recuperação de senha usam envio direto de e-mail. As notificações opcionais de pedidos, lembretes e atendimento passam pela fila. Aceitação de mensagem pelo provedor não comprova leitura ou entrega na caixa de entrada.
+- Cadastro e acesso por senha não dependem de confirmação por e-mail. A comprovação opcional do endereço e a recuperação de senha usam envio direto; as notificações opcionais de pedidos, lembretes e atendimento passam pela fila. Aceitação de mensagem pelo provedor não comprova leitura ou entrega na caixa de entrada.
 - Backup PostgreSQL protege os registros do banco. As imagens no Cloudinary, as credenciais, o domínio e a configuração dos provedores exigem proteção e recuperação próprias.
 - Cancelamentos, disputas, solicitações de privacidade e devoluções exigem decisão humana em casos previstos na operação. O sistema registra o fluxo; não substitui a política da loja nem a aprovação de seus textos.
+- As páginas e os controles de privacidade não certificam a operação. O comprador deve assumir a identidade pública, o atendimento, as decisões e as obrigações efetivas da empresa antes de receber dados reais.
 
 ## Condição de entrega
 

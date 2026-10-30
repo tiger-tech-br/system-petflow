@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="Conheça os serviços disponíveis na PetFlow e solicite o atendimento para o seu pet.">
+    <meta name="theme-color" content="#04766d">
+    <title>PetFlow | Serviços</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/layout/public-header.css?v=20261030-2">
+    <link rel="stylesheet" href="/css/pages/services-catalog.css?v=20261030-1">
+</head>
+<body class="services-catalog-page">
+    <a class="services-skip" href="#catalog-content">Ir para os serviços</a>
+    <main class="services-catalog" id="catalog-content">
+        <nav class="services-breadcrumb" aria-label="Caminho da página"><a href="/">Início</a><span aria-hidden="true">/</span><span aria-current="page">Serviços</span></nav>
+        <section class="services-catalog-hero" aria-labelledby="services-heading">
+            <div><span class="services-eyebrow">Cuidado em cada fase</span><h1 id="services-heading">Mais cuidado para quem faz parte da família.</h1><p>Conheça os atendimentos disponíveis, confira os detalhes e escolha o serviço para o seu pet.</p><a class="services-button" href="#available-services">Explorar serviços <span aria-hidden="true">↓</span></a></div>
+            <img src="/images/services/banho-tosa.jpg" alt="Cuidado e higiene de um cachorro" width="640" height="480" fetchpriority="high">
+        </section>
+        <section class="services-list-section" id="available-services" aria-labelledby="available-title">
+            <header class="services-list-heading"><div><span class="services-eyebrow">Feitos para o seu pet</span><h2 id="available-title">Nossos serviços</h2></div><p>Escolha um atendimento para consultar informações e solicitar um horário.</p></header>
+            <p id="servicesCatalogStatus" class="services-catalog-status" role="status">Carregando serviços disponíveis...</p>
+            <div class="services-catalog-grid" id="servicesCatalogGrid" aria-busy="true"></div>
+            <button class="services-button services-retry" id="servicesCatalogRetry" type="button" hidden>Tentar novamente</button>
+            <noscript><p>Ative o JavaScript para consultar os serviços atualizados da loja.</p></noscript>
+        </section>
+        <section class="services-process" aria-labelledby="services-process-title"><div><span class="services-eyebrow">Simples, do começo ao cuidado</span><h2 id="services-process-title">Como solicitar</h2></div><ol><li><strong>01</strong><div><h3>Escolha o serviço</h3><p>Veja a descrição e o valor informado pela loja.</p></div></li><li><strong>02</strong><div><h3>Conte sobre seu pet</h3><p>Entre na sua conta, selecione seu pet e indique a data desejada.</p></div></li><li><strong>03</strong><div><h3>Aguarde a confirmação</h3><p>A equipe recebe a solicitação e confirma a disponibilidade do atendimento.</p></div></li></ol></section>
+        <section class="services-support"><div><h2>Uma dúvida antes de escolher?</h2><p>Consulte a Central de Ajuda ou acompanhe suas solicitações pela sua conta.</p></div><a class="services-button services-button-secondary" href="/ajuda">Central de Ajuda <span aria-hidden="true">↗</span></a></section>
+    </main>
+    <footer class="services-catalog-footer"><a href="/" class="services-footer-brand">PetFlow<small>Cuidado em cada fase.</small></a><nav aria-label="Informações da loja"><a href="/">Loja</a><a href="/conta">Minha conta</a><a href="/privacidade">Privacidade</a><a href="/termos-de-uso">Termos de Uso</a></nav></footer>
+    <script src="/js/layout/public-header.js?v=20261030-2"></script>
+    <script src="/js/pages/services/service-catalog.js?v=20261030-1" defer></script>
+    <script src="/js/legal/site-privacy.js?v=20261030-1" defer></script>
+</body>
+</html>

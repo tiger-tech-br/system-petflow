@@ -131,6 +131,27 @@ app.get("/login", (request, response) => {
 
 });
 
+app.get("/cadastro", (request, response) => {
+    response.sendFile(path.join(__dirname, "views", "auth", "login.html"));
+});
+
+app.get("/ajuda", (request, response) => {
+    response.sendFile(path.join(__dirname, "views", "help", "index.html"));
+});
+
+app.get("/api/public/privacidade", (request, response) => {
+    response.set("Cache-Control", "no-store").json({ success: true,
+        data: require("./services/publicLegalService").publicLegalConfiguration() });
+});
+
+app.get("/privacidade", (request, response) => {
+    response.sendFile(path.join(__dirname, "views", "legal", "privacy-center.html"));
+});
+
+app.get("/politica-de-cookies", (request, response) => {
+    response.sendFile(path.join(__dirname, "views", "legal", "cookies.html"));
+});
+
 app.get("/redefinir-senha", (request, response) => {
 
     response.sendFile(path.join(__dirname, "views", "auth", "reset-password.html"));
@@ -189,6 +210,10 @@ app.get("/produtos/:slug", (request, response) => {
 
     response.sendFile(path.join(__dirname, "views", "products", "detail.html"));
 
+});
+
+app.get("/servicos", (request, response) => {
+    response.sendFile(path.join(__dirname, "views", "services", "index.html"));
 });
 
 app.get("/servicos/:slug", (request, response) => {

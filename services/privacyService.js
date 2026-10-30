@@ -1,6 +1,7 @@
 "use strict";
 const audit = require("./auditService");
 const { enqueueEmail } = require("./emailQueueService");
+const { PRIVACY_POLICY_VERSION } = require("../config/privacyPolicy");
 
 // Colunas explícitas impedem que novos campos internos entrem na exportação.
 // Também filtramos o resultado: JSON legado (como endereço) nunca é copiado inteiro.
@@ -291,7 +292,7 @@ async function processRequest(db, req, id) {
       [
         req.user.empresaId,
         customer.id,
-        process.env.PRIVACY_POLICY_VERSION || "2026-10-29",
+        PRIVACY_POLICY_VERSION,
       ],
       );
     }

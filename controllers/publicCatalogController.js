@@ -69,8 +69,7 @@ async function servicos(request, response, next) {
             FROM servicos
             WHERE ativo = TRUE
                 AND empresa_id=get_petflow_empresa_id()
-            ORDER BY nome ASC
-            LIMIT 8;
+            ORDER BY nome ASC;
         `);
 
         return response.status(200).json({
