@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#f5f8f6">
+    <meta name="color-scheme" content="light">
+    <meta name="description" content="Entre ou crie sua conta PetFlow para acompanhar pedidos e usar seu endereço salvo.">
+    <title>PetFlow | Entrar</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/pages/public-login.css?v=20261029-2">
+    <link rel="stylesheet" href="/css/pages/android-login.css?v=20261101-1">
+</head>
+<body class="customer-access" data-auth-view="login">
+    <header class="access-topbar">
+        <a class="access-wordmark" href="/" aria-label="PetFlow — página inicial"><img src="/images/logo/fred-petflow-logo-transparent.png" alt="" width="44" height="44"><span>PetFlow</span></a>
+        <a class="access-back" href="/">Voltar para a loja <span aria-hidden="true">↗</span></a>
+    </header>
+    <main class="login-container access-shell">
+        <section class="login-card access-form-card" aria-labelledby="login-title">
+            <header class="login-header">
+                <h1 id="login-title" tabindex="-1">Acesse sua conta</h1>
+                <p id="authIntroDescription">Tudo para cuidar do seu pet, em um só lugar.</p>
+            </header>
+
+            <form id="publicLoginForm" class="login-form auth-panel active" aria-labelledby="login-title" autocomplete="on">
+                <div class="form-group">
+                    <label for="loginEmail">E-mail</label>
+                    <input class="form-control" type="email" id="loginEmail" name="email" placeholder="E-mail" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" maxlength="150" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginSenha">Senha</label>
+                    <input class="form-control" type="password" id="loginSenha" name="senha" placeholder="Senha" autocomplete="current-password" maxlength="72" required>
+                </div>
+                <div class="form-row form-row-end">
+                    <button class="access-text-button" type="button" data-public-forgot-password>Esqueci minha senha</button>
+                </div>
+                <button class="btn btn-primary" type="submit">Entrar</button>
+                <p class="login-note" id="loginStatus" role="status" aria-live="polite" aria-atomic="true"></p>
+            </form>
+
+            <form id="publicRegisterForm" class="login-form auth-panel" aria-labelledby="login-title" hidden autocomplete="on">
+                <p class="access-register-note"><span aria-hidden="true">✓</span> Crie sua conta e entre sem confirmar por e-mail.</p>
+                <fieldset class="access-fieldset"><legend><span>01</span> Sobre você</legend><p class="access-fieldset-note">Seus dados identificam a conta e ajudam no atendimento dos pedidos.</p><div class="access-fields">
+                <div class="form-group field-wide">
+                    <label for="registerNome">Nome</label>
+                    <input class="form-control" id="registerNome" name="nome" placeholder="Nome completo" autocomplete="name" minlength="3" maxlength="120" pattern="^[A-Za-zÀ-ÿ\s']{3,120}$" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">E-mail</label>
+                    <input class="form-control" id="registerEmail" name="email" type="email" placeholder="seuemail@exemplo.com" autocomplete="email" maxlength="150" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerNascimento">Data de nascimento <small>Opcional</small></label>
+                    <input class="form-control" id="registerNascimento" name="data_nascimento" type="date" autocomplete="bday">
+                </div>
+                <div class="form-group">
+                    <label for="registerCpf">CPF</label>
+                    <input class="form-control" id="registerCpf" name="cpf" inputmode="numeric" placeholder="000.000.000-00" pattern="^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$" title="Informe um CPF válido, com ou sem pontuação." required>
+                </div>
+                <div class="form-group">
+                    <label for="registerTelefone">Celular (WhatsApp)</label>
+                    <div class="input-with-icon">
+                        <input class="form-control" id="registerTelefone" name="telefone" type="tel" autocomplete="tel-national" placeholder="(00) 00000-0000" pattern="^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$" required>
+                    </div>
+                </div>
+                </div></fieldset>
+                <fieldset class="access-fieldset"><legend><span>02</span> Endereço de entrega</legend><p class="access-fieldset-note">Usado para calcular o frete e entregar seus pedidos. Você pode editar depois.</p><div class="access-fields">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="registerCep">CEP</label>
+                        <input class="form-control" id="registerCep" name="cep" placeholder="00000-000" pattern="^\d{5}-?\d{3}$" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerNumero">N°</label>
+                        <input class="form-control" id="registerNumero" name="numero" placeholder="123" maxlength="12" pattern="^[0-9A-Za-zÀ-ÿ\s/-]{1,12}$" required>
+                    </div>
+                </div>
+                <div class="form-group field-wide">
+                    <label for="registerEndereco">Endereço</label>
+                    <input class="form-control" id="registerEndereco" name="endereco" placeholder="Rua, avenida ou travessa" minlength="3" maxlength="160" required>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                    <label for="registerComplemento">Complemento <small>Opcional</small></label>
+                        <input class="form-control" id="registerComplemento" name="complemento" placeholder="Opcional" maxlength="80">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerBairro">Bairro</label>
+                        <input class="form-control" id="registerBairro" name="bairro" minlength="2" maxlength="80" required>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="registerCidade">Cidade</label>
+                        <input class="form-control" id="registerCidade" name="cidade" minlength="2" maxlength="80" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEstado">Estado</label>
+                        <input class="form-control" id="registerEstado" name="estado" maxlength="2" pattern="^[A-Za-z]{2}$" placeholder="SP" required>
+                    </div>
+                </div>
+                </div></fieldset>
+                <fieldset class="access-fieldset"><legend><span>03</span> Acesso e privacidade</legend><div class="access-fields">
+                <div class="form-group field-wide">
+                    <label for="registerSenha">Senha</label>
+                    <input class="form-control" type="password" id="registerSenha" name="senha" minlength="8" maxlength="72" autocomplete="new-password" aria-describedby="registerPasswordHelp" required>
+                    <small class="access-field-help" id="registerPasswordHelp">Use pelo menos 8 caracteres. O limite é de 72 bytes; caracteres acentuados podem ocupar mais de um byte.</small>
+                </div>
+                <label class="access-consent"><input type="checkbox" name="aceite_privacidade" required><span>Li a <a href="/politica-de-privacidade" target="_blank" rel="noopener">Política de Privacidade</a> e estou ciente de como meus dados são utilizados.</span></label>
+                <label class="access-consent"><input type="checkbox" name="aceite_termos" required><span>Li e aceito os <a href="/termos-de-uso" target="_blank" rel="noopener">Termos de Uso</a>.</span></label>
+                <p class="access-field-help field-wide">O cadastro não inscreve você na newsletter. O recebimento de ofertas é uma escolha separada.</p>
+                </div></fieldset>
+                <button class="btn btn-primary" type="submit">Criar minha conta <span aria-hidden="true">→</span></button>
+                <p class="login-note" id="registerStatus" role="status" aria-live="polite" aria-atomic="true"></p>
+            </form>
+            <nav class="access-switcher" aria-label="Acesso do cliente">
+                <p id="authSwitchPrompt">Ainda não tem uma conta?</p>
+                <button class="access-switch-button" type="button" data-auth-tab="register" aria-controls="publicRegisterForm">Cadastre-se aqui</button>
+                <button class="access-switch-button" type="button" data-auth-tab="login" aria-controls="publicLoginForm" hidden>Entrar na minha conta</button>
+            </nav>
+            <details class="access-optional"><summary>Verificar meu e-mail (opcional)</summary><p>Você pode entrar sem esta etapa. Para confirmar que o e-mail é seu, preencha-o acima e solicite um link.</p><div id="optionalEmailVerification"></div></details>
+            <p class="access-demo-notice" data-legal-demo-notice>Ambiente demonstrativo: use apenas dados fictícios. A identificação e o contato da empresa ainda precisam ser configurados.</p>
+            <footer class="access-legal"><span>Seus dados merecem cuidado.</span><nav aria-label="Privacidade no acesso"><a href="/politica-de-privacidade">Privacidade</a><a href="/politica-de-cookies">Cookies</a><a href="/privacidade">Seus direitos</a></nav></footer>
+        </section>
+    </main>
+
+    <script src="/js/pages/auth/public-auth.js?v=20261101-1"></script>
+<script src="/js/legal/site-privacy.js?v=20261030-1" defer></script>
+</body>
+</html>

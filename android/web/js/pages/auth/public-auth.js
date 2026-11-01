@@ -1,0 +1,924 @@
+"use strict";
+
+const CUSTOMER_API = window.location.hostname === "localhost"
+    ? "http://localhost:4500/api/public"
+    : "/api/public";
+
+document.addEventListener("DOMContentLoaded", () => {
+    clearLegacyPublicSession();
+    setupTabs();
+    setupEmailVerificationFromUrl();
+    setupPublicLogin();
+    setupResendVerification();
+    setupPublicRegister();
+    setupPublicAccount();
+    setupPublicOrders();
+    setupCepLookup();
+    setupCpfMasks();
+    setupForgotPassword();
+    setupPublicResetPassword();
+    setupPasswordToggles();
+});
+
+document.addEventListener("petflow:customer-logout", () => {
+    if (document.querySelector(".account-container")) {
+        window.location.href = "/";
+    }
+});
+
+function setupTabs() {
+    const tabs = Array.from(document.querySelectorAll("[data-auth-tab]"));
+    if (!tabs.length) return;
+    tabs.forEach(button => {
+        button.addEventListener("click", () => selectAuthTab(button.dataset.authTab, true));
+    });
+    const params = new URLSearchParams(window.location.search);
+    selectAuthTab(window.location.pathname === "/cadastro" || params.get("cadastro") === "1" ? "register" : "login");
+}
+
+function selectAuthTab(tab, focus = false) {
+    const register = tab === "register";
+    document.querySelectorAll("[data-auth-tab]").forEach(button => {
+        const selected = button.dataset.authTab === (register ? "register" : "login");
+        button.hidden = selected;
+    });
+    for (const [id, selected] of [["publicLoginForm", !register], ["publicRegisterForm", register]]) {
+        const panel = document.getElementById(id);
+        if (!panel) continue;
+        panel.classList.toggle("active", selected);
+        panel.hidden = !selected;
+    }
+    if (document.body) document.body.dataset.authView = register ? "register" : "login";
+    setText(document.getElementById("login-title"), register ? "Crie sua conta PetFlow" : "Acesse sua conta");
+    setText(document.getElementById("authIntroDescription"), register
+        ? "É simples começar. Preencha seus dados e entre com seu e-mail e senha, sem aguardar uma confirmação."
+        : "Tudo para cuidar do seu pet, em um só lugar.");
+    setText(document.getElementById("authSwitchPrompt"), register ? "Já tem uma conta?" : "Ainda não tem uma conta?");
+    document.title = register ? "PetFlow | Criar conta" : "PetFlow | Entrar";
+    if (focus) document.getElementById("login-title")?.focus();
+}
+
+function setupPublicLogin() {
+    const form = document.getElementById("publicLoginForm");
+
+    form?.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (form.dataset.submitting === "true") return;
+        const status = document.getElementById("loginStatus");
+        const button = form.querySelector("button[type='submit']");
+        form.dataset.submitting = "true";
+        form.setAttribute("aria-busy", "true");
+        if (button) button.disabled = true;
+        setStatus(status, "Entrando...", "loading");
+
+        try {
+            const payload = await request(
+                "/clientes/login",
+                "POST",
+                Object.fromEntries(new FormData(form).entries())
+            );
+
+            saveCustomer(payload.data);
+            window.location.href = publicLoginDestination();
+        } catch (error) {
+            setStatus(status, error.message, "error");
+        } finally {
+            form.dataset.submitting = "false";
+            form.setAttribute("aria-busy", "false");
+            if (button) button.disabled = false;
+        }
+    });
+}
+
+function setupPublicRegister() {
+    const form = document.getElementById("publicRegisterForm");
+    try { const address=JSON.parse(sessionStorage.getItem("petflow_delivery_address")||"null"); if(form&&address) Object.entries(address).forEach(([key,value])=>{if(form.elements[key])form.elements[key].value=value;}); } catch {}
+
+    form?.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (form.dataset.submitting === "true") return;
+        const status = document.getElementById("registerStatus");
+
+        if (!validateCpfInput(form.elements.cpf, status)) {
+            return;
+        }
+
+        const email = String(form.elements.email.value || "").trim();
+        const button = form.querySelector("button[type='submit']");
+        form.dataset.submitting = "true";
+        form.setAttribute("aria-busy", "true");
+        if (button) button.disabled = true;
+        setStatus(status, "Criando cadastro...", "loading");
+
+        try {
+            const payload = await request(
+                "/clientes/cadastro",
+                "POST",
+                Object.fromEntries(new FormData(form).entries())
+            );
+
+            form.reset();
+            const loginEmail = document.getElementById("loginEmail");
+            const loginPassword = document.getElementById("loginSenha");
+            if (loginEmail) loginEmail.value = email;
+            if (loginPassword) loginPassword.value = "";
+            selectAuthTab("login");
+            setStatus(status, "");
+            setStatus(document.getElementById("loginStatus"), payload.message || "Cadastro criado. Você já pode entrar com seu e-mail e senha.", "success");
+            loginPassword?.focus();
+        } catch (error) {
+            setStatus(status, error.message, "error");
+        } finally {
+            form.dataset.submitting = "false";
+            form.setAttribute("aria-busy", "false");
+            if (button) button.disabled = false;
+        }
+    });
+}
+
+async function setupEmailVerificationFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("verificar_email");
+
+    if (!token) {
+        return;
+    }
+
+    const status = document.getElementById("loginStatus");
+    setStatus(status, "Confirmando seu e-mail...");
+
+    try {
+        const payload = await request(
+            `/clientes/verificar-email?token=${encodeURIComponent(token)}`,
+            "GET"
+        );
+
+        setStatus(status, payload.message || "E-mail confirmado com sucesso. Você já pode entrar.");
+        window.history.replaceState({}, document.title, "/login");
+    } catch (error) {
+        setStatus(status, error.message || "Não foi possível confirmar o e-mail.");
+    }
+}
+
+async function setupPublicAccount() {
+    const form = document.getElementById("publicAccountForm");
+
+    if (!form) {
+        return;
+    }
+
+    const token = getCustomerToken();
+
+    if (!token) {
+        window.location.href = "/login";
+        return;
+    }
+
+    const status = document.getElementById("accountStatus");
+
+    try {
+        const payload = await request("/clientes/me", "GET");
+        fillForm(form, payload.data);
+        sessionStorage.setItem("petflow_customer_user", JSON.stringify(payload.data));
+        window.PetFlowPublicHeader?.update();
+        window.PetFlowAndroidNavigation?.update();
+    } catch {
+        clearPublicSession();
+        window.location.href = "/login";
+        return;
+    }
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        if (!validateCpfInput(form.elements.cpf, status)) {
+            return;
+        }
+
+        setStatus(status, "Salvando...");
+
+        try {
+            const payload = await request(
+                "/clientes/me",
+                "PUT",
+                Object.fromEntries(new FormData(form).entries())
+            );
+
+            sessionStorage.setItem("petflow_customer_user", JSON.stringify(payload.data));
+            window.PetFlowPublicHeader?.update();
+            window.PetFlowAndroidNavigation?.update();
+            sessionStorage.removeItem("petflow_delivery_address");
+            setStatus(status, "Dados atualizados com sucesso.");
+        } catch (error) {
+            setStatus(status, error.message);
+        }
+    });
+
+    document.getElementById("publicLogout")?.addEventListener("click", async () => {
+        try { await request("/clientes/logout", "POST", {}); } catch(error) { setStatus(status,error.message); return; }
+        clearPublicSession();
+        window.location.href = "/";
+    });
+
+    document.getElementById("publicDeleteAccount")?.addEventListener("click", async () => {
+        const confirmed = window.confirm(
+            "Tem certeza que deseja excluir seu cadastro? Você perderá o acesso à área do cliente."
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        setStatus(status, "Excluindo cadastro...");
+
+        try {
+            const result = await request("/clientes/me", "DELETE");
+            clearPublicSession();
+            setStatus(status, result.message);
+            form.querySelectorAll("input, button").forEach(element => element.disabled = true);
+        } catch (error) {
+            setStatus(status, error.message || "Não foi possível excluir o cadastro.");
+        }
+    });
+}
+
+function clearPublicSession() {
+    sessionStorage.removeItem("petflow_customer_token");
+    sessionStorage.removeItem("petflow_customer_user");
+    sessionStorage.removeItem("petflow_public_favorites");
+    sessionStorage.removeItem("petflow_public_cart");
+    clearLegacyPublicSession();
+    window.PetFlowPublicHeader?.update();
+}
+
+function clearLegacyPublicSession() {
+    localStorage.removeItem("petflow_customer_token");
+    localStorage.removeItem("petflow_customer_user");
+    localStorage.removeItem("petflow_public_favorites");
+    localStorage.removeItem("petflow_public_cart");
+}
+
+function returningPaymentId() {
+    const params = new URLSearchParams(window.location.search || "");
+    const id = params.get("pedido") || "";
+    return params.get("pagamento") === "retorno" && /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(id) ? id : null;
+}
+
+function publicLoginDestination() {
+    const params = new URLSearchParams(window.location.search || "");
+    const id = params.get("pedido") || "";
+    if (params.get("retorno") === "pedidos" && /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(id)) {
+        return "/meus-pedidos?pagamento=retorno&pedido=" + encodeURIComponent(id);
+    }
+    return params.get("retorno") === "sacola" ? "/sacola" : "/";
+}
+
+function paymentStatusMessage(payment = {}) {
+    if (payment.status === "CANCELADA") {
+        return payment.pagseguroStatus === "PAID"
+            ? "O PagBank recebeu o pagamento após o encerramento deste pedido. Entre em contato com o atendimento para conferência."
+            : "Este pedido foi encerrado. Confira o atendimento antes de iniciar uma nova compra.";
+    }
+    if (["PAGAMENTO_APROVADO", "EM_SEPARACAO", "SAIU_PARA_ENTREGA", "ENTREGUE", "FINALIZADA"].includes(payment.status)) {
+        return "Pagamento confirmado. Situação do pedido: " + formatStatus(payment.status) + ".";
+    }
+    if (["IN_ANALYSIS", "AUTHORIZED"].includes(payment.pagseguroStatus)) {
+        return "O PagBank está analisando o pagamento. Seu pedido continua salvo; aguarde a confirmação.";
+    }
+    if (payment.pagseguroStatus === "DECLINED") {
+        return "O cartão foi recusado. Use Continuar pagamento para tentar novamente no mesmo pedido.";
+    }
+    return "O pagamento ainda aguarda confirmação. Você pode continuar ou consultar o pagamento deste pedido.";
+}
+
+async function setupPublicOrders() {
+    const list = document.getElementById("publicOrdersList");
+    if (!list) return;
+    const returnId = returningPaymentId();
+    if (!getCustomerToken()) {
+        window.location.href = returnId ? "/login?retorno=pedidos&pedido=" + encodeURIComponent(returnId) : "/login";
+        return;
+    }
+    const status = document.getElementById("ordersStatus");
+    let checkVersion = 0, timer, disposed = false;
+    function stopChecking() {
+        checkVersion++;
+        clearTimeout(timer);
+    }
+    window.addEventListener?.("pagehide", () => { disposed = true; stopChecking(); });
+
+    async function checkPayment(id, attempt, version) {
+        const result = await request("/pagamentos/" + encodeURIComponent(id), "GET");
+        if (disposed || version !== checkVersion) return;
+        const payload = await request("/clientes/pedidos", "GET");
+        if (disposed || version !== checkVersion) return;
+        renderOrders(list, Array.isArray(payload.data) ? payload.data : []);
+        setStatus(status, paymentStatusMessage(result.payment));
+        const pending = result.payment?.status === "AGUARDANDO_PAGAMENTO" && ["ACTIVE", "WAITING", "IN_ANALYSIS", "AUTHORIZED"].includes(result.payment?.pagseguroStatus);
+        if (!pending || attempt === null) return;
+        if (attempt >= 5) {
+            setStatus(status, paymentStatusMessage(result.payment) + " Use Consultar pagamento para conferir novamente em instantes.");
+            return;
+        }
+        timer = setTimeout(() => {
+            if (disposed || version !== checkVersion || !getCustomerToken()) return;
+            checkPayment(id, attempt + 1, version).catch(error => {
+                if (version === checkVersion) setStatus(status, "Pedido #" + shortId(id) + ": " + error.message + " Use Consultar pagamento para tentar novamente.");
+            });
+        }, 5000);
+    }
+
+    list.addEventListener("click", async event => {
+        const button = event.target.closest("[data-pay-order], [data-check-payment]");
+        if (!button) return;
+        stopChecking();
+        const version = checkVersion;
+        button.disabled = true;
+        const id = button.dataset.payOrder || button.dataset.checkPayment;
+        setStatus(status, button.dataset.payOrder ? "Preparando o pagamento do pedido #" + shortId(id) + "..." : "Consultando o pagamento no PagBank...");
+        try {
+            if (button.dataset.payOrder) {
+                const payload = await request("/pagamentos", "POST", { vendaId: id });
+                if (disposed || version !== checkVersion) return;
+                let target;
+                try { target = new URL(payload.payment?.checkoutUrl || ""); }
+                catch { throw new Error("O pagamento não retornou um endereço válido. Consulte o atendimento com a referência deste pedido."); }
+                if (target.protocol !== "https:") throw new Error("O pagamento não retornou um endereço válido. Consulte o atendimento com a referência deste pedido.");
+                window.location.href = target.href;
+            } else {
+                await checkPayment(id, null, version);
+            }
+        } catch (error) {
+            if (version === checkVersion) setStatus(status, "Pedido #" + shortId(id) + ": " + (error.message || "Não foi possível consultar o pagamento.") + " Você pode acompanhar este pedido aqui.");
+        } finally {
+            button.disabled = false;
+        }
+    });
+
+    async function refreshOrders() {
+        const initialVersion = checkVersion;
+        try {
+            const payload = await request("/clientes/pedidos", "GET");
+            if (disposed || initialVersion !== checkVersion) return;
+            const orders = Array.isArray(payload.data) ? payload.data : [];
+            renderOrders(list, orders);
+            setStatus(status, "");
+            if (returnId && orders.some(order => order.id === returnId)) {
+                setStatus(status, "Conferindo o pagamento do pedido #" + shortId(returnId) + " no PagBank...");
+                await checkPayment(returnId, 0, initialVersion);
+            }
+        } catch (error) {
+            if (!disposed && initialVersion === checkVersion) setStatus(status, error.message || "Não foi possível carregar seus pedidos. Use Consultar pagamento para conferir novamente.");
+        }
+    }
+    window.addEventListener?.("pageshow", async event => {
+        if (!event.persisted) return;
+        disposed = false;
+        stopChecking();
+        if (!getCustomerToken()) {
+            window.location.href = returnId ? "/login?retorno=pedidos&pedido=" + encodeURIComponent(returnId) : "/login";
+            return;
+        }
+        await refreshOrders();
+    });
+    await refreshOrders();
+}
+
+function renderOrders(list, orders) {
+    if (!orders.length) {
+        list.innerHTML = `
+            <div class="orders-empty">
+                <i class="fa-regular fa-folder-open"></i>
+                <strong>Você ainda não fez pedidos.</strong>
+                <span>Quando comprar pela sacola, seus pedidos aparecerão aqui.</span>
+            </div>
+        `;
+
+        return;
+    }
+
+    list.innerHTML = orders.map(order => {
+        const items = Array.isArray(order.itens)
+            ? order.itens
+            : [];
+
+        return `
+            ${order.status === "SAIU_PARA_ENTREGA" ? `<a class="btn-secondary" href="/entrega.html?pedido=${encodeURIComponent(order.id)}">Rastrear pedido</a>` : ""}
+            <article class="order-card">
+                <header>
+                    <div>
+                        <span>Pedido #${escapeHtml(shortId(order.id))}</span>
+                        <strong>${escapeHtml(formatStatus(order.status))}</strong>
+                    </div>
+
+                    <b>${currency(order.valor_final ?? order.valor_total)}</b>
+                </header>
+
+                <dl>
+                    <div>
+                        <dt>Data</dt>
+                        <dd>${formatDate(order.data_venda)}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Pagamento</dt>
+                        <dd>${escapeHtml(formatPaymentMethod(order.forma_pagamento))}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Entrega</dt>
+                        <dd>${escapeHtml(formatOrderAddress(order))}</dd>
+                    </div>
+                </dl>
+
+                <ul>
+                    ${items.map(item => `
+                        <li>
+                            <span>${escapeHtml(item.produto || "Produto")}</span>
+                            <strong>${Number(item.quantidade || 0)} x ${currency(item.preco_unitario)}</strong>
+                        </li>
+                    `).join("")}
+                </ul>
+
+                ${renderOrderNotes(order)}
+                ${renderOrderTimeline(order.status)}
+                ${renderContinuePayment(order)}
+            </article>
+        `;
+    }).join("");
+}
+
+function renderOrderNotes(order) {
+    if (!order.observacoes) {
+        return "";
+    }
+
+    return `
+        <div class="order-note">
+            <span>Observações</span>
+            <p>${escapeHtml(order.observacoes)}</p>
+        </div>
+    `;
+}
+
+function renderContinuePayment(order) {
+    if (
+        order.status !== "AGUARDANDO_PAGAMENTO"
+    ) {
+        return "";
+    }
+
+    const expired = order.reserva_expira_em && new Date(order.reserva_expira_em) <= new Date();
+    return `
+        <div class="order-actions">
+            ${expired ? `<span>A reserva deste pedido terminou. Consulte o atendimento antes de pagar.</span>` : `
+            <button
+                class="btn order-pay-button"
+                type="button"
+                data-pay-order="${escapeHtml(order.id)}"
+            >
+                <i class="fa-solid fa-lock"></i>
+                ${order.pagseguro_checkout_url ? "Continuar pagamento" : "Pagar este pedido"}
+            </button>
+            <span>Você será direcionado para o ambiente seguro do PagBank.</span>`}
+            ${order.pagseguro_checkout_id ? `<button class="btn-secondary" type="button" data-check-payment="${escapeHtml(order.id)}">Consultar pagamento</button>` : ""}
+        </div>
+    `;
+}
+
+function renderOrderTimeline(status) {
+    const steps = [
+        {
+            status: "AGUARDANDO_PAGAMENTO",
+            label: "Pedido criado"
+        },
+        {
+            status: "PAGAMENTO_APROVADO",
+            label: "Pedido recebido"
+        },
+        {
+            status: "EM_SEPARACAO",
+            label: "Preparando"
+        },
+        {
+            status: "SAIU_PARA_ENTREGA",
+            label: "Saiu para entrega"
+        },
+        {
+            status: "ENTREGUE",
+            label: "Entregue"
+        }
+    ];
+
+    const currentIndex = Math.max(
+        0,
+        steps.findIndex(step => step.status === status)
+    );
+
+    return `
+        <ol class="order-timeline" aria-label="Andamento do pedido">
+            ${steps.map((step, index) => `
+                <li class="${index <= currentIndex ? "is-done" : ""}">
+                    <span>${index <= currentIndex ? "✓" : ""}</span>
+                    ${escapeHtml(step.label)}
+                </li>
+            `).join("")}
+        </ol>
+    `;
+}
+
+function formatStatus(status) {
+    const labels = {
+        PENDENTE: "Pendente",
+        APROVADO: "Aprovado",
+        AGUARDANDO_PAGAMENTO: "Aguardando pagamento",
+        PAGAMENTO_APROVADO: "Pedido recebido",
+        EM_SEPARACAO: "Preparando",
+        EM_ENTREGA: "Em entrega",
+        SAIU_PARA_ENTREGA: "Saiu para entrega",
+        ENTREGUE: "Entregue",
+        FINALIZADA: "Finalizado",
+        CONCLUIDO: "Concluído",
+        CANCELADO: "Cancelado",
+        CANCELADA: "Cancelada"
+    };
+
+    return labels[status] || status || "Pendente";
+}
+
+function formatPaymentMethod(value) {
+    const labels = {
+        PIX: "PIX",
+        CARTAO_CREDITO: "Cartão de crédito",
+        CARTAO_DEBITO: "Cartão de débito",
+        PAGBANK: "Aguardando pagamento",
+        CREDIT_CARD: "Cartão de crédito",
+        DEBIT_CARD: "Cartão de débito",
+        BOLETO: "Boleto"
+    };
+
+    return labels[value] || value || "Não informado";
+}
+
+function formatOrderAddress(order) {
+    return [
+        order.endereco,
+        order.numero,
+        order.complemento,
+        order.bairro,
+        order.cidade,
+        order.estado
+    ].filter(Boolean).join(", ") || "Endereço não informado";
+}
+
+function shortId(id) {
+    return String(id || "").slice(0, 8).toUpperCase();
+}
+
+function formatDate(value) {
+    if (!value) {
+        return "Não informado";
+    }
+
+    return new Date(value).toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+    });
+}
+
+function currency(value) {
+    return Number(value || 0).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
+}
+
+function setupCepLookup() {
+    document.querySelectorAll("input[name='cep']").forEach(input => {
+        let lookupTimer = null;
+        let lastLoadedCep = "";
+
+        const lookup = async () => {
+            const cep = input.value.replace(/\D/g, "");
+
+            if (cep.length !== 8 || cep === lastLoadedCep) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const data = await response.json();
+
+                if (data.erro) {
+                    return;
+                }
+
+                lastLoadedCep = cep;
+                const form = input.closest("form");
+                setField(form, "endereco", data.logradouro);
+                setField(form, "bairro", data.bairro);
+                setField(form, "cidade", data.localidade);
+                setField(form, "estado", data.uf);
+                form?.elements.numero?.focus();
+            } catch {
+                // CEP manual continua permitido.
+            }
+        };
+
+        input.addEventListener("input", () => {
+            const digits = input.value.replace(/\D/g, "").slice(0, 8);
+            input.value = digits.length > 5
+                ? `${digits.slice(0, 5)}-${digits.slice(5)}`
+                : digits;
+
+            window.clearTimeout(lookupTimer);
+            lookupTimer = window.setTimeout(lookup, 350);
+        });
+
+        input.addEventListener("blur", lookup);
+    });
+}
+
+function setupCpfMasks() {
+    document.querySelectorAll("input[name='cpf']").forEach(input => {
+        input.addEventListener("input", () => {
+            const digits = input.value.replace(/\D/g, "").slice(0, 11);
+            input.value = formatCpf(digits);
+        });
+
+        input.addEventListener("blur", () => {
+            validateCpfInput(input, document.getElementById("accountStatus") || document.getElementById("registerStatus"));
+        });
+    });
+}
+
+function validateCpfInput(input, status) {
+    if (!input) {
+        return true;
+    }
+
+    const digits = input.value.replace(/\D/g, "");
+
+    if (!/^\d{11}$/.test(digits)) {
+        setStatus(status, "Informe um CPF válido com 11 números.");
+        input.focus();
+        return false;
+    }
+
+    input.value = formatCpf(digits);
+    setStatus(status, "");
+    return true;
+}
+
+function formatCpf(value) {
+    const digits = String(value || "").replace(/\D/g, "").slice(0, 11);
+
+    if (digits.length > 9) {
+        return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+    }
+
+    if (digits.length > 6) {
+        return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+    }
+
+    if (digits.length > 3) {
+        return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+    }
+
+    return digits;
+}
+
+function setupForgotPassword() {
+    document
+        .querySelector("[data-public-forgot-password]")
+        ?.addEventListener("click", async event => {
+            event.preventDefault();
+            const status = document.getElementById("loginStatus");
+            const email = document.getElementById("loginEmail")?.value?.trim();
+
+            if (!email) {
+                setStatus(status, "Informe seu e-mail para receber o link de recuperação.");
+                return;
+            }
+
+            setStatus(status, "Enviando e-mail de recuperação...");
+
+            try {
+                const payload = await request(
+                    "/clientes/esqueci-senha",
+                    "POST",
+                    { email }
+                );
+
+                setStatus(status, payload.message || "Verifique seu e-mail.");
+            } catch (error) {
+                setStatus(status, error.message || "Não foi possível enviar o e-mail.");
+            }
+        });
+}
+
+function setupPublicResetPassword() {
+    const form = document.getElementById("publicResetPasswordForm");
+
+    if (!form) {
+        return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token") || "";
+    const isAdminReset = params.get("tipo") === "admin";
+    const status = document.getElementById("resetStatus");
+    const tokenInput = document.getElementById("resetToken");
+
+    if (isAdminReset) {
+        setText(document.querySelector(".login-eyebrow"), "Área administrativa");
+        setText(document.getElementById("resetTitle"), "Crie uma nova senha administrativa");
+    }
+
+    if (tokenInput) {
+        tokenInput.value = token;
+    }
+
+    if (!token) {
+        setStatus(status, "Link inválido. Solicite uma nova recuperação de senha.");
+    }
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const senha = form.senha.value;
+        const senhaConfirmacao = form.senhaConfirmacao.value;
+
+        if (senha !== senhaConfirmacao) {
+            setStatus(status, "As senhas não conferem.");
+            return;
+        }
+
+        setStatus(status, "Salvando nova senha...");
+
+        try {
+            await requestPasswordReset(params.get("tipo"), {
+                token,
+                senha
+            });
+
+            setStatus(status, "Senha redefinida com sucesso. Você já pode entrar.");
+            setTimeout(() => {
+                window.location.href = isAdminReset
+                    ? "/admin/index.html"
+                    : "/login";
+            }, 1500);
+        } catch (error) {
+            setStatus(status, error.message || "Não foi possível redefinir a senha.");
+        }
+    });
+}
+
+async function requestPasswordReset(type, body) {
+    if (type !== "admin") {
+        return request("/clientes/redefinir-senha", "POST", body);
+    }
+
+    const response = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+    });
+    const payload = await response.json();
+
+    if (!response.ok) {
+        throw new Error(payload.message || `Erro ${response.status}`);
+    }
+
+    return payload;
+}
+
+async function request(endpoint, method = "GET", body) {
+    const token = getCustomerToken();
+    let response;
+    try {
+        response = await fetch(`${CUSTOMER_API}${endpoint}`, {
+            method,
+            headers: {
+                "Content-Type": "application/json",
+                ...(token ? { Authorization: `Bearer ${token}` } : {})
+            },
+            ...(body ? { body: JSON.stringify(body) } : {})
+        });
+    } catch {
+        throw new Error("Não foi possível conectar ao PetFlow. Confira sua conexão e tente novamente.");
+    }
+
+    const payload = await response.json().catch(() => {
+        throw new Error("O serviço está indisponível no momento. Tente novamente em instantes.");
+    });
+
+    if (!response.ok) {
+        throw new Error(payload.message || `Erro ${response.status}`);
+    }
+
+    return payload;
+}
+
+function saveCustomer(data) {
+    clearLegacyPublicSession();
+    sessionStorage.setItem("petflow_customer_token", data.token);
+    sessionStorage.setItem("petflow_customer_user", JSON.stringify(data.user));
+    window.PetFlowPublicHeader?.update();
+}
+
+function getCustomerToken() {
+    return sessionStorage.getItem("petflow_customer_token");
+}
+
+function fillForm(form, data) {
+    Object.entries(data || {}).forEach(([key, value]) => {
+        if (form.elements[key]) {
+            form.elements[key].value = form.elements[key].type === "date" && value
+                ? String(value).slice(0, 10)
+                : value || "";
+        }
+    });
+}
+
+function setField(form, name, value) {
+    if (form?.elements[name]) {
+        form.elements[name].value = value || "";
+    }
+}
+
+function setText(element, message) {
+    if (element) {
+        element.textContent = message || "";
+    }
+}
+
+function setStatus(element, message, state = "") {
+    if (element) {
+        element.textContent = message || "";
+        if (element.dataset) element.dataset.state = state;
+    }
+}
+
+function setupPasswordToggles() {
+    document.querySelectorAll("input[type='password']").forEach(input => {
+        if (input.closest(".password-control")) {
+            return;
+        }
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "password-control";
+        input.parentNode.insertBefore(wrapper, input);
+        wrapper.appendChild(input);
+
+        const button = document.createElement("button");
+        button.className = "password-toggle";
+        button.type = "button";
+        button.setAttribute("aria-label", "Mostrar senha");
+        button.setAttribute("aria-controls", input.id);
+        button.setAttribute("aria-pressed", "false");
+        const eye = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+        const eyeSlash = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3 18 18M10.6 5.1 12 5c6.5 0 10 7 10 7a22 22 0 0 1-3 4M6.5 6.5A23 23 0 0 0 2 12s3.5 7 10 7a11 11 0 0 0 5.5-1.5M10 10a3 3 0 0 0 4 4"/></svg>';
+        button.innerHTML = eyeSlash;
+
+        button.addEventListener("click", () => {
+            const visible = input.type === "text";
+            input.type = visible ? "password" : "text";
+            button.setAttribute("aria-label", visible ? "Mostrar senha" : "Ocultar senha");
+            button.setAttribute("aria-pressed", String(!visible));
+            button.innerHTML = visible ? eyeSlash : eye;
+        });
+
+        wrapper.appendChild(button);
+    });
+}
+
+function escapeHtml(value) {
+    return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function setupResendVerification() {
+    const form = document.getElementById("publicLoginForm");
+    const container = document.getElementById("optionalEmailVerification");
+    if (!form || !container || container.dataset.bound === "true") return;
+    container.dataset.bound = "true";
+    const button=document.createElement("button");
+    button.type="button"; button.className="btn btn-secondary"; button.textContent="Enviar link opcional de verificação";
+    container.appendChild(button);
+    button.addEventListener("click",async()=>{
+        button.disabled=true;
+        try {
+            const result=await request("/clientes/reenviar-confirmacao","POST",{email:form.elements.email.value});
+            setStatus(document.getElementById("loginStatus"),result.message);
+        } catch(error) { setStatus(document.getElementById("loginStatus"),error.message); }
+        finally { button.disabled=false; }
+    });
+}

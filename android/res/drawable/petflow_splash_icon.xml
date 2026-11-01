@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The Android 12+ icon mask leaves the complete wordmark in its safe area. -->
+    <item android:width="288dp" android:height="288dp">
+        <shape android:shape="rectangle"><solid android:color="@android:color/transparent" /></shape>
+    </item>
+    <item android:width="160dp" android:height="160dp" android:gravity="center">
+        <bitmap android:src="@drawable/petflow_logo" android:gravity="fill" android:filter="true" />
+    </item>
+</layer-list>

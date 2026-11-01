@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="petflow_brand">#045A54</color>
+    <style name="PetFlowTheme" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">@color/petflow_brand</item>
+        <item name="android:windowBackground">@drawable/petflow_splash</item>
+        <item name="android:statusBarColor">@color/petflow_brand</item>
+        <item name="android:navigationBarColor">@color/petflow_brand</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
+</resources>

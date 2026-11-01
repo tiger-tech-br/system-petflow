@@ -1,0 +1,149 @@
+/* Only the Android WebView loads this navigation stylesheet. */
+body.petflow-android-shell {
+    --pf-app-nav-height: 75px;
+    padding-bottom: calc(var(--pf-app-page-bottom, 0px) + var(--pf-app-nav-height));
+}
+
+body.petflow-android-shell .store-mobile-nav.pf-app-bottom-nav {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 450;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: auto;
+    align-items: stretch;
+    gap: 2px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 6px max(8px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+    border: 0;
+    border-top: 1px solid #dfe8e3;
+    border-radius: 0;
+    background: #fff;
+    box-shadow: 0 -4px 20px rgb(19 53 42 / 6%);
+    box-sizing: border-box;
+    isolation: isolate;
+}
+
+body.petflow-android-shell .pf-app-bottom-nav > a,
+body.petflow-android-shell .pf-app-bottom-nav > a:first-child {
+    position: relative;
+    display: grid;
+    grid-template-rows: 34px 16px;
+    place-items: center;
+    align-content: center;
+    gap: 3px;
+    min-width: 0;
+    min-height: 60px;
+    height: auto;
+    margin: 0;
+    padding: 3px;
+    border: 0;
+    border-radius: 12px;
+    color: #738079;
+    background: transparent;
+    box-shadow: none;
+    font: 500 11px/16px -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    letter-spacing: 0;
+    text-align: center;
+    text-decoration: none;
+    text-transform: none;
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+}
+
+body.petflow-android-shell .pf-app-bottom-nav > a.is-active {
+    color: #045a54;
+    font-weight: 700;
+}
+
+.petflow-android-shell .pf-app-nav-visual {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 34px;
+    border-radius: 12px;
+    color: inherit;
+}
+
+.petflow-android-shell .pf-app-nav-visual > svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+    flex: none;
+}
+
+.petflow-android-shell .is-active .pf-app-nav-visual {
+    background: #eaf4ef;
+}
+
+.petflow-android-shell .pf-app-nav-label {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 16px;
+}
+
+.petflow-android-shell .pf-app-avatar {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #cde1d7;
+    border-radius: 50%;
+    color: #045a54;
+    background: #edf5f1;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 750;
+}
+
+.petflow-android-shell .is-active .pf-app-avatar {
+    border-color: #045a54;
+    color: #fff;
+    background: #045a54;
+}
+
+.petflow-android-shell .pf-app-avatar-icon > svg {
+    width: 20px;
+    height: 20px;
+}
+
+.petflow-android-shell .pf-app-bottom-nav > a:focus-visible {
+    outline: 3px solid #efbf51;
+    outline-offset: -3px;
+}
+
+.petflow-android-shell .public-header [data-public-logout] {
+    display: none !important;
+}
+
+.petflow-android-shell #publicLogout {
+    min-height: 48px;
+    margin-top: 8px;
+    border: 1px solid #d9e5df;
+    border-radius: 10px;
+    color: #49675b;
+    background: #f5f9f7;
+    box-shadow: none;
+    font-size: 14px;
+}
+
+.petflow-android-shell .pf-privacy-notice {
+    bottom: calc(var(--pf-app-nav-height) + 12px);
+}
+
+@media (max-width: 820px) {
+    .petflow-android-shell .public-header .header-actions { gap: 2px; }
+    .petflow-android-shell .public-header .menu.active { max-height: min(65dvh, 560px); }
+    .petflow-android-shell .footer { padding-bottom: 24px; }
+}
+
+@media (hover: hover) {
+    .petflow-android-shell .pf-app-bottom-nav > a:hover { background: #f2f7f4; }
+}

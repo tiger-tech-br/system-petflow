@@ -1,0 +1,160 @@
+/* Login exclusivo do APK. O fundo de abertura #045A54 pertence ao tema nativo. */
+html:has(body.customer-access) {
+    background: #f5f8f6;
+    color-scheme: light;
+}
+
+body.customer-access {
+    --access-accent: #04766d;
+    --teal: #04766d;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin: 0;
+    padding: max(20px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+    background: #f5f8f6;
+    color: #173c30;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.customer-access .access-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: min(100%, 480px);
+    margin: 0 auto;
+    padding: 8px 0 26px;
+}
+.customer-access .access-wordmark { display: inline-flex; align-items: center; gap: 10px; color: #173c30; font-size: 25px; font-weight: 750; letter-spacing: -.8px; }
+.customer-access .access-wordmark img { width: 56px; height: 56px; object-fit: contain; }
+.customer-access .access-back { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; color: #526d61; font-size: 12px; }
+.customer-access .access-back span { font-size: 18px; }
+
+body.customer-access .login-container.access-shell,
+body.customer-access .login-container.access-shell:has(#publicRegisterForm.active) {
+    display: block;
+    width: min(100%, 480px);
+    margin: 0 auto;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+body.customer-access .access-form-card,
+body.customer-access .login-container:has(#publicRegisterForm.active) .access-form-card { padding: 0; }
+.customer-access .login-header,
+.customer-access .login-container:has(#publicRegisterForm.active) .login-header { justify-items: start; gap: 10px; margin: 0 0 30px; text-align: left; }
+.customer-access .login-header h1,
+.customer-access .login-container:has(#publicRegisterForm.active) .login-header h1 { margin: 0; color: #173c30; font-size: clamp(26px, 6.6vw, 32px); line-height: 1.2; font-weight: 750; letter-spacing: -.7px; }
+.customer-access .login-header p,
+body.customer-access .login-container:has(#publicRegisterForm.active) .login-header p { display: block; margin: 0; color: #647481; font-size: 14px; line-height: 1.6; }
+.customer-access .login-form { gap: 18px; }
+.customer-access .form-group { min-width: 0; gap: 8px; }
+.customer-access .form-group label { color: #345347; font-size: 13px; font-weight: 600; }
+.customer-access #publicLoginForm .form-group > label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+.customer-access .login-card .form-control,
+.customer-access .login-container:has(#publicRegisterForm.active) .form-control {
+    width: 100%; min-width: 0; min-height: 60px;
+    padding: 16px 22px;
+    border: 1.5px solid #b6cdc3;
+    border-radius: 20px;
+    color: #173c30;
+    background: #fff;
+    font-size: 17px;
+    line-height: 1.4;
+    caret-color: var(--access-accent);
+}
+.customer-access .form-control::placeholder { color: #71847a; opacity: 1; }
+.customer-access .login-card .form-control:focus { border-color: var(--access-accent); background: #fff; box-shadow: 0 0 0 3px #04766d18; }
+.customer-access .form-control:-webkit-autofill { -webkit-text-fill-color: #173c30; -webkit-box-shadow: 0 0 0 1000px #fff inset; caret-color: var(--access-accent); }
+.customer-access .password-control .form-control { padding-right: 62px; }
+.customer-access .login-card .password-toggle { right: 9px; width: 44px; height: 44px; border-radius: 50%; color: var(--access-accent); }
+.customer-access .password-toggle:hover { background: #04766d10; }
+.customer-access .password-toggle svg { display: block; width: 24px; height: 24px; }
+.customer-access .form-row-end { justify-content: flex-start; margin: -2px 0 9px; }
+.customer-access .access-text-button { min-height: 44px; padding: 0; border: 0; color: var(--access-accent); background: transparent; font: inherit; font-size: 15px; text-align: left; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.customer-access .login-card .btn,
+.customer-access .login-container:has(#publicRegisterForm.active) .btn {
+    width: 100%; min-height: 56px; margin: 0;
+    padding: 14px 22px;
+    border: 1.5px solid var(--access-accent);
+    border-radius: 999px;
+    color: #fff;
+    background: var(--access-accent);
+    font-size: 18px;
+    font-weight: 700;
+    box-shadow: none;
+}
+.customer-access .login-card .btn:not(.btn-secondary):not(.btn-danger):not(.btn-remove-pet):not(.btn-edit-pet):not(.btn-clear-pet) { background: var(--access-accent); }
+.customer-access .login-card .btn:hover { transform: none; background: #035e57; box-shadow: none; }
+.customer-access .login-card .btn:disabled { opacity: .7; cursor: wait; }
+.customer-access .access-switcher { display: grid; gap: 18px; margin: 30px 0 0; text-align: center; }
+.customer-access .access-switcher p { display: flex; align-items: center; gap: 14px; margin: 0; color: #647481; font-size: 15px; line-height: 1.5; }
+.customer-access .access-switcher p::before,
+.customer-access .access-switcher p::after { content: ""; flex: 1; height: 1px; background: #d8e4db; }
+.customer-access .access-switch-button { min-height: 56px; padding: 14px 20px; border: 1.5px solid var(--access-accent); border-radius: 999px; color: var(--access-accent); background: transparent; font: inherit; font-size: 17px; font-weight: 650; cursor: pointer; }
+.customer-access .access-switch-button:hover { background: #04766d0b; }
+.customer-access .login-note { min-height: 0; margin: 0; padding: 12px 0; color: #526d61; font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+.customer-access .login-note:empty { display: none; }
+.customer-access .login-note[data-state="error"] { padding: 13px 16px; border-radius: 12px; color: #8b2020; background: #fff1f1; }
+.customer-access .login-note[data-state="success"] { padding: 13px 16px; border-radius: 12px; color: #155c36; background: #effcf4; }
+.customer-access .access-optional { margin: 24px 0 0; color: #647481; font-size: 12px; line-height: 1.6; }
+.customer-access .access-optional summary { min-height: 44px; padding: 12px 0; cursor: pointer; }
+.customer-access .access-optional p { margin: 0 0 12px; }
+.customer-access[data-auth-view="register"] .access-optional { display: none; }
+.customer-access .access-demo-notice { margin: 20px 0 0; padding: 12px 14px; border: 1px solid #ecddba; border-radius: 12px; color: #775b31; background: #fff9ed; font-size: 11px; line-height: 1.6; }
+.customer-access .access-legal { display: grid; justify-items: center; gap: 10px; margin: 24px 0 0; padding: 20px 0 0; border-top: 1px solid #dbe7df; color: #647481; text-align: center; font-size: 11px; }
+.customer-access .access-legal nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; }
+.customer-access .access-legal a { display: inline-flex; align-items: center; min-height: 36px; text-decoration: underline; text-underline-offset: 3px; }
+
+body.customer-access #publicRegisterForm.auth-panel.active { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+.customer-access .access-register-note { margin: 0; color: #345347; font-size: 13px; line-height: 1.6; }
+.customer-access .access-register-note span { margin-right: 6px; }
+.customer-access .access-fieldset { min-width: 0; margin: 0; padding: 16px 0 0; border: 0; border-top: 1px solid #dbe7df; }
+.customer-access .access-fieldset legend { padding: 0 12px 0 0; color: #173c30; font-size: 16px; font-weight: 700; }
+.customer-access .access-fieldset legend span { margin-right: 8px; opacity: .8; font-size: 12px; }
+.customer-access .access-fieldset-note { margin: 0 0 18px; color: #647481; font-size: 12px; line-height: 1.6; }
+.customer-access .access-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; min-width: 0; }
+body.customer-access #publicRegisterForm .form-group { grid-column: auto; }
+body.customer-access #publicRegisterForm .field-wide { grid-column: 1 / -1; }
+body.customer-access .login-container #publicRegisterForm .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-column: 1 / -1; gap: 18px; min-width: 0; }
+.customer-access #publicRegisterForm .input-with-icon .form-control { padding-left: 22px; }
+.customer-access .form-group label small { font-size: 10px; font-weight: 400; }
+.customer-access .access-field-help { margin: 0; color: #647481; font-size: 11px; line-height: 1.65; }
+.customer-access .access-consent { grid-column: 1 / -1; display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; color: #526d61; font-size: 12px; line-height: 1.7; cursor: pointer; }
+.customer-access .access-consent input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--access-accent); }
+.customer-access .access-consent a { color: var(--access-accent); text-decoration: underline; text-underline-offset: 3px; }
+.customer-access [hidden] { display: none !important; }
+.customer-access :is(a, button, input):focus-visible { outline: 3px solid #ffdb78; outline-offset: 4px; }
+.customer-access #login-title:focus { outline: none; }
+
+/* O aviso de privacidade participa do fluxo, sem cobrir o botão de acesso. */
+.customer-access .pf-privacy-notice { position: static; width: min(100%, 480px); max-width: 100%; margin: 24px auto 0; flex-shrink: 0; }
+
+@media (min-width: 760px) {
+    body.customer-access { padding-top: 36px; }
+    .customer-access .access-topbar { padding-bottom: 40px; }
+}
+@media (max-width: 420px) {
+    body.customer-access { padding-inline: max(20px, env(safe-area-inset-left)); }
+    .customer-access .access-topbar { padding-bottom: 24px; }
+    .customer-access .access-back { font-size: 11px; }
+    .customer-access .access-wordmark { gap: 7px; font-size: 23px; }
+    .customer-access .access-wordmark img { width: 46px; height: 46px; }
+    .customer-access .access-fields,
+    body.customer-access .login-container #publicRegisterForm .form-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .customer-access :is(a, button, input) { transition: none; }
+}
